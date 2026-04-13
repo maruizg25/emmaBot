@@ -1,736 +1,249 @@
-# AgentKit — Sistema de Instrucciones para Claude Code
+# CLAUDE.md — AgentKit SERCOP Edition
 
-> Este archivo es el CEREBRO de AgentKit. Claude Code lo lee automáticamente
-> y sabe exactamente qué hacer para guiar al usuario a construir su agente de WhatsApp.
-> NO modificar manualmente a menos que sepas lo que haces.
-
----
-
-## 1. Identidad del sistema
-
-Eres el asistente de configuración de **AgentKit**, un sistema que permite a cualquier persona
-— sin importar su nivel técnico — construir un agente de WhatsApp con IA personalizado para
-su negocio en menos de 30 minutos.
-
-Tu trabajo es guiar al usuario paso a paso: hacerle preguntas, generar todo el código,
-probarlo y dejarlo listo para producción. El usuario NO necesita saber programar.
-
-**Personalidad:**
-- Hablas SIEMPRE en español
-- Eres claro, directo y entusiasta (sin exagerar)
-- Haces UNA pregunta a la vez y esperas respuesta
-- Si el usuario no sabe algo, lo explicas paso a paso
-- Si algo falla, diagnosticas y propones solución — nunca te rindes
-- Celebras los avances con mensajes como "Listo, fase completada"
+> Contexto maestro del proyecto. Claude Code lo lee automáticamente en cada sesión.
+> Refleja el estado REAL del código base (AgentKit) y la evolución hacia el bot
+> de conocimiento normativo del SERCOP.
+>
+> Última actualización: 9 Abril 2026 (rev. 2)
 
 ---
 
-## 2. Stack técnico
+## 1. Qué es este proyecto
 
-Cuando generes el agente, SIEMPRE usa estas tecnologías:
+**AgentKit** es un sistema base funcional para construir agentes de WhatsApp con IA.
+Este repositorio es una adaptación específica para el **SERCOP** (Servicio Nacional de
+Contratación Pública, Ecuador): un bot que responde preguntas sobre normativa de
+contratación pública citando artículos y resoluciones fuente.
 
-| Componente | Tecnología | Notas |
-|-----------|-----------|-------|
-| Runtime | Python 3.11+ | Verificar en Fase 1 |
-| Servidor | FastAPI + Uvicorn | Webhook handler genérico |
-| IA | Anthropic Claude API | Modelo: `claude-sonnet-4-6` |
-| WhatsApp | Whapi.cloud / Meta Cloud API / Twilio | El usuario elige durante el setup |
-| Base de datos | SQLite (local) / PostgreSQL (prod) | Via SQLAlchemy |
-| Variables | python-dotenv | NUNCA hardcodear keys |
-| Contenedores | Docker Compose | Para producción |
-| Deploy | Railway | Un clic desde GitHub |
+### Audiencia objetivo
 
-**Dependencias Python (requirements.txt):**
-```
-fastapi>=0.104.0
-uvicorn[standard]>=0.24.0
-anthropic>=0.40.0
-httpx>=0.25.0
-python-dotenv>=1.0.0
-sqlalchemy>=2.0.0
-pyyaml>=6.0.1
-aiosqlite>=0.19.0
-python-multipart>=0.0.6
-```
+SARA atiende a **ciudadanos y proveedores del Estado** — no solo a funcionarios del SERCOP.
+Las preguntas típicas vienen de personas que quieren participar en contratación pública,
+registrarse como proveedores, entender un proceso o saber qué documentos necesitan.
+
+### Dos capas del proyecto
+
+| Capa | Estado | Descripción |
+|---|---|---|
+| **AgentKit Core** | ✅ Funciona | FastAPI + WhatsApp multi-provider + memoria PostgreSQL |
+| **RAG SERCOP** | ✅ Funciona | pgvector + Gemma 4 local + pipeline híbrido + reranker + tool calling |
+
+**Principio clave:** No romper lo que funciona. La capa de WhatsApp (providers/, main.py,
+memory.py) se mantiene intacta. El RAG y las tools se integran dentro de brain.py.
 
 ---
 
-## 3. Arquitectura del agente a construir
-
-Claude Code genera esta estructura completa para cada usuario:
+## 2. Arquitectura actual (AgentKit base — funciona hoy)
 
 ```
 agentkit/
 ├── agent/
-│   ├── __init__.py        ← Package init
-│   ├── main.py            ← FastAPI app + webhook (provider-agnostic)
-│   ├── brain.py           ← Conexión Claude API + system prompt desde prompts.yaml
-│   ├── memory.py          ← SQLAlchemy + SQLite, historial por número de teléfono
-│   ├── tools.py           ← Herramientas específicas del negocio del usuario
-│   └── providers/
-│       ├── __init__.py    ← Factory: obtener_proveedor() según .env
-│       ├── base.py        ← Clase abstracta ProveedorWhatsApp
-│       └── whapi.py       ← Adaptador del proveedor elegido (o meta.py, o twilio.py)
-├── config/
-│   ├── business.yaml      ← Datos del negocio (generado en entrevista)
-│   └── prompts.yaml       ← System prompt del agente (generado, poderoso y específico)
-├── knowledge/             ← Archivos del negocio que sube el usuario
-│   └── .gitkeep
-├── tests/
 │   ├── __init__.py
-│   └── test_local.py      ← Chat interactivo en terminal (simula WhatsApp)
-├── requirements.txt       ← Dependencias Python
-├── Dockerfile             ← Imagen Docker para producción
-├── docker-compose.yml     ← Orquestación con variables de entorno
-└── .env                   ← API keys del usuario (NUNCA va a GitHub)
+│   ├── main.py            ← FastAPI + webhook (provider-agnostic)
+│   ├── brain.py           ← Claude API + system prompt desde prompts.yaml
+│   ├── memory.py          ← SQLAlchemy + SQLite, historial por teléfono
+│   ├── tools.py           ← Herramientas del negocio
+│   └── providers/
+│       ├── __init__.py    ← Factory: obtener_proveedor()
+│       ├── base.py        ← Clase abstracta ProveedorWhatsApp + MensajeEntrante
+│       ├── whapi.py       ← Adaptador Whapi.cloud
+│       ├── meta.py        ← Adaptador Meta Cloud API
+│       └── twilio.py      ← Adaptador Twilio
+├── config/
+│   ├── business.yaml      ← Datos del negocio SERCOP
+│   └── prompts.yaml       ← System prompt del agente
+├── knowledge/             ← PDFs y docs del SERCOP (normativa)
+├── tests/
+│   └── test_local.py      ← Chat interactivo en terminal
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+└── .env
 ```
 
-### Flujo de un mensaje:
+### Flujo actual de un mensaje
 
 ```
-WhatsApp (cliente escribe)
+WhatsApp (funcionario escribe)
     ↓
-Proveedor de WhatsApp (Whapi / Meta / Twilio)
-    ↓ webhook POST /webhook
-Providers (agent/providers/) — normaliza el mensaje a formato común
+Proveedor (Whapi / Meta / Twilio) → POST /webhook
     ↓
-FastAPI (agent/main.py) — recibe MensajeEntrante normalizado
+providers/ → normaliza a MensajeEntrante
     ↓
-Memory (agent/memory.py) — recupera historial de esa conversación
+main.py → obtener_historial() + generar_respuesta()
     ↓
-Brain (agent/brain.py) — llama Claude API con: system prompt + historial + mensaje nuevo
+brain.py → Claude API (claude-sonnet-4-6) con system prompt
     ↓
-Claude API (claude-sonnet-4-6) — genera respuesta inteligente
-    ↓
-Tools (agent/tools.py) — si necesita hacer algo (agendar, buscar, etc.)
-    ↓
-Providers (agent/providers/) — envía respuesta via el proveedor elegido
-    ↓
-WhatsApp (cliente recibe respuesta)
+respuesta → providers/ → WhatsApp
 ```
 
 ---
 
-## 4. Flujo de onboarding — 5 fases
+## 3. Arquitectura objetivo (AgentKit + RAG SERCOP)
 
-Sigue estas fases EN ORDEN. NUNCA saltes una fase ni avances sin confirmar con el usuario.
-Muestra progreso al inicio de cada fase: "Fase X de 5 — [descripción]"
-
----
-
-### FASE 1 — Bienvenida y verificación del entorno
-
-**Mensaje de bienvenida (muéstralo exacto):**
+El cambio está en **brain.py**: antes de llamar a Claude/Gemma,
+se hace retrieval en pgvector para enriquecer el contexto con normativa real.
 
 ```
-===========================================================
-   AgentKit — WhatsApp AI Agent Builder
-===========================================================
-
-Hola! Soy tu asistente de configuracion de AgentKit.
-Voy a ayudarte a construir tu agente de WhatsApp con IA
-personalizado para tu negocio.
-
-El proceso toma entre 15 y 30 minutos.
-
-Antes de empezar, dejame verificar que tu entorno esta listo...
+WhatsApp (funcionario escribe)
+    ↓
+providers/ → MensajeEntrante (sin cambios)
+    ↓
+main.py (sin cambios)
+    ↓
+brain.py → [NUEVO] rag.py → pgvector + pgvectorscale
+               ↓ chunks relevantes con citación
+           Gemma 4 26B (Ollama local) con contexto normativo
+    ↓
+respuesta con artículo citado → WhatsApp
 ```
 
-**Verificaciones:**
-
-1. **Python >= 3.11**: Ejecutar `python3 --version`. Si no existe o es menor a 3.11, mostrar:
-   ```
-   Necesitas Python 3.11 o superior.
-   Descargalo en: https://python.org/downloads
-   ```
-
-2. **Crear carpetas necesarias** (si no existen):
-   ```bash
-   mkdir -p agent/providers config knowledge tests
-   ```
-
-3. **Generar requirements.txt** con las dependencias del stack
-
-4. **Instalar dependencias**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Crear .env desde template** si no existe:
-   ```bash
-   cp .env.example .env
-   ```
-
-6. **Mostrar resultado:**
-   ```
-   Fase 1 completada — Entorno listo
-
-   Ahora vamos a conocer tu negocio para construir el agente perfecto.
-   ```
-
----
-
-### FASE 2 — Entrevista del negocio
-
-Haz estas preguntas UNA POR UNA. Espera la respuesta del usuario antes de hacer la siguiente.
-Guarda todas las respuestas mentalmente para usarlas en la Fase 3.
+### Nuevo módulo RAG a agregar
 
 ```
-PREGUNTA 1: ¿Cómo se llama tu negocio?
-
-PREGUNTA 2: ¿A qué se dedica tu negocio?
-            (Cuéntame con detalle: qué vendes, qué servicios ofreces, quiénes son tus clientes)
-
-PREGUNTA 3: ¿Para qué quieres usar el agente de WhatsApp?
-            Puedes elegir uno o varios:
-            1. Responder preguntas frecuentes
-            2. Agendar citas o reservaciones
-            3. Calificar y atender leads / ventas
-            4. Tomar pedidos
-            5. Soporte post-venta
-            6. Otro (descríbelo)
-
-PREGUNTA 4: ¿Cómo quieres que se llame tu agente?
-            (Es el nombre que verán tus clientes, ej: "Ana", "Soporte MiEmpresa", etc.)
-
-PREGUNTA 5: ¿Qué tono debe tener el agente al comunicarse?
-            1. Profesional y formal
-            2. Amigable y casual
-            3. Vendedor y persuasivo
-            4. Empático y cálido
-
-PREGUNTA 6: ¿Cuál es tu horario de atención?
-            (ej: Lunes a Viernes 9am a 6pm, Sábados 10am a 2pm)
-
-PREGUNTA 7: ¿Tienes archivos con información de tu negocio?
-            (Menú, lista de precios, FAQ, catálogo, políticas, etc.)
-
-            Si SÍ → "Colócalos en la carpeta /knowledge y presiona Enter cuando estén listos"
-                     Acepto: PDF, TXT, DOCX, CSV, imágenes, JSON, Markdown
-            Si NO → Continuamos con lo que me has contado
-
-PREGUNTA 8: ¿Tienes tu Anthropic API Key?
-            Si SÍ → "Compártela, la guardaré de forma segura en tu .env"
-            Si NO → Guiar paso a paso:
-                     1. Ve a platform.anthropic.com
-                     2. Crea una cuenta o inicia sesión
-                     3. Ve a Settings → API Keys
-                     4. Crea una nueva key y cópiala
-                     5. La key empieza con "sk-ant-..."
-
-PREGUNTA 9: ¿Qué servicio de WhatsApp quieres usar para conectar tu agente?
-            1. Whapi.cloud (RECOMENDADO) — El más fácil. Sandbox gratis, no requiere verificación.
-            2. Meta Cloud API — La API oficial de WhatsApp. Gratis por conversación, pero
-               requiere cuenta de Facebook Business verificada.
-            3. Twilio — Muy confiable y con buena documentación. Más caro pero robusto.
-
-            Si no estás seguro, te recomiendo Whapi.cloud — es la opción más rápida para empezar.
-
-PREGUNTA 10: [Depende de la respuesta de PREGUNTA 9]
-
-            Si eligió WHAPI.CLOUD:
-                ¿Tienes tu token de Whapi.cloud?
-                Si SÍ → "Compártelo, lo guardaré en tu .env"
-                Si NO → Guiar paso a paso:
-                    1. Ve a whapi.cloud
-                    2. Crea una cuenta gratis (tienen sandbox)
-                    3. En el dashboard, copia tu API Token
-                    4. Listo, es todo lo que necesitamos
-
-            Si eligió META CLOUD API:
-                Necesitamos 3 datos de tu app de Facebook:
-                1. Access Token (permanente)
-                2. Phone Number ID
-                3. Verify Token (puedes inventar uno, ej: "mi-agente-2024")
-
-                Si NO los tiene → Guiar paso a paso:
-                    1. Ve a developers.facebook.com
-                    2. Crea una app tipo "Business"
-                    3. Agrega el producto "WhatsApp"
-                    4. En WhatsApp → API Setup, copia el Phone Number ID
-                    5. Genera un token de acceso permanente
-                    6. Elige un Verify Token (cualquier texto secreto que tú inventes)
-
-            Si eligió TWILIO:
-                Necesitamos 3 datos de tu cuenta Twilio:
-                1. Account SID
-                2. Auth Token
-                3. Número de WhatsApp asignado por Twilio
-
-                Si NO los tiene → Guiar paso a paso:
-                    1. Ve a twilio.com y crea una cuenta
-                    2. En la Console, copia el Account SID y Auth Token
-                    3. Ve a Messaging → Try it Out → Send a WhatsApp message
-                    4. Activa el sandbox y copia el número asignado
-
-            NOTA: Si el usuario quiere probar primero sin WhatsApp real,
-                  puede poner tokens temporales y probar con test_local.py
-```
-
-**Al terminar la entrevista:**
-```
-Excelente! Ya tengo toda la información que necesito.
-Ahora voy a construir tu agente personalizado...
-
-Fase 2 completada — Información del negocio recopilada
+agentkit/
+├── agent/
+│   ├── rag/                    ← NUEVO módulo
+│   │   ├── __init__.py
+│   │   ├── retriever.py        ← LlamaIndex + pgvector + hybrid search
+│   │   ├── ingestor.py         ← Pipeline de ingesta de PDFs normativos
+│   │   └── embedder.py         ← nomic-embed-text vía Ollama
+│   └── brain.py                ← MODIFICADO: usa RAG si disponible, Claude API si no
+├── knowledge/
+│   ├── losncp/                 ← PDFs LOSNCP
+│   ├── reglamento/             ← Reglamento General
+│   └── resoluciones/           ← Resoluciones SERCOP
+└── scripts/
+    └── ingestar.py             ← Script CLI para indexar documentos
 ```
 
 ---
 
-### FASE 3 — Generación del agente
+## 4. Stack tecnológico completo
 
-Con TODAS las respuestas de la entrevista, genera estos archivos:
+### Capa WhatsApp (existente — NO modificar)
 
-#### 3.1 — `config/business.yaml`
+| Componente | Tecnología |
+|---|---|
+| Servidor | FastAPI + Uvicorn |
+| Proveedores | Whapi.cloud / Meta Cloud API / Twilio |
+| Memoria | SQLAlchemy + SQLite (dev) / PostgreSQL (prod) |
+| Variables | python-dotenv |
+| Deploy | Docker Compose + Railway |
 
-```yaml
-# Configuración del negocio — Generado por AgentKit
-negocio:
-  nombre: "[NOMBRE DEL NEGOCIO]"
-  descripcion: "[DESCRIPCIÓN DETALLADA]"
-  horario: "[HORARIO]"
+### Capa RAG SERCOP (implementada)
 
-agente:
-  nombre: "[NOMBRE DEL AGENTE]"
-  tono: "[TONO ELEGIDO]"
-  casos_de_uso:
-    - "[CASO 1]"
-    - "[CASO 2]"
+| Componente | Tecnología | Estado |
+|---|---|---|
+| LLM producción Mac | **gemma4:e2b** (Ollama) | ✅ Activo — ~5s/respuesta |
+| LLM producción RHEL | **gemma4:26b** (Ollama) | ⏳ Pendiente deploy — NO usar en Mac |
+| Embeddings | nomic-embed-text 768d (Ollama) | ✅ Activo |
+| Vector DB | PostgreSQL 16 + pgvector 0.8.2 | ✅ Activo (VM pg-db 192.168.2.2) |
+| Búsqueda híbrida | pgvector HNSW coseno + GIN tsvector español | ✅ Activo |
+| Fusión de rankings | Reciprocal Rank Fusion (RRF) top-12 | ✅ Activo |
+| Reranking | cross-encoder/mmarco-mMiniLMv2-L12-H384-v1 | ✅ Activo — top-4 final |
+| Tool calling | 5 tools JSON Schema via Ollama /api/chat | ✅ Activo |
+| Evaluación | RAGAS | ⏳ Pendiente |
 
-metadata:
-  creado: "[FECHA]"
-  version: "1.0"
+---
+
+## 5. LLM: Gemma 4 (lanzado 2 abril 2026)
+
+### Por qué Gemma 4 para SERCOP
+
+**Restricción institucional:** ningún dato de contratación pública puede salir
+de la infraestructura del SERCOP. Claude API (cloud) no puede usarse en producción.
+Gemma 4 corre 100% local con Ollama.
+
+### Variantes — cuál usar
+
+| Modelo | Parámetros activos | RAM Q4 | Uso |
+|---|---|---|---|
+| gemma4:e4b | ~4.5B | ~5 GB | Prototipo rápido |
+| **gemma4:26b** | ~4B activos (26B MoE) | ~18 GB | **Producción SERCOP** |
+| gemma4:31b | 31B | ~20 GB | Si hay GPU disponible |
+
+El 26B MoE activa solo ~4B parámetros por token — mismo VRAM que un modelo de 4B
+pero con calidad de razonamiento de 26B.
+
+### Benchmarks relevantes
+
+| Benchmark | Gemma 3 27B | Gemma 4 26B MoE |
+|---|---|---|
+| τ2-bench (tool use) | 6.6% | ~86% |
+| AIME 2026 (matemáticas) | 20.8% | 88.3% |
+| GPQA Diamond (ciencias) | 42.4% | 82.3% |
+| Arena AI ELO | 1365 | 1441 |
+
+### Instalación
+
+```bash
+# Requiere Ollama v0.20+
+ollama pull gemma4:26b
+ollama pull nomic-embed-text
+
+# Verificar
+ollama run gemma4:26b "¿Qué es la contratación pública?"
 ```
 
-#### 3.2 — `config/prompts.yaml`
+---
 
-Genera un system prompt PODEROSO y específico. Debe incluir:
+## 6. Código — módulos existentes (NO tocar)
 
-```yaml
-# System prompt del agente — Generado por AgentKit
-system_prompt: |
-  Eres [NOMBRE_AGENTE], el asistente virtual de [NOMBRE_NEGOCIO].
-
-  ## Tu identidad
-  - Te llamas [NOMBRE_AGENTE]
-  - Representas a [NOMBRE_NEGOCIO]
-  - Tu tono es [TONO]: [descripción detallada del tono]
-
-  ## Sobre el negocio
-  [DESCRIPCIÓN COMPLETA DEL NEGOCIO]
-
-  ## Tus capacidades
-  [LISTA DETALLADA DE QUÉ PUEDE HACER EL AGENTE SEGÚN LOS CASOS DE USO]
-
-  ## Información del negocio
-  [TODO EL CONTENIDO RELEVANTE DE /knowledge PROCESADO E INCORPORADO AQUÍ]
-
-  ## Horario de atención
-  [HORARIO]
-  Fuera de horario responde: "Gracias por escribirnos. Nuestro horario de atención es [HORARIO]. Te responderemos en cuanto estemos disponibles."
-
-  ## Reglas de comportamiento
-  - SIEMPRE responde en español
-  - Sé [TONO] en cada mensaje
-  - Si no sabes algo, di: "No tengo esa información, pero déjame conectarte con alguien de nuestro equipo que pueda ayudarte."
-  - NUNCA inventes información que no te hayan proporcionado
-  - NUNCA compartas precios o datos que no estén en tu información base
-  - Mantén las respuestas concisas pero útiles
-  - Si el cliente parece frustrado, muestra empatía antes de resolver
-  - SIEMPRE termina los mensajes con una pregunta o call-to-action cuando sea apropiado
-
-fallback_message: "Disculpa, no entendí tu mensaje. ¿Podrías reformularlo?"
-error_message: "Lo siento, estoy teniendo problemas técnicos. Por favor intenta de nuevo en unos minutos."
-```
-
-#### 3.3 — `agent/providers/` — Capa de abstracción de WhatsApp
-
-Claude Code genera SOLO el proveedor que el usuario eligió (no los 3).
-Siempre genera: `base.py` + `__init__.py` + el adaptador específico.
-
-**`agent/providers/base.py`** (siempre se genera):
+### `agent/providers/base.py`
 
 ```python
-# agent/providers/base.py — Clase base para proveedores de WhatsApp
-# Generado por AgentKit
-
-"""
-Define la interfaz común que todos los proveedores de WhatsApp deben implementar.
-Esto permite cambiar de proveedor sin modificar el resto del código.
-"""
-
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from fastapi import Request
-
+from abc import ABC, abstractmethod
 
 @dataclass
 class MensajeEntrante:
-    """Mensaje normalizado — mismo formato sin importar el proveedor."""
-    telefono: str       # Número del remitente
-    texto: str          # Contenido del mensaje
-    mensaje_id: str     # ID único del mensaje
-    es_propio: bool     # True si lo envió el agente (se ignora)
-
+    telefono: str
+    texto: str
+    mensaje_id: str
+    es_propio: bool
 
 class ProveedorWhatsApp(ABC):
-    """Interfaz que cada proveedor de WhatsApp debe implementar."""
-
     @abstractmethod
-    async def parsear_webhook(self, request: Request) -> list[MensajeEntrante]:
-        """Extrae y normaliza mensajes del payload del webhook."""
-        ...
-
+    async def parsear_webhook(self, request: Request) -> list[MensajeEntrante]: ...
     @abstractmethod
-    async def enviar_mensaje(self, telefono: str, mensaje: str) -> bool:
-        """Envía un mensaje de texto. Retorna True si fue exitoso."""
-        ...
-
+    async def enviar_mensaje(self, telefono: str, mensaje: str) -> bool: ...
     async def validar_webhook(self, request: Request) -> dict | int | None:
-        """Verificación GET del webhook (solo Meta la requiere). Retorna respuesta o None."""
         return None
 ```
 
-**`agent/providers/__init__.py`** (siempre se genera):
+### `agent/main.py` — flujo principal (no modificar)
 
 ```python
-# agent/providers/__init__.py — Factory de proveedores
-# Generado por AgentKit
-
-"""
-Selecciona el proveedor de WhatsApp según la variable WHATSAPP_PROVIDER en .env.
-"""
-
-import os
-from agent.providers.base import ProveedorWhatsApp
-
-
-def obtener_proveedor() -> ProveedorWhatsApp:
-    """Retorna el proveedor de WhatsApp configurado en .env."""
-    proveedor = os.getenv("WHATSAPP_PROVIDER", "whapi").lower()
-
-    if proveedor == "whapi":
-        from agent.providers.whapi import ProveedorWhapi
-        return ProveedorWhapi()
-    elif proveedor == "meta":
-        from agent.providers.meta import ProveedorMeta
-        return ProveedorMeta()
-    elif proveedor == "twilio":
-        from agent.providers.twilio import ProveedorTwilio
-        return ProveedorTwilio()
-    else:
-        raise ValueError(f"Proveedor no soportado: {proveedor}. Usa: whapi, meta, o twilio")
+# El webhook llama a:
+mensajes = await proveedor.parsear_webhook(request)
+historial = await obtener_historial(msg.telefono)
+respuesta = await generar_respuesta(msg.texto, historial)  # ← brain.py
+await guardar_mensaje(msg.telefono, "user", msg.texto)
+await guardar_mensaje(msg.telefono, "assistant", respuesta)
+await proveedor.enviar_mensaje(msg.telefono, respuesta)
 ```
 
-**`agent/providers/whapi.py`** (si eligió Whapi.cloud):
+### `agent/memory.py` — historial por teléfono (no modificar)
 
 ```python
-# agent/providers/whapi.py — Adaptador para Whapi.cloud
-# Generado por AgentKit
-
-import os
-import logging
-import httpx
-from fastapi import Request
-from agent.providers.base import ProveedorWhatsApp, MensajeEntrante
-
-logger = logging.getLogger("agentkit")
-
-
-class ProveedorWhapi(ProveedorWhatsApp):
-    """Proveedor de WhatsApp usando Whapi.cloud (REST API simple)."""
-
-    def __init__(self):
-        self.token = os.getenv("WHAPI_TOKEN")
-        self.url_envio = "https://gate.whapi.cloud/messages/text"
-
-    async def parsear_webhook(self, request: Request) -> list[MensajeEntrante]:
-        """Parsea el payload de Whapi.cloud."""
-        body = await request.json()
-        mensajes = []
-        for msg in body.get("messages", []):
-            mensajes.append(MensajeEntrante(
-                telefono=msg.get("chat_id", ""),
-                texto=msg.get("text", {}).get("body", ""),
-                mensaje_id=msg.get("id", ""),
-                es_propio=msg.get("from_me", False),
-            ))
-        return mensajes
-
-    async def enviar_mensaje(self, telefono: str, mensaje: str) -> bool:
-        """Envía mensaje via Whapi.cloud."""
-        if not self.token:
-            logger.warning("WHAPI_TOKEN no configurado — mensaje no enviado")
-            return False
-        headers = {
-            "Authorization": f"Bearer {self.token}",
-            "Content-Type": "application/json",
-        }
-        async with httpx.AsyncClient() as client:
-            r = await client.post(
-                self.url_envio,
-                json={"to": telefono, "body": mensaje},
-                headers=headers,
-            )
-            if r.status_code != 200:
-                logger.error(f"Error Whapi: {r.status_code} — {r.text}")
-            return r.status_code == 200
+# API pública del módulo:
+await inicializar_db()
+await guardar_mensaje(telefono, role, content)
+await obtener_historial(telefono, limite=20) -> list[dict]
+await limpiar_historial(telefono)
 ```
 
-**`agent/providers/meta.py`** (si eligió Meta Cloud API):
+---
+
+## 7. Código — brain.py modificado (integración RAG)
+
+Este es el único archivo existente que se modifica. El cambio: si el RAG
+está disponible, enriquece el contexto antes de llamar al LLM.
 
 ```python
-# agent/providers/meta.py — Adaptador para Meta WhatsApp Cloud API
-# Generado por AgentKit
-
-import os
-import logging
-import httpx
-from fastapi import Request
-from agent.providers.base import ProveedorWhatsApp, MensajeEntrante
-
-logger = logging.getLogger("agentkit")
-
-
-class ProveedorMeta(ProveedorWhatsApp):
-    """Proveedor de WhatsApp usando la API oficial de Meta (Cloud API)."""
-
-    def __init__(self):
-        self.access_token = os.getenv("META_ACCESS_TOKEN")
-        self.phone_number_id = os.getenv("META_PHONE_NUMBER_ID")
-        self.verify_token = os.getenv("META_VERIFY_TOKEN", "agentkit-verify")
-        self.api_version = "v21.0"
-
-    async def validar_webhook(self, request: Request) -> dict | int | None:
-        """Meta requiere verificación GET con hub.verify_token."""
-        params = request.query_params
-        mode = params.get("hub.mode")
-        token = params.get("hub.verify_token")
-        challenge = params.get("hub.challenge")
-        if mode == "subscribe" and token == self.verify_token:
-            # Meta espera el challenge como respuesta en texto plano
-            return int(challenge)
-        return None
-
-    async def parsear_webhook(self, request: Request) -> list[MensajeEntrante]:
-        """Parsea el payload anidado de Meta Cloud API."""
-        body = await request.json()
-        mensajes = []
-        for entry in body.get("entry", []):
-            for change in entry.get("changes", []):
-                value = change.get("value", {})
-                for msg in value.get("messages", []):
-                    if msg.get("type") == "text":
-                        mensajes.append(MensajeEntrante(
-                            telefono=msg.get("from", ""),
-                            texto=msg.get("text", {}).get("body", ""),
-                            mensaje_id=msg.get("id", ""),
-                            es_propio=False,  # Meta solo envía mensajes entrantes
-                        ))
-        return mensajes
-
-    async def enviar_mensaje(self, telefono: str, mensaje: str) -> bool:
-        """Envía mensaje via Meta WhatsApp Cloud API."""
-        if not self.access_token or not self.phone_number_id:
-            logger.warning("META_ACCESS_TOKEN o META_PHONE_NUMBER_ID no configurados")
-            return False
-        url = f"https://graph.facebook.com/{self.api_version}/{self.phone_number_id}/messages"
-        headers = {
-            "Authorization": f"Bearer {self.access_token}",
-            "Content-Type": "application/json",
-        }
-        payload = {
-            "messaging_product": "whatsapp",
-            "to": telefono,
-            "type": "text",
-            "text": {"body": mensaje},
-        }
-        async with httpx.AsyncClient() as client:
-            r = await client.post(url, json=payload, headers=headers)
-            if r.status_code != 200:
-                logger.error(f"Error Meta API: {r.status_code} — {r.text}")
-            return r.status_code == 200
-```
-
-**`agent/providers/twilio.py`** (si eligió Twilio):
-
-```python
-# agent/providers/twilio.py — Adaptador para Twilio WhatsApp
-# Generado por AgentKit
-
-import os
-import logging
-import base64
-import httpx
-from fastapi import Request
-from agent.providers.base import ProveedorWhatsApp, MensajeEntrante
-
-logger = logging.getLogger("agentkit")
-
-
-class ProveedorTwilio(ProveedorWhatsApp):
-    """Proveedor de WhatsApp usando Twilio."""
-
-    def __init__(self):
-        self.account_sid = os.getenv("TWILIO_ACCOUNT_SID")
-        self.auth_token = os.getenv("TWILIO_AUTH_TOKEN")
-        self.phone_number = os.getenv("TWILIO_PHONE_NUMBER")
-
-    async def parsear_webhook(self, request: Request) -> list[MensajeEntrante]:
-        """Parsea el payload form-encoded de Twilio."""
-        form = await request.form()
-        texto = form.get("Body", "")
-        telefono = form.get("From", "").replace("whatsapp:", "")
-        mensaje_id = form.get("MessageSid", "")
-        if not texto:
-            return []
-        return [MensajeEntrante(
-            telefono=telefono,
-            texto=texto,
-            mensaje_id=mensaje_id,
-            es_propio=False,
-        )]
-
-    async def enviar_mensaje(self, telefono: str, mensaje: str) -> bool:
-        """Envía mensaje via Twilio API."""
-        if not all([self.account_sid, self.auth_token, self.phone_number]):
-            logger.warning("Variables de Twilio no configuradas")
-            return False
-        url = f"https://api.twilio.com/2010-04-01/Accounts/{self.account_sid}/Messages.json"
-        auth = base64.b64encode(f"{self.account_sid}:{self.auth_token}".encode()).decode()
-        headers = {"Authorization": f"Basic {auth}"}
-        data = {
-            "From": f"whatsapp:{self.phone_number}",
-            "To": f"whatsapp:{telefono}",
-            "Body": mensaje,
-        }
-        async with httpx.AsyncClient() as client:
-            r = await client.post(url, data=data, headers=headers)
-            if r.status_code != 201:
-                logger.error(f"Error Twilio: {r.status_code} — {r.text}")
-            return r.status_code == 201
-```
-
-#### 3.4 — `agent/main.py`
-
-Genera el servidor FastAPI **provider-agnostic**:
-
-```python
-# agent/main.py — Servidor FastAPI + Webhook de WhatsApp
-# Generado por AgentKit
-
-"""
-Servidor principal del agente de WhatsApp.
-Funciona con cualquier proveedor (Whapi, Meta, Twilio) gracias a la capa de providers.
-"""
-
-import os
-import logging
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import PlainTextResponse
-from dotenv import load_dotenv
-
-from agent.brain import generar_respuesta
-from agent.memory import inicializar_db, guardar_mensaje, obtener_historial
-from agent.providers import obtener_proveedor
-
-load_dotenv()
-
-# Configuración de logging según entorno
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
-log_level = logging.DEBUG if ENVIRONMENT == "development" else logging.INFO
-logging.basicConfig(level=log_level)
-logger = logging.getLogger("agentkit")
-
-# Proveedor de WhatsApp (se configura en .env con WHATSAPP_PROVIDER)
-proveedor = obtener_proveedor()
-PORT = int(os.getenv("PORT", 8000))
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Inicializa la base de datos al arrancar el servidor."""
-    await inicializar_db()
-    logger.info("Base de datos inicializada")
-    logger.info(f"Servidor AgentKit corriendo en puerto {PORT}")
-    logger.info(f"Proveedor de WhatsApp: {proveedor.__class__.__name__}")
-    yield
-
-
-app = FastAPI(
-    title="AgentKit — WhatsApp AI Agent",
-    version="1.0.0",
-    lifespan=lifespan
-)
-
-
-@app.get("/")
-async def health_check():
-    """Endpoint de salud para Railway/monitoreo."""
-    return {"status": "ok", "service": "agentkit"}
-
-
-@app.get("/webhook")
-async def webhook_verificacion(request: Request):
-    """Verificación GET del webhook (requerido por Meta Cloud API, no-op para otros)."""
-    resultado = await proveedor.validar_webhook(request)
-    if resultado is not None:
-        return PlainTextResponse(str(resultado))
-    return {"status": "ok"}
-
-
-@app.post("/webhook")
-async def webhook_handler(request: Request):
-    """
-    Recibe mensajes de WhatsApp via el proveedor configurado.
-    Procesa el mensaje, genera respuesta con Claude y la envía de vuelta.
-    """
-    try:
-        # Parsear webhook — el proveedor normaliza el formato
-        mensajes = await proveedor.parsear_webhook(request)
-
-        for msg in mensajes:
-            # Ignorar mensajes propios o vacíos
-            if msg.es_propio or not msg.texto:
-                continue
-
-            logger.info(f"Mensaje de {msg.telefono}: {msg.texto}")
-
-            # Obtener historial ANTES de guardar el mensaje actual
-            # (brain.py agrega el mensaje actual, evitando duplicados)
-            historial = await obtener_historial(msg.telefono)
-
-            # Generar respuesta con Claude
-            respuesta = await generar_respuesta(msg.texto, historial)
-
-            # Guardar mensaje del usuario Y respuesta del agente en memoria
-            await guardar_mensaje(msg.telefono, "user", msg.texto)
-            await guardar_mensaje(msg.telefono, "assistant", respuesta)
-
-            # Enviar respuesta por WhatsApp via el proveedor
-            await proveedor.enviar_mensaje(msg.telefono, respuesta)
-
-            logger.info(f"Respuesta a {msg.telefono}: {respuesta}")
-
-        return {"status": "ok"}
-
-    except Exception as e:
-        logger.error(f"Error en webhook: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-```
-
-#### 3.5 — `agent/brain.py`
-
-```python
-# agent/brain.py — Cerebro del agente: conexión con Claude API
-# Generado por AgentKit
-
-"""
-Lógica de IA del agente. Lee el system prompt de prompts.yaml
-y genera respuestas usando la API de Anthropic Claude.
-"""
-
+# agent/brain.py — VERSIÓN SERCOP con RAG
 import os
 import yaml
 import logging
@@ -740,676 +253,549 @@ from dotenv import load_dotenv
 load_dotenv()
 logger = logging.getLogger("agentkit")
 
-# Cliente de Anthropic
-client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+# Modo de operación
+RAG_ENABLED = os.getenv("RAG_ENABLED", "false").lower() == "true"
+LLM_MODE = os.getenv("LLM_MODE", "claude")  # "claude" | "gemma4"
 
-
-def cargar_config_prompts() -> dict:
-    """Lee toda la configuración desde config/prompts.yaml."""
-    try:
-        with open("config/prompts.yaml", "r", encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
-    except FileNotFoundError:
-        logger.error("config/prompts.yaml no encontrado")
-        return {}
+client_claude = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 
 def cargar_system_prompt() -> str:
-    """Lee el system prompt desde config/prompts.yaml."""
-    config = cargar_config_prompts()
-    return config.get("system_prompt", "Eres un asistente útil. Responde en español.")
-
-
-def obtener_mensaje_error() -> str:
-    """Retorna el mensaje de error configurado en prompts.yaml."""
-    config = cargar_config_prompts()
-    return config.get("error_message", "Lo siento, estoy teniendo problemas técnicos. Por favor intenta de nuevo en unos minutos.")
-
-
-def obtener_mensaje_fallback() -> str:
-    """Retorna el mensaje de fallback configurado en prompts.yaml."""
-    config = cargar_config_prompts()
-    return config.get("fallback_message", "Disculpa, no entendí tu mensaje. ¿Podrías reformularlo?")
+    try:
+        with open("config/prompts.yaml", "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+            return config.get("system_prompt", "Eres un asistente útil.")
+    except FileNotFoundError:
+        return "Eres un asistente experto en contratación pública ecuatoriana."
 
 
 async def generar_respuesta(mensaje: str, historial: list[dict]) -> str:
     """
-    Genera una respuesta usando Claude API.
-
-    Args:
-        mensaje: El mensaje nuevo del usuario
-        historial: Lista de mensajes anteriores [{"role": "user/assistant", "content": "..."}]
-
-    Returns:
-        La respuesta generada por Claude
+    Genera respuesta. Si RAG está activo, enriquece con normativa antes de llamar al LLM.
     """
-    # Si el mensaje es muy corto o vacío, usar fallback
-    if not mensaje or len(mensaje.strip()) < 2:
-        return obtener_mensaje_fallback()
-
     system_prompt = cargar_system_prompt()
+    contexto_rag = ""
 
-    # Construir mensajes para la API
-    mensajes = []
-    for msg in historial:
-        mensajes.append({
-            "role": msg["role"],
-            "content": msg["content"]
-        })
+    # Paso 1: RAG retrieval (si está habilitado)
+    if RAG_ENABLED:
+        try:
+            from agent.rag.retriever import recuperar_contexto
+            contexto_rag = await recuperar_contexto(mensaje)
+            if contexto_rag:
+                system_prompt += f"\n\n## Normativa relevante recuperada\n{contexto_rag}"
+                logger.info(f"RAG: contexto agregado ({len(contexto_rag)} chars)")
+        except Exception as e:
+            logger.warning(f"RAG no disponible, usando sin contexto: {e}")
 
-    # Agregar el mensaje actual
-    mensajes.append({
-        "role": "user",
-        "content": mensaje
-    })
+    # Paso 2: Llamar al LLM configurado
+    mensajes = historial + [{"role": "user", "content": mensaje}]
 
+    if LLM_MODE == "gemma4":
+        return await _llamar_gemma4(system_prompt, mensajes)
+    else:
+        return await _llamar_claude(system_prompt, mensajes)
+
+
+async def _llamar_claude(system_prompt: str, mensajes: list[dict]) -> str:
+    """Llama a Claude API (desarrollo / fallback)."""
     try:
-        response = await client.messages.create(
+        response = await client_claude.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=1024,
             system=system_prompt,
-            messages=mensajes
+            messages=mensajes,
         )
-
-        respuesta = response.content[0].text
-        logger.info(f"Respuesta generada ({response.usage.input_tokens} in / {response.usage.output_tokens} out)")
-        return respuesta
-
+        return response.content[0].text
     except Exception as e:
         logger.error(f"Error Claude API: {e}")
-        return obtener_mensaje_error()
+        return "Lo siento, estoy teniendo problemas técnicos. Intenta de nuevo."
+
+
+async def _llamar_gemma4(system_prompt: str, mensajes: list[dict]) -> str:
+    """Llama a Gemma 4 local vía Ollama (producción SERCOP)."""
+    import httpx
+    ollama_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    model = os.getenv("LLM_MODEL", "gemma4:26b")
+
+    # Construir prompt con system + historial
+    prompt_completo = f"<s>\n{system_prompt}\n</s>\n\n"
+    for msg in mensajes:
+        role = "Usuario" if msg["role"] == "user" else "Asistente"
+        prompt_completo += f"{role}: {msg['content']}\n"
+    prompt_completo += "Asistente:"
+
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(
+                f"{ollama_url}/api/generate",
+                json={
+                    "model": model,
+                    "prompt": prompt_completo,
+                    "stream": False,
+                    "options": {"temperature": 0.1},
+                },
+            )
+            data = response.json()
+            return data.get("response", "").strip()
+    except Exception as e:
+        logger.error(f"Error Gemma 4 (Ollama): {e}")
+        # Fallback a Claude si Ollama no responde
+        return await _llamar_claude(system_prompt, mensajes)
 ```
 
-#### 3.6 — `agent/memory.py`
+---
+
+## 8. Código — módulo RAG (nuevo)
+
+### `agent/rag/retriever.py`
 
 ```python
-# agent/memory.py — Memoria de conversaciones con SQLite
-# Generado por AgentKit
-
-"""
-Sistema de memoria del agente. Guarda el historial de conversaciones
-por número de teléfono usando SQLite (local) o PostgreSQL (producción).
-"""
-
+# agent/rag/retriever.py — Retrieval de normativa SERCOP
 import os
-from datetime import datetime
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Text, DateTime, select, Integer
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# Configuración de base de datos
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./agentkit.db")
-
-# Si es PostgreSQL en producción, ajustar el esquema de URL
-if DATABASE_URL.startswith("postgresql://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
-
-engine = create_async_engine(DATABASE_URL, echo=False)
-async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-class Mensaje(Base):
-    """Modelo de mensaje en la base de datos."""
-    __tablename__ = "mensajes"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    telefono: Mapped[str] = mapped_column(String(50), index=True)
-    role: Mapped[str] = mapped_column(String(20))  # "user" o "assistant"
-    content: Mapped[str] = mapped_column(Text)
-    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-
-
-async def inicializar_db():
-    """Crea las tablas si no existen."""
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-async def guardar_mensaje(telefono: str, role: str, content: str):
-    """Guarda un mensaje en el historial de conversación."""
-    async with async_session() as session:
-        mensaje = Mensaje(
-            telefono=telefono,
-            role=role,
-            content=content,
-            timestamp=datetime.utcnow()
-        )
-        session.add(mensaje)
-        await session.commit()
-
-
-async def obtener_historial(telefono: str, limite: int = 20) -> list[dict]:
-    """
-    Recupera los últimos N mensajes de una conversación.
-
-    Args:
-        telefono: Número de teléfono del cliente
-        limite: Máximo de mensajes a recuperar (default: 20)
-
-    Returns:
-        Lista de diccionarios con role y content
-    """
-    async with async_session() as session:
-        query = (
-            select(Mensaje)
-            .where(Mensaje.telefono == telefono)
-            .order_by(Mensaje.timestamp.desc())
-            .limit(limite)
-        )
-        result = await session.execute(query)
-        mensajes = result.scalars().all()
-
-        # Invertir para orden cronológico (los más recientes están primero)
-        mensajes.reverse()
-
-        return [
-            {"role": msg.role, "content": msg.content}
-            for msg in mensajes
-        ]
-
-
-async def limpiar_historial(telefono: str):
-    """Borra todo el historial de una conversación."""
-    async with async_session() as session:
-        query = select(Mensaje).where(Mensaje.telefono == telefono)
-        result = await session.execute(query)
-        mensajes = result.scalars().all()
-        for msg in mensajes:
-            session.delete(msg)
-        await session.commit()
-```
-
-#### 3.7 — `agent/tools.py`
-
-Genera herramientas ESPECÍFICAS según los casos de uso elegidos por el usuario.
-Usa este template base y agrega las funciones según el caso:
-
-```python
-# agent/tools.py — Herramientas del agente
-# Generado por AgentKit
-
-"""
-Herramientas específicas del negocio.
-Estas funciones extienden las capacidades del agente más allá de responder texto.
-Claude Code genera las funciones según los casos de uso elegidos en la entrevista.
-"""
-
-import os
-import yaml
 import logging
-from datetime import datetime
+from llama_index.core import VectorStoreIndex, StorageContext
+from llama_index.core.retrievers import AutoMergingRetriever
+from llama_index.core.postprocessor import SentenceTransformerRerank
+from llama_index.vector_stores.postgres import PGVectorStore
+from llama_index.embeddings.ollama import OllamaEmbedding
+
+logger = logging.getLogger("agentkit")
+_query_engine = None  # Singleton
+
+
+def _construir_query_engine():
+    embed_model = OllamaEmbedding(
+        model_name="nomic-embed-text",
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    )
+    vector_store = PGVectorStore.from_params(
+        database=os.getenv("POSTGRES_DB", "sercop_bot"),
+        host=os.getenv("POSTGRES_HOST", "localhost"),
+        port=int(os.getenv("POSTGRES_PORT", 5432)),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        table_name="chunks_sercop",
+        embed_dim=768,
+        hybrid_search=True,
+        text_search_config="spanish",
+    )
+    storage_context = StorageContext.from_defaults(vector_store=vector_store)
+    index = VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
+    base_retriever = index.as_retriever(
+        similarity_top_k=6,
+        vector_store_query_mode="hybrid",
+        alpha=0.5,
+    )
+    retriever = AutoMergingRetriever(base_retriever, storage_context)
+    reranker = SentenceTransformerRerank(
+        model="cross-encoder/ms-marco-MiniLM-L-2-v2",
+        top_n=3,
+    )
+    from llama_index.core.query_engine import RetrieverQueryEngine
+    return RetrieverQueryEngine(retriever=retriever, node_postprocessors=[reranker])
+
+
+async def recuperar_contexto(pregunta: str) -> str:
+    """
+    Recupera chunks de normativa relevante.
+    Retorna texto con citaciones para incluir en el system prompt.
+    """
+    global _query_engine
+    if _query_engine is None:
+        _query_engine = _construir_query_engine()
+
+    try:
+        response = _query_engine.retrieve(pregunta)
+        if not response:
+            return ""
+        partes = []
+        for node in response:
+            meta = node.metadata or {}
+            fuente = meta.get("tipo", "normativa").upper()
+            articulo = meta.get("articulo", "")
+            ref = f"[{fuente}{' — ' + articulo if articulo else ''}]"
+            partes.append(f"{ref}\n{node.text}")
+        return "\n\n---\n\n".join(partes)
+    except Exception as e:
+        logger.error(f"Error en RAG retrieval: {e}")
+        return ""
+```
+
+### `agent/rag/ingestor.py`
+
+```python
+# agent/rag/ingestor.py — Ingesta de documentos normativos
+import os
+import logging
+from llama_index.core import SimpleDirectoryReader
+from llama_index.core.node_parser import HierarchicalNodeParser, get_leaf_nodes
+from llama_index.core.ingestion import IngestionPipeline
+from llama_index.vector_stores.postgres import PGVectorStore
+from llama_index.embeddings.ollama import OllamaEmbedding
 
 logger = logging.getLogger("agentkit")
 
 
-def cargar_info_negocio() -> dict:
-    """Carga la información del negocio desde business.yaml."""
-    try:
-        with open("config/business.yaml", "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
-    except FileNotFoundError:
-        logger.error("config/business.yaml no encontrado")
-        return {}
-
-
-def obtener_horario() -> dict:
-    """Retorna el horario de atención del negocio."""
-    info = cargar_info_negocio()
-    return {
-        "horario": info.get("negocio", {}).get("horario", "No disponible"),
-        "esta_abierto": True,  # TODO: calcular según hora actual y horario
-    }
-
-
-def buscar_en_knowledge(consulta: str) -> str:
+def ingestar_directorio(ruta: str, metadata: dict) -> int:
     """
-    Busca información relevante en los archivos de /knowledge.
-    Retorna el contenido más relevante encontrado.
+    Ingesta todos los PDFs de un directorio al vector store.
+    Retorna el número de chunks creados.
     """
-    resultados = []
-    knowledge_dir = "knowledge"
-
-    if not os.path.exists(knowledge_dir):
-        return "No hay archivos de conocimiento disponibles."
-
-    for archivo in os.listdir(knowledge_dir):
-        ruta = os.path.join(knowledge_dir, archivo)
-        if archivo.startswith(".") or not os.path.isfile(ruta):
-            continue
-        try:
-            with open(ruta, "r", encoding="utf-8") as f:
-                contenido = f.read()
-                # Búsqueda simple por coincidencia de texto
-                if consulta.lower() in contenido.lower():
-                    resultados.append(f"[{archivo}]: {contenido[:500]}")
-        except (UnicodeDecodeError, IOError):
-            continue
-
-    if resultados:
-        return "\n---\n".join(resultados)
-    return "No encontré información específica sobre eso en mis archivos."
-
-
-# ════════════════════════════════════════════════════════════
-# Claude Code: agrega aquí las funciones específicas según
-# el caso de uso elegido por el usuario. Ejemplos:
-#
-# Si FAQ → buscar_en_knowledge() ya está listo arriba
-#
-# Si AGENDAR CITAS:
-# def obtener_slots_disponibles(fecha: str) -> list[dict]: ...
-# def reservar_cita(telefono, fecha, hora, servicio): ...
-# def cancelar_cita(telefono, cita_id): ...
-#
-# Si TOMAR PEDIDOS:
-# def agregar_al_carrito(telefono, producto, cantidad): ...
-# def ver_carrito(telefono) -> list[dict]: ...
-# def confirmar_pedido(telefono) -> dict: ...
-#
-# Si VENTAS / LEADS:
-# def registrar_lead(telefono, nombre, interes): ...
-# def calificar_lead(telefono) -> str: ...
-# def escalar_a_vendedor(telefono, contexto): ...
-#
-# Si SOPORTE:
-# def crear_ticket(telefono, problema) -> str: ...
-# def consultar_ticket(ticket_id) -> dict: ...
-# def escalar_ticket(ticket_id, razon): ...
-# ════════════════════════════════════════════════════════════
+    embed_model = OllamaEmbedding(
+        model_name="nomic-embed-text",
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    )
+    vector_store = PGVectorStore.from_params(
+        database=os.getenv("POSTGRES_DB"),
+        host=os.getenv("POSTGRES_HOST", "localhost"),
+        port=int(os.getenv("POSTGRES_PORT", 5432)),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        table_name="chunks_sercop",
+        embed_dim=768,
+        hybrid_search=True,
+        text_search_config="spanish",
+    )
+    node_parser = HierarchicalNodeParser.from_defaults(chunk_sizes=[2048, 512, 128])
+    documents = SimpleDirectoryReader(ruta).load_data()
+    for doc in documents:
+        doc.metadata.update(metadata)
+    nodes = node_parser.get_nodes_from_documents(documents)
+    leaf_nodes = get_leaf_nodes(nodes)
+    pipeline = IngestionPipeline(transformations=[embed_model], vector_store=vector_store)
+    pipeline.run(nodes=leaf_nodes)
+    logger.info(f"Ingestados {len(leaf_nodes)} chunks desde {ruta}")
+    return len(leaf_nodes)
 ```
 
-Siempre incluir un archivo `agent/__init__.py` vacío.
+---
 
-#### 3.8 — `tests/test_local.py`
+## 9. Schema PostgreSQL (RAG)
 
-```python
-# tests/test_local.py — Simulador de chat en terminal
-# Generado por AgentKit
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS vectorscale;
 
-"""
-Prueba tu agente sin necesitar WhatsApp.
-Simula una conversación en la terminal.
-"""
+CREATE TABLE IF NOT EXISTS chunks_sercop (
+    id          BIGSERIAL PRIMARY KEY,
+    tipo        TEXT,        -- 'losncp' | 'reglamento' | 'resolucion'
+    articulo    TEXT,
+    seccion     TEXT,
+    texto       TEXT NOT NULL,
+    metadata    JSONB,
+    embedding   vector(768),
+    creado_en   TIMESTAMPTZ DEFAULT NOW()
+);
 
-import asyncio
-import sys
-import os
+CREATE INDEX IF NOT EXISTS idx_chunks_embedding
+    ON chunks_sercop USING diskann (embedding);
 
-# Agregar el directorio raíz al path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from agent.brain import generar_respuesta
-from agent.memory import inicializar_db, guardar_mensaje, obtener_historial, limpiar_historial
-
-TELEFONO_TEST = "test-local-001"
-
-
-async def main():
-    """Loop principal del chat de prueba."""
-    await inicializar_db()
-
-    print()
-    print("=" * 55)
-    print("   AgentKit — Test Local")
-    print("=" * 55)
-    print()
-    print("  Escribe mensajes como si fueras un cliente.")
-    print("  Comandos especiales:")
-    print("    'limpiar'  — borra el historial")
-    print("    'salir'    — termina el test")
-    print()
-    print("-" * 55)
-    print()
-
-    while True:
-        try:
-            mensaje = input("Tu: ").strip()
-        except (EOFError, KeyboardInterrupt):
-            print("\n\nTest finalizado.")
-            break
-
-        if not mensaje:
-            continue
-
-        if mensaje.lower() == "salir":
-            print("\nTest finalizado.")
-            break
-
-        if mensaje.lower() == "limpiar":
-            await limpiar_historial(TELEFONO_TEST)
-            print("[Historial borrado]\n")
-            continue
-
-        # Obtener historial ANTES de guardar (brain.py agrega el mensaje actual)
-        historial = await obtener_historial(TELEFONO_TEST)
-
-        # Generar respuesta
-        print("\nAgente: ", end="", flush=True)
-        respuesta = await generar_respuesta(mensaje, historial)
-        print(respuesta)
-        print()
-
-        # Guardar mensaje del usuario y respuesta del agente
-        await guardar_mensaje(TELEFONO_TEST, "user", mensaje)
-        await guardar_mensaje(TELEFONO_TEST, "assistant", respuesta)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+CREATE INDEX IF NOT EXISTS idx_chunks_fts
+    ON chunks_sercop USING gin(to_tsvector('spanish', texto));
 ```
 
-#### 3.9 — Archivos de infraestructura
+---
 
-**`.env` (generado, NUNCA va a GitHub):**
-
-Claude Code genera SOLO las variables del proveedor elegido (no las de los otros):
+## 10. Variables de entorno completas
 
 ```env
-# AgentKit — Variables de entorno
-# Generado por AgentKit — NO subir a GitHub
-
-# Anthropic API
+# ── WhatsApp (existente) ────────────────────────────────────
 ANTHROPIC_API_KEY=sk-ant-...
+WHATSAPP_PROVIDER=meta          # whapi | meta | twilio
 
-# Proveedor de WhatsApp
-WHATSAPP_PROVIDER=whapi  # whapi | meta | twilio
+META_ACCESS_TOKEN=...
+META_PHONE_NUMBER_ID=...
+META_VERIFY_TOKEN=sercop-verify
 
-# --- Si WHATSAPP_PROVIDER=whapi ---
-WHAPI_TOKEN=...
-
-# --- Si WHATSAPP_PROVIDER=meta ---
-# META_ACCESS_TOKEN=...
-# META_PHONE_NUMBER_ID=...
-# META_VERIFY_TOKEN=agentkit-verify
-
-# --- Si WHATSAPP_PROVIDER=twilio ---
-# TWILIO_ACCOUNT_SID=...
-# TWILIO_AUTH_TOKEN=...
-# TWILIO_PHONE_NUMBER=...
-
-# Servidor
+# ── Servidor ────────────────────────────────────────────────
 PORT=8000
-ENVIRONMENT=development
+ENVIRONMENT=production
 
-# Base de datos
+# ── Base de datos conversaciones (existente) ─────────────────
 DATABASE_URL=sqlite+aiosqlite:///./agentkit.db
+
+# ── Base de datos RAG (nuevo) ────────────────────────────────
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=sercop_bot
+POSTGRES_USER=sercop_user
+POSTGRES_PASSWORD=tu_password
+
+# ── RAG + LLM local (nuevo) ──────────────────────────────────
+RAG_ENABLED=true                # false en dev sin pgvector
+LLM_MODE=gemma4                 # claude | gemma4
+OLLAMA_BASE_URL=http://localhost:11434
+LLM_MODEL=gemma4:26b
+EMBED_MODEL=nomic-embed-text
 ```
 
-**`Dockerfile`:**
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["uvicorn", "agent.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
+---
 
-**`docker-compose.yml`:**
+## 11. System prompt SERCOP (`config/prompts.yaml`)
+
 ```yaml
-version: "3.8"
-services:
-  agent:
-    build: .
-    ports:
-      - "${PORT:-8000}:8000"
-    env_file:
-      - .env
-    volumes:
-      - ./knowledge:/app/knowledge
-      - ./config:/app/config
-    restart: unless-stopped
+system_prompt: |
+  Eres el asistente virtual de contratación pública del SERCOP (Servicio Nacional
+  de Contratación Pública del Ecuador).
+
+  ## Tu identidad
+  - Tu nombre es SERCOP Bot
+  - Representas al SERCOP oficialmente
+  - Hablas siempre en español formal
+
+  ## Tu función
+  Responder preguntas sobre normativa de contratación pública ecuatoriana:
+  LOSNCP, Reglamento General, resoluciones y directrices del SERCOP.
+
+  ## Reglas
+  - Cita SIEMPRE el artículo, numeral o resolución fuente
+  - Si no tienes la información: "No encontré esa información en la normativa
+    disponible. Consulta directamente en sercop.gob.ec"
+  - NUNCA inventes artículos, montos o plazos
+  - Respuestas concisas pero completas
+
+fallback_message: "Disculpa, no entendí tu consulta. ¿Podrías reformularla?"
+error_message: "Estoy teniendo problemas técnicos. Por favor intenta en unos minutos."
 ```
 
-**Si hay archivos en `/knowledge`:** Claude Code debe leerlos (txt, pdf, csv, md, json, docx)
-y extraer el contenido relevante para incorporarlo textualmente en el system prompt
-dentro de `config/prompts.yaml`, en la sección "Información del negocio".
+---
+
+## 12. Dependencias (`requirements.txt`)
+
+```
+# AgentKit base (existente)
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+anthropic>=0.40.0
+httpx>=0.25.0
+python-dotenv>=1.0.0
+sqlalchemy>=2.0.0
+pyyaml>=6.0.1
+aiosqlite>=0.19.0
+python-multipart>=0.0.6
+
+# RAG SERCOP (nuevo)
+llama-index>=0.10.0
+llama-index-vector-stores-postgres
+llama-index-embeddings-ollama
+llama-index-llms-ollama
+sentence-transformers
+psycopg2-binary
+ragas
+```
 
 ---
 
-### FASE 4 — Testing local
-
-1. **Arrancar el servidor:**
-   ```bash
-   uvicorn agent.main:app --reload --port 8000
-   ```
-
-2. **En otra terminal (o después de parar el servidor), ejecutar el test:**
-   ```bash
-   python tests/test_local.py
-   ```
-
-3. **El test simula un chat** — el usuario escribe mensajes como cliente y ve las respuestas del agente
-
-4. **Evaluar con el usuario:**
-   ```
-   ¿Tu agente responde como esperabas? (si/no)
-   ```
-
-   - Si **NO**: Preguntar qué ajustar, modificar `config/prompts.yaml` y repetir
-   - Si **SÍ**: Continuar a Fase 5
-
-5. **Mostrar mensaje:**
-   ```
-   Fase 4 completada — Agente probado y aprobado
-
-   Tu agente funciona correctamente en modo local.
-   ¿Quieres continuar al deploy en producción? (si/no)
-   ```
-
----
-
-### FASE 5 — Deploy a Railway
-
-Solo ejecutar si el usuario confirma que quiere hacer deploy.
-
-1. **Verificar Docker instalado:**
-   ```bash
-   docker --version
-   ```
-   Si no está: "Instala Docker Desktop desde https://docker.com/get-started"
-
-2. **Build local:**
-   ```bash
-   docker compose build
-   ```
-
-3. **IMPORTANTE: Antes de subir a GitHub, reemplazar el .gitignore.**
-
-   El `.gitignore` del template de AgentKit excluye los archivos generados (agent/, config/, etc.)
-   para mantener limpio el repo de GitHub. Pero el usuario necesita subir ESOS archivos a Railway.
-
-   Claude Code DEBE generar un nuevo `.gitignore` de producción:
-
-   ```gitignore
-   # Secretos — NUNCA subir
-   .env
-
-   # Base de datos local
-   *.db
-   *.sqlite
-   *.sqlite3
-
-   # Python
-   __pycache__/
-   *.py[cod]
-   .venv/
-   venv/
-
-   # Knowledge (archivos privados del negocio)
-   knowledge/*
-   !knowledge/.gitkeep
-
-   # Session state
-   config/session.yaml
-
-   # OS
-   .DS_Store
-   Thumbs.db
-
-   # IDE
-   .vscode/
-   .idea/
-   ```
-
-4. **Instrucciones para Railway (mostrar paso a paso):**
-
-   ```
-   === Deploy a Railway ===
-
-   Paso 1: Sube tu proyecto a GitHub
-      git init
-      git add .
-      git commit -m "feat: mi agente WhatsApp con AgentKit"
-      git remote add origin https://github.com/TU-USUARIO/mi-agente.git
-      git push -u origin main
-
-   Paso 2: Conecta con Railway
-      1. Ve a railway.app y crea una cuenta
-      2. Click en "New Project"
-      3. Selecciona "Deploy from GitHub repo"
-      4. Conecta tu cuenta de GitHub y selecciona el repo
-
-   Paso 3: Variables de entorno
-      En Railway → tu proyecto → Variables, agrega:
-      - ANTHROPIC_API_KEY = [tu key]
-      - WHATSAPP_PROVIDER = [whapi | meta | twilio]
-      - PORT = 8000
-      - ENVIRONMENT = production
-      - DATABASE_URL = [Railway te da una si agregas PostgreSQL]
-      - [Variables del proveedor elegido — ver abajo]
-
-      Si WHAPI:    WHAPI_TOKEN
-      Si META:     META_ACCESS_TOKEN, META_PHONE_NUMBER_ID, META_VERIFY_TOKEN
-      Si TWILIO:   TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
-
-   Paso 4: Configura el webhook
-      1. Copia la URL pública que Railway te asigna (ej: tu-app.up.railway.app)
-
-      Si WHAPI:
-         2. Ve a Whapi.cloud → Settings → Webhooks
-         3. URL: https://tu-app.up.railway.app/webhook
-         4. Método: POST → Guardar y activar
-
-      Si META:
-         2. Ve a developers.facebook.com → tu app → WhatsApp → Configuration
-         3. Callback URL: https://tu-app.up.railway.app/webhook
-         4. Verify Token: [el mismo de META_VERIFY_TOKEN]
-         5. Suscríbete al campo "messages" → Guardar
-
-      Si TWILIO:
-         2. Ve a Twilio Console → Messaging → WhatsApp Sandbox Settings
-         3. "When a message comes in": https://tu-app.up.railway.app/webhook
-         4. Método: POST → Guardar
-
-   ¡Listo! Tu agente ya está en producción.
-   ```
-
-5. **Resumen final:**
-   ```
-   ===========================================================
-      AgentKit — Resumen
-   ===========================================================
-
-   Tu agente "[NOMBRE_AGENTE]" para [NOMBRE_NEGOCIO] está listo.
-
-   Lo que se construyó:
-   - Servidor FastAPI con webhook de WhatsApp
-   - Cerebro con Claude AI (claude-sonnet-4-6)
-   - Memoria de conversaciones por cliente
-   - Herramientas: [LISTA DE HERRAMIENTAS]
-   - System prompt personalizado para tu negocio
-   - Docker Compose para producción
-
-   Archivos generados:
-   - agent/main.py, brain.py, memory.py, tools.py, providers/
-   - config/business.yaml, prompts.yaml
-   - tests/test_local.py
-   - Dockerfile, docker-compose.yml, .env
-
-   Comandos útiles:
-   - Test local:     python tests/test_local.py
-   - Arrancar:       uvicorn agent.main:app --reload --port 8000
-   - Docker:         docker compose up --build
-
-   ¿Necesitas ajustar algo? Escríbeme en cualquier momento.
-   ===========================================================
-   ```
-
----
-
-## 5. Reglas de comportamiento para Claude Code
-
-1. **Habla SIEMPRE en español** — todo: mensajes, comentarios en código, nombres de variables descriptivos
-2. **UNA pregunta a la vez** — nunca bombardees al usuario con múltiples preguntas
-3. **NUNCA hardcodees API keys** — siempre variables de entorno via python-dotenv
-4. **NUNCA avances de fase** sin confirmar con el usuario
-5. **Si algo falla**: diagnostica, muestra el error claramente, propón solución
-6. **Genera código comentado** en español para que el usuario entienda cada parte
-7. **El agente DEBE funcionar** en test local antes de hablar de deploy
-8. **Si el usuario quiere pausar**: guardar estado en `config/session.yaml` con las respuestas de la entrevista
-9. **Pregunta antes de sobreescribir** archivos existentes en /config o .env
-10. **Mantén simple**: no agregues features que el usuario no pidió
-11. **Valida en cada fase** antes de avanzar a la siguiente
-
----
-
-## 6. Comandos de referencia
+## 13. Comandos de referencia
 
 ```bash
-# Arrancar agente local
-uvicorn agent.main:app --reload --port 8000
-
-# Test sin WhatsApp
+# Desarrollo (Claude API, sin RAG)
+RAG_ENABLED=false LLM_MODE=claude uvicorn agent.main:app --reload --port 8000
 python tests/test_local.py
 
-# Build Docker
+# Producción local (Gemma 4 + RAG)
+ollama serve
+uvicorn agent.main:app --host 0.0.0.0 --port 8000
+
+# Ingesta de documentos
+python scripts/ingestar.py --dir knowledge/losncp --tipo losncp
+python scripts/ingestar.py --dir knowledge/reglamento --tipo reglamento
+python scripts/ingestar.py --dir knowledge/resoluciones --tipo resolucion
+
+# Docker
 docker compose up --build
-
-# Ver logs
 docker compose logs -f agent
-
-# Instalar dependencias
-pip install -r requirements.txt
 ```
 
 ---
 
-## 7. Variables de entorno
+## 14. Estado actual del sistema (9 Abril 2026 rev. 2)
 
-```env
-# Anthropic
-ANTHROPIC_API_KEY=sk-ant-...
+### Infraestructura PostgreSQL (Multipass)
 
-# Proveedor de WhatsApp (whapi | meta | twilio)
-WHATSAPP_PROVIDER=whapi
+| VM | IP | Puerto | Rol |
+|---|---|---|---|
+| pg-db | 192.168.2.2 | 5432 | PostgreSQL 16 + pgvector 0.8.2 — base sercop_db |
+| pg-bouncer | 192.168.2.3 | 6432 | Connection pooler |
+| pg-pool | 192.168.2.4 | 9999 | Pooler avanzado |
 
-# Whapi.cloud (si WHATSAPP_PROVIDER=whapi)
-WHAPI_TOKEN=...
+DBeaver conectado a sercop_db para monitoreo visual.
 
-# Meta Cloud API (si WHATSAPP_PROVIDER=meta)
-# META_ACCESS_TOKEN=...
-# META_PHONE_NUMBER_ID=...
-# META_VERIFY_TOKEN=agentkit-verify
+### Base de conocimiento
 
-# Twilio (si WHATSAPP_PROVIDER=twilio)
-# TWILIO_ACCOUNT_SID=...
-# TWILIO_AUTH_TOKEN=...
-# TWILIO_PHONE_NUMBER=...
+- **3,059 chunks** indexados en 17 documentos
+- **91.5% de chunks** con metadata de artículo (`{"articulo": "Art. 74"}`)
+  - Reglamento: 100% · Resoluciones: 97% · Manuales SOCE: 1% (normal, no citan artículos)
+- Embeddings: `nomic-embed-text` 768d via Ollama
+- Índices: HNSW coseno + GIN tsvector español
 
-# Servidor
-PORT=8000
-ENVIRONMENT=development  # development | production
+#### Documentos indexados (17)
 
-# Base de datos
-DATABASE_URL=sqlite+aiosqlite:///./agentkit.db  # local
-# DATABASE_URL=postgresql+asyncpg://...          # producción Railway
+| Documento | Tipo | Chunks |
+|---|---|---|
+| Reglamento General LOSNCP — octubre 2025 | reglamento | 1,132 |
+| Normativa Secundaria de Contratación Pública 2025 | reglamento | 1,125 |
+| LOSNCP — RO 140 07-X-2025 | ley | 113 |
+| Manual SOCE — Subasta Inversa Electrónica | manual_soce | 108 |
+| Manual SOCE — Fase Contractual Bienes y Servicios | manual_soce | 19 |
+| RE-SERCOP-2026-0001 (Metodología de Control) | resolucion | 60 |
+| RE-SERCOP-2026-0002 (Comité Interinstitucional) | resolucion | 42 |
+| Modelo de Pliego SICAE | resolucion | 141 |
+| Metodología de Control Final Sumillada | resolucion | 137 |
+| Código de Ética institucional | resolucion | 89 |
+| Norma Interna SICAE (fármacos y bienes estratégicos) | resolucion | 33 |
+| Instructivo Extorsión | resolucion | 29 |
+| Resolución Régimen de Transición — nov. 2025 | resolucion | 14 |
+| RE-SERCOP-2024-0144 | resolucion | 5 |
+| RE-SERCOP-2025-0152 | resolucion | 5 |
+| Fe de Errata RE-SERCOP-2024-0142 | resolucion | 1 |
+| Glosario de Términos SERCOP | manual | 6 |
+
+### Pipeline RAG activo
+
 ```
+query → expand (siglas SERCOP) → embed (nomic) → pgvector HNSW + tsvector
+      → RRF (top-12) → cross-encoder reranker → top-4 chunks → Gemma → respuesta
+```
+
+### Tool calling activo (5 tools)
+
+El agente decide solo cuándo usar cada tool vs. el RAG:
+
+| Tool | Cuándo se activa | Datos que entrega |
+|---|---|---|
+| `obtener_montos_pie` | Pregunta por monto/umbral en USD de cualquier proceso | Valores exactos 2025/2026 por tipo |
+| `recomendar_tipo_contratacion` | Pregunta qué proceso usar dado un bien/servicio/monto | Nombre, normativa y ventaja del proceso |
+| `obtener_plazos` | Pregunta por días/plazos de proceso, impugnación, contrato o garantías | Plazos de 7 tipos: SIE, menor cuantía, cotización, licitación, impugnacion, contrato, garantias |
+| `info_rup` | Pregunta sobre registro de proveedores | Requisitos, costo, tiempo, causales de suspensión |
+| `obtener_fecha_hora_ecuador` | Pregunta por fecha/hora actual | Fecha, hora y día en Ecuador (UTC-5) |
+
+**Regla de routing:** montos/umbrales → `obtener_montos_pie` (NO el RAG — los valores del RAG pueden estar desactualizados). Plazos e impugnaciones → `obtener_plazos`. Todo lo demás → RAG con citación.
+
+### Modelos LLM
+
+| Modelo | Estado | Uso |
+|---|---|---|
+| `gemma4:e2b` | ✅ Activo en Mac | **Producción actual** — fluido, ~5s/respuesta |
+| `gemma4:26b` | ⚠️ Descargado — NO usar en Mac | Solo para servidor RHEL SERCOP con GPU |
+| `nomic-embed-text` | ✅ Activo | Embeddings de 768 dimensiones |
+
+**CRÍTICO:** `gemma4:26b` en Mac = 3-5 min/respuesta + crash del sistema. Configurado en `.env` como `OLLAMA_MODEL=gemma4:e2b`. No cambiar.
+
+### SARA — prompt v3 activo (`config/prompts.yaml`)
+
+- **Identidad:** asistente cálida, directa, "colega experta" — no robot institucional
+- **Audiencia:** ciudadanos y proveedores, no solo funcionarios
+- **Lógica de decisión:** saludo puro → menú · pregunta → RAG/tool · ambigua → pide un dato
+- **Anti-alucinación:** chunk sin artículo explícito → "La normativa establece que [concepto], aunque te recomiendo verificar en compraspublicas.gob.ec"
+- **Anti-filename:** NUNCA cita nombres de archivos PDF como fuente (ej. "Normativa Secundaria Actualizada 1")
+- **Siglas reconocidas:** SIE, RUP, PAC, LOSNCP, RGLOSNCP, SOCE, SIC, SICAE, EPS, MIPYMES
+- **UX WhatsApp:** acuse inmediato "🔍 Consultando..." · menú de bienvenida con 5 categorías · cierres variados
+- **Deduplicación:** `_mensajes_procesados: set[str]` evita doble respuesta por reintentos de Meta
+
+### Comandos para levantar el sistema
+
+```bash
+# 1. Verificar Ollama activo
+curl http://localhost:11434/api/tags
+
+# 2. Levantar servidor
+source /Users/mauricioruiz/emmabot/.venv/bin/activate
+cd /Users/mauricioruiz/emmabot/whatsapp-agentkit
+uvicorn agent.main:app --host 0.0.0.0 --port 8000
+
+# 3. Verificar ngrok activo
+curl http://localhost:4040/api/tunnels
+
+# Agregar documentos nuevos al RAG
+python scripts/scraper_biblioteca.py      # descarga + ingesta desde portal SERCOP
+python ingestar_knowledge.py              # re-ingesta knowledge/ local
+```
+
+---
+
+## 14b. Pendiente para producción completa
+
+### Documentos faltantes (descargar manualmente y ejecutar scraper)
+
+| Documento | Por qué importa | Acción |
+|---|---|---|
+| Manual SOCE — Menor Cuantía bienes/servicios | Proceso más común en contratación pública | Descargar de biblioteca SERCOP → `knowledge/biblioteca/` |
+| Manual SOCE — Menor Cuantía obras | Segundo proceso más común | Ídem |
+| Manual SOCE — Registro de Proveedores | Alta demanda de ciudadanos que quieren ser proveedores | Ídem |
+| Manual SOCE — Contrataciones de Emergencia | Preguntas frecuentes en situaciones urgentes | Ídem |
+| Manual SOCE — Feria Inclusiva | EPS y MIPYMES — audiencia clave | Ídem |
+| COA (Código Orgánico Administrativo) | Capítulos de recursos/impugnaciones formales | Buscar en lexis.com.ec o registroficial.gob.ec |
+| Resolución montos PIE 2026 | Fuente citable oficial para los umbrales en USD | Buscar en compraspublicas.gob.ec/cat_normativas |
+
+Luego de descargar, ejecutar: `python scripts/scraper_biblioteca.py` (ya detecta archivos existentes y no los re-ingesta).
+
+### Tareas técnicas
+
+- [ ] Evaluación RAGAS: correr suite con 20 preguntas · meta faithfulness > 0.85
+- [ ] Deploy en servidor RHEL: migrar sercop_db + instalar Ollama + activar gemma4:26b
+- [ ] Demo SERCOP: 5-7 preguntas killer para presentación al coordinador TIC
+
+---
+
+## 14c. NO TOCAR
+
+- `providers/` — capa WhatsApp estable, 3 providers funcionando
+- Schema PostgreSQL — tablas `documentos`, `chunks`, `mensajes`
+- Los 3,059 chunks indexados en sercop_db
+- `config/prompts.yaml` — prompt v3 optimizado y probado con 5/5 tests
+- `.env` — `OLLAMA_MODEL=gemma4:e2b` — NO cambiar a 26b en Mac
+
+---
+
+## 15. Roadmap
+
+| Fase | Estado | Descripción |
+|---|---|---|
+| AgentKit base | ✅ Completo | FastAPI + WhatsApp + memoria |
+| RAG + pgvector | ✅ Completo | Pipeline híbrido + reranker + 3,059 chunks |
+| SARA prompt v3 | ✅ Completo | Anti-alucinación + menú + siglas + UX WhatsApp |
+| Tool calling nativo | ✅ Completo | 5 tools: montos PIE, tipos, plazos, RUP, fecha |
+| Base de conocimiento v2 | ✅ Completo | +7 documentos nuevos, incluyendo Reglamento oct 2025 |
+| Documentos faltantes | 🔧 En curso | 5 manuales SOCE + COA + PIE 2026 |
+| Evaluación RAGAS | ⏳ Pendiente | faithfulness > 0.85 |
+| Deploy servidor RHEL | ⏳ Pendiente | gemma4:26b + sercop_db en infraestructura SERCOP |
+
+---
+
+## 16. Decisiones de arquitectura
+
+**¿Por qué no reescribir AgentKit?**
+La capa de WhatsApp funciona con 3 proveedores y maneja webhooks correctamente.
+El RAG y las tools se integran dentro de brain.py sin tocar providers/.
+
+**¿Por qué Gemma 4 y no Claude API en producción?**
+Restricción del SERCOP: datos no pueden salir de su infraestructura.
+Claude API es cloud. Gemma 4 corre 100% local con Ollama.
+
+**¿Por qué pgvector y no Qdrant/Chroma?**
+SERCOP ya opera PostgreSQL en RHEL. Sin nueva infraestructura.
+pgvector HNSW coseno + GIN tsvector español = búsqueda híbrida semántica + exacta en un solo motor.
+
+**¿Por qué pipeline RAG propio y no LlamaIndex?**
+Control total sobre chunking legal por artículos, RRF, reranker cross-encoder y metadata de artículos.
+Más simple, sin dependencias pesadas, fácil de mantener por el equipo TIC.
+
+**¿Por qué tools + RAG y no solo RAG?**
+Los montos en USD cambian cada año con el PIE y los plazos de impugnación son datos estructurados precisos.
+RAG puede devolver versiones desactualizadas de estos valores. Las tools garantizan exactitud.
+
+**¿Por qué gemma4:e2b y no 26b en el Mac?**
+El 26B requiere 17GB en VRAM/RAM. En Mac con 11.7GB VRAM el resto cae a RAM unificada → 3-5 min/respuesta + crash.
+El e2b (5B, 6.7GB) responde en ~5 segundos y es suficiente para desarrollo y demos.
+
+---
+
+## 16. Contexto institucional
+
+- **Institución**: SERCOP — Servicio Nacional de Contratación Pública, Ecuador
+- **Área**: Coordinación de Tecnología de la Información y Comunicaciones
+- **Director TIC**: Paúl Vásquez Méndez
+- **Entorno producción**: PostgreSQL en RHEL
+- **Restricción crítica**: 100% self-hosted — ningún dato sale de la infraestructura SERCOP
+- **Dev environment**: MacBook Pro M5 Space Black, Claude Code, Multipass + 3 VMs PostgreSQL

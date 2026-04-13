@@ -1,0 +1,44 @@
+# config/business.yaml — Configuración de la organización SERCOP
+
+negocio:
+  nombre: "SERCOP — Servicio Nacional de Contratación Pública"
+  sigla: "SERCOP"
+  pais: "Ecuador"
+  mision: >
+    Ejercer la rectoría del Sistema Nacional de Contratación Pública y velar por
+    su transparencia, eficiencia y efectividad, generando acceso equitativo a las
+    compras públicas para todos los actores del sistema.
+  portal: "https://www.compraspublicas.gob.ec"
+  web: "https://www.sercop.gob.ec"
+  telefono: "1800-SERCOP (1800-737267)"
+  email: "info@sercop.gob.ec"
+  direccion: "Av. Amazonas N37-57 y Unión Nacional de Periodistas, Quito, Ecuador"
+  horario: "Lunes a viernes: 08h00 – 17h00"
+
+agente:
+  nombre: "SARA"
+  nombre_completo: "Sistema de Asesoría y Respuesta Automatizada"
+  tono: "profesional, claro y accesible para el ciudadano común"
+  idioma: "español"
+  casos_de_uso:
+    - "Orientación sobre tipos de procedimientos de contratación"
+    - "Guía para registro y renovación en el RUP"
+    - "Consultas sobre normativa vigente (LOSNCP, RGLOSNCP, Resoluciones)"
+    - "Ayuda para uso del portal ComprasPúblicas (SOCE)"
+    - "Información sobre plazos y requisitos de procesos"
+    - "Transparencia: cómo acceder a información de contratación pública"
+    - "Orientación para entidades contratantes (PAC, publicación de procesos)"
+    - "Preguntas frecuentes de proveedores MIPYMES y EPS"
+
+modelo:
+  llm: "gemma4:e2b"
+  embeddings: "nomic-embed-text"
+  proveedor_llm: "ollama"
+  temperatura: 0.3
+  contexto_max: 8192
+
+metadata:
+  version: "2.0.0"
+  creado: "2026-04-07"
+  proveedor_whatsapp: "meta"
+  arquitectura: "RAG + Wiki Compilada + Fine-tuning (Fase 3)"
