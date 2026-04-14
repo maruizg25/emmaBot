@@ -378,6 +378,22 @@ async def _llamar_groq(
         return await _llamar_ollama(client, mensajes)
 
     response.raise_for_status()
+
+    # Mostrar en logs cuánto queda del límite gratuito
+    h = response.headers
+    remaining_req = h.get("x-ratelimit-remaining-requests", "?")
+    remaining_tok = h.get("x-ratelimit-remaining-tokens", "?")
+    limit_req     = h.get("x-ratelimit-limit-requests", "?")
+    reset_req     = h.get("x-ratelimit-reset-requests", "?")
+    logger.info(f"Groq límites — requests: {remaining_req}/{limit_req} (reset: {reset_req}) | tokens/min restantes: {remaining_tok}")
+
+    # Advertir cuando queden menos de 100 requests del día
+    try:
+        if int(remaining_req) < 100:
+            logger.warning(f"⚠️  Groq: quedan solo {remaining_req} requests hoy — considera plan de pago")
+    except (ValueError, TypeError):
+        pass
+
     data = response.json()
     return data["choices"][0]["message"]["content"]
 
