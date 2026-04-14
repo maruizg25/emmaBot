@@ -15,6 +15,7 @@ Mejoras vs versión anterior:
 - TOP_K_BUSQUEDA subido a 12 (más candidatos para el reranker)
 """
 
+import os
 import logging
 from agent.embeddings import generar_embedding
 from agent.memory import buscar_chunks_semantico, buscar_chunks_fulltext, _is_postgres
@@ -23,7 +24,7 @@ logger = logging.getLogger("agentkit")
 
 RRF_K           = 60   # Constante estándar de investigación
 TOP_K_BUSQUEDA  = 12   # Candidatos por búsqueda antes de fusionar
-TOP_K_RERANK    = 4    # Chunks finales a inyectar en el prompt
+TOP_K_RERANK    = int(os.getenv("TOP_K_CHUNKS", "2"))  # Chunks finales al prompt
 
 # ── Diccionario de expansión de queries ──────────────────────────────────────
 # Siglas y términos técnicos del dominio de contratación pública ecuatoriana

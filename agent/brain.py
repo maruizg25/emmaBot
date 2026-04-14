@@ -35,6 +35,9 @@ OLLAMA_MODEL   = os.getenv("OLLAMA_MODEL",  "gemma4:e2b")
 WIKI_DIR       = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
 WIKI_FALLBACK  = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 
+# Ventana de contexto: el system prompt de SARA tiene ~3500 tokens solo.
+# 4096 lo truncaba silenciosamente. 8192 es el mínimo real con RAG + historial corto.
+# Subir a 16384 solo si hay GPU disponible.
 OLLAMA_NUM_CTX    = int(os.getenv("OLLAMA_NUM_CTX",    "8192"))
 OLLAMA_MAX_TOKENS = int(os.getenv("OLLAMA_MAX_TOKENS", "512"))
 

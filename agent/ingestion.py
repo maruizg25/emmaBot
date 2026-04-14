@@ -15,6 +15,8 @@ Mejoras vs versión anterior:
 - Imports al nivel de módulo (no lazy) para evitar deadlocks en threads
 """
 
+from __future__ import annotations
+
 import asyncio
 import os
 import re

@@ -1,6 +1,8 @@
 # agent/providers/meta.py — Adaptador para Meta WhatsApp Cloud API
 # Generado por AgentKit
 
+from __future__ import annotations
+
 import os
 import logging
 import httpx

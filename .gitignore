@@ -12,9 +12,9 @@ __pycache__/
 .venv/
 venv/
 
-# Knowledge (archivos privados del negocio)
-knowledge/*
-!knowledge/.gitkeep
+# Knowledge — PDFs incluidos para deploy en servidor
+knowledge/.gitkeep
+knowledge/biblioteca/.gitkeep
 
 # Session state
 config/session.yaml
