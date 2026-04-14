@@ -32,10 +32,10 @@ WIKI_DIR      = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
 WIKI_FALLBACK = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 MAX_TOOL_TURNS = 3  # Máximo de rondas de tool calling por respuesta
 
-# Ventana de contexto: 16384 en CPU = lentísimo (atención O(n²)).
-# 4096 es suficiente para system prompt + 4 chunks RAG + historial corto.
-# Subir solo si el modelo lo necesita y hay GPU disponible.
-OLLAMA_NUM_CTX    = int(os.getenv("OLLAMA_NUM_CTX",    "4096"))
+# Ventana de contexto: el system prompt de SARA tiene ~3500 tokens solo.
+# 4096 lo truncaba silenciosamente. 8192 es el mínimo real con RAG + historial corto.
+# Subir a 16384 solo si hay GPU disponible.
+OLLAMA_NUM_CTX    = int(os.getenv("OLLAMA_NUM_CTX",    "8192"))
 OLLAMA_MAX_TOKENS = int(os.getenv("OLLAMA_MAX_TOKENS", "512"))
 
 

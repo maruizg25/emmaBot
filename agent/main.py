@@ -29,6 +29,7 @@ logger = logging.getLogger("agentkit")
 proveedor = obtener_proveedor()
 PORT = int(os.getenv("PORT", 8000))
 ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "")  # Dejar vacío desactiva la auth en dev
+HISTORIAL_LIMITE = int(os.getenv("HISTORIAL_LIMITE", "4"))  # Mensajes previos al LLM
 
 # Deduplicación de mensajes — evita procesar el mismo mensaje_id dos veces
 # Meta reintenta el webhook si no recibe 200 en ~5s (RAG + LLM puede tardar más)
@@ -123,7 +124,7 @@ async def webhook_handler(request: Request):
                     "🔍 Consultando la normativa SERCOP, un momento..."
                 )
 
-            historial = await obtener_historial(msg.telefono)
+            historial = await obtener_historial(msg.telefono, limite=HISTORIAL_LIMITE)
             respuesta = await generar_respuesta(msg.texto, historial)
 
             await guardar_mensaje(msg.telefono, "user", msg.texto)
