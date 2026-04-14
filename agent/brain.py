@@ -44,7 +44,7 @@ OLLAMA_MAX_TOKENS = int(os.getenv("OLLAMA_MAX_TOKENS", "400"))
 
 # ── Groq (API externa — gratuita hasta 14.400 req/día) ───────────────────────
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL   = os.getenv("GROQ_MODEL",   "llama-3.1-8b-instant")
+GROQ_MODEL   = os.getenv("GROQ_MODEL",   "meta-llama/llama-4-scout-17b-16e-instruct")
 GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
 
 WIKI_DIR      = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
@@ -363,15 +363,20 @@ async def _llamar_groq(
         "max_tokens": 600,
     }
     response = await client.post(GROQ_URL, json=payload, headers=headers)
+
     if response.status_code == 413:
         logger.warning("Groq 413: payload demasiado grande, reintentando sin contexto RAG")
-        # Reenviar solo system + último mensaje del usuario (sin contexto inyectado)
         solo_pregunta = next(
             (m["content"].split("\n\n---\n")[0] for m in reversed(mensajes_groq) if m["role"] == "user"),
             mensajes_groq[-1]["content"]
         )
         payload["messages"] = [mensajes_groq[0], {"role": "user", "content": solo_pregunta}]
         response = await client.post(GROQ_URL, json=payload, headers=headers)
+
+    if response.status_code == 429:
+        logger.warning("Groq 429: rate limit alcanzado, usando Ollama local como fallback")
+        return await _llamar_ollama(client, mensajes)
+
     response.raise_for_status()
     data = response.json()
     return data["choices"][0]["message"]["content"]
