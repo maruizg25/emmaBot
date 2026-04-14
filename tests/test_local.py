@@ -9,6 +9,7 @@ Simula una conversación de ventas en la terminal.
 import asyncio
 import sys
 import os
+import time
 
 # Agregar el directorio raíz al path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -60,9 +61,11 @@ async def main():
 
         # Generar respuesta de Emma
         print("\nEmma: ", end="", flush=True)
+        t0 = time.monotonic()
         respuesta = await generar_respuesta(mensaje, historial)
+        elapsed = time.monotonic() - t0
         print(respuesta)
-        print()
+        print(f"  ⏱  {elapsed:.1f}s\n")
 
         # Guardar mensaje del usuario y respuesta de Emma
         await guardar_mensaje(TELEFONO_TEST, "user", mensaje)
