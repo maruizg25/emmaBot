@@ -26,11 +26,17 @@ from dotenv import load_dotenv
 load_dotenv()
 logger = logging.getLogger("agentkit")
 
-OLLAMA_URL   = os.getenv("OLLAMA_URL",   "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma4:e2b")
-WIKI_DIR     = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
+OLLAMA_URL    = os.getenv("OLLAMA_URL",    "http://localhost:11434")
+OLLAMA_MODEL  = os.getenv("OLLAMA_MODEL",  "gemma4:e2b")
+WIKI_DIR      = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
 WIKI_FALLBACK = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 MAX_TOOL_TURNS = 3  # Máximo de rondas de tool calling por respuesta
+
+# Ventana de contexto: 16384 en CPU = lentísimo (atención O(n²)).
+# 4096 es suficiente para system prompt + 4 chunks RAG + historial corto.
+# Subir solo si el modelo lo necesita y hay GPU disponible.
+OLLAMA_NUM_CTX    = int(os.getenv("OLLAMA_NUM_CTX",    "4096"))
+OLLAMA_MAX_TOKENS = int(os.getenv("OLLAMA_MAX_TOKENS", "512"))
 
 
 @lru_cache(maxsize=1)
@@ -99,7 +105,8 @@ async def _llamar_ollama(
         "options": {
             "temperature": 0.2,
             "top_p": 0.9,
-            "num_ctx": 16384,
+            "num_ctx": OLLAMA_NUM_CTX,
+            "num_predict": OLLAMA_MAX_TOKENS,
             "repeat_penalty": 1.1,
         },
     }
@@ -177,7 +184,8 @@ async def generar_respuesta(mensaje: str, historial: list[dict]) -> str:
     from agent.tools import TOOLS_SCHEMA, ejecutar_tool
 
     try:
-        async with httpx.AsyncClient(timeout=180.0) as client:
+        timeout = int(os.getenv("OLLAMA_TIMEOUT", "120"))
+        async with httpx.AsyncClient(timeout=timeout) as client:
             for turno in range(MAX_TOOL_TURNS):
                 data = await _llamar_ollama(client, mensajes, tools=TOOLS_SCHEMA)
                 msg_respuesta = data.get("message", {})
