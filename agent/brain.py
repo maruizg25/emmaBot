@@ -95,6 +95,10 @@ _SALUDOS = {
     "de acuerdo", "listo", "claro", "sí", "si", "no", "bye",
     "hasta luego", "adios", "adiós", "chao", "nos vemos",
     "muchas gracias", "excelente", "genial", "muy bien",
+    # Saludos sociales con "como" — no son consultas normativas
+    "como estas", "cómo estas", "como estás", "cómo estás",
+    "como te va", "cómo te va", "como te encuentras", "cómo te encuentras",
+    "todo bien", "que tal", "qué tal", "hola como estas", "hola cómo estás",
 }
 
 # Palabras clave que indican consulta normativa (activa RAG)
@@ -333,18 +337,41 @@ async def _llamar_groq(
     client: httpx.AsyncClient,
     mensajes: list[dict],
 ) -> str:
-    """Llamada a Groq API (OpenAI-compatible). Llama 3.3 70B, ~1-2s de respuesta."""
+    """Llamada a Groq API (OpenAI-compatible). ~1s de respuesta."""
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json",
     }
+    # Truncar el último mensaje (user) si el contexto inyectado es muy largo.
+    # Groq rechaza con 413 si el payload supera ~6,000 tokens totales en modelos 8b.
+    MAX_USER_CHARS = int(os.getenv("GROQ_MAX_USER_CHARS", "6000"))
+    mensajes_groq = []
+    for i, msg in enumerate(mensajes):
+        if msg["role"] == "user" and i == len(mensajes) - 1:
+            content = msg["content"]
+            if len(content) > MAX_USER_CHARS:
+                content = content[:MAX_USER_CHARS] + "\n\n[contexto truncado]"
+                logger.warning(f"Contexto truncado a {MAX_USER_CHARS} chars para Groq")
+            mensajes_groq.append({"role": "user", "content": content})
+        else:
+            mensajes_groq.append(msg)
+
     payload = {
         "model": GROQ_MODEL,
-        "messages": mensajes,
+        "messages": mensajes_groq,
         "temperature": 0.2,
         "max_tokens": 600,
     }
     response = await client.post(GROQ_URL, json=payload, headers=headers)
+    if response.status_code == 413:
+        logger.warning("Groq 413: payload demasiado grande, reintentando sin contexto RAG")
+        # Reenviar solo system + último mensaje del usuario (sin contexto inyectado)
+        solo_pregunta = next(
+            (m["content"].split("\n\n---\n")[0] for m in reversed(mensajes_groq) if m["role"] == "user"),
+            mensajes_groq[-1]["content"]
+        )
+        payload["messages"] = [mensajes_groq[0], {"role": "user", "content": solo_pregunta}]
+        response = await client.post(GROQ_URL, json=payload, headers=headers)
     response.raise_for_status()
     data = response.json()
     return data["choices"][0]["message"]["content"]
