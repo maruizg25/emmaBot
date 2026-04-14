@@ -13,6 +13,8 @@ Mejoras vs versión anterior:
 - Retorna list[float] directamente (no string pg-format)
 """
 
+from __future__ import annotations
+
 import os
 import httpx
 import logging

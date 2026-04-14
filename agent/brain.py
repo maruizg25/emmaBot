@@ -14,6 +14,8 @@ Flujo completo:
          → si texto directo: devolver respuesta
 """
 
+from __future__ import annotations
+
 import os
 import json
 import yaml
