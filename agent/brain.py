@@ -183,13 +183,16 @@ async def generar_respuesta(mensaje: str, historial: list[dict]) -> str:
     mensajes.append({"role": "user", "content": mensaje})
 
     # ── 5. Loop tool calling ──────────────────────────────────────────────
+    # Las tools solo se envían cuando hay una consulta real.
+    # Para saludos simples se omiten (~600 tokens menos → respuesta más rápida).
     from agent.tools import TOOLS_SCHEMA, ejecutar_tool
+    tools_activas = TOOLS_SCHEMA if _es_consulta else None
 
     try:
         timeout = int(os.getenv("OLLAMA_TIMEOUT", "120"))
         async with httpx.AsyncClient(timeout=timeout) as client:
             for turno in range(MAX_TOOL_TURNS):
-                data = await _llamar_ollama(client, mensajes, tools=TOOLS_SCHEMA)
+                data = await _llamar_ollama(client, mensajes, tools=tools_activas)
                 msg_respuesta = data.get("message", {})
                 tool_calls = msg_respuesta.get("tool_calls", [])
 
