@@ -10,6 +10,14 @@ import asyncio
 import sys
 import os
 import time
+import logging
+
+# Mostrar logs del agente durante el test
+logging.basicConfig(
+    level=logging.INFO,
+    format="  %(levelname)s %(name)s: %(message)s",
+    stream=sys.stdout,
+)
 
 # Agregar el directorio raíz al path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
