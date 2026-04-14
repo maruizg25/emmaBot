@@ -30,16 +30,25 @@ from dotenv import load_dotenv
 load_dotenv()
 logger = logging.getLogger("agentkit")
 
-OLLAMA_URL     = os.getenv("OLLAMA_URL",    "http://localhost:11434")
-OLLAMA_MODEL   = os.getenv("OLLAMA_MODEL",  "gemma4:e2b")
-WIKI_DIR       = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
-WIKI_FALLBACK  = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
+# ── Proveedor LLM: "ollama" (local) o "groq" (API externa) ───────────────────
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama").lower()
+
+# ── Ollama (local) ────────────────────────────────────────────────────────────
+OLLAMA_URL    = os.getenv("OLLAMA_URL",   "http://localhost:11434")
+OLLAMA_MODEL  = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 
 # Ventana de contexto: el system prompt de SARA tiene ~3500 tokens solo.
 # 4096 lo truncaba silenciosamente. 8192 es el mínimo real con RAG + historial corto.
-# Subir a 16384 solo si hay GPU disponible.
 OLLAMA_NUM_CTX    = int(os.getenv("OLLAMA_NUM_CTX",    "8192"))
-OLLAMA_MAX_TOKENS = int(os.getenv("OLLAMA_MAX_TOKENS", "512"))
+OLLAMA_MAX_TOKENS = int(os.getenv("OLLAMA_MAX_TOKENS", "400"))
+
+# ── Groq (API externa — gratuita hasta 14.400 req/día) ───────────────────────
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_MODEL   = os.getenv("GROQ_MODEL",   "llama-3.3-70b-versatile")
+GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
+
+WIKI_DIR      = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
+WIKI_FALLBACK = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 
 
 # ─── Configuración cargada una sola vez ──────────────────────────────────────
@@ -295,17 +304,13 @@ def _buscar_en_wiki(query: str, max_chars: int = 2000) -> str:
     return f"[WIKI: {nombre.replace('_', ' ').title()}]\n{contenido[:max_chars]}"
 
 
-# ─── Llamada a Ollama ─────────────────────────────────────────────────────────
+# ─── Llamadas al LLM ─────────────────────────────────────────────────────────
 
 async def _llamar_ollama(
     client: httpx.AsyncClient,
     mensajes: list[dict],
 ) -> str:
-    """
-    Llamada directa a Ollama /api/chat sin tool calling.
-    System prompt estático → Ollama reutiliza KV cache entre llamadas.
-    Retorna el texto de la respuesta.
-    """
+    """Llamada a Ollama /api/chat (LLM local). Sin tool calling."""
     payload: dict = {
         "model": OLLAMA_MODEL,
         "messages": mensajes,
@@ -322,6 +327,37 @@ async def _llamar_ollama(
     response.raise_for_status()
     data = response.json()
     return data.get("message", {}).get("content", "")
+
+
+async def _llamar_groq(
+    client: httpx.AsyncClient,
+    mensajes: list[dict],
+) -> str:
+    """Llamada a Groq API (OpenAI-compatible). Llama 3.3 70B, ~1-2s de respuesta."""
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": GROQ_MODEL,
+        "messages": mensajes,
+        "temperature": 0.2,
+        "max_tokens": 600,
+    }
+    response = await client.post(GROQ_URL, json=payload, headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
+
+
+async def _llamar_llm(client: httpx.AsyncClient, mensajes: list[dict]) -> str:
+    """Despacha al proveedor configurado: groq u ollama."""
+    if LLM_PROVIDER == "groq":
+        if not GROQ_API_KEY:
+            logger.warning("GROQ_API_KEY no configurado, usando Ollama como fallback")
+            return await _llamar_ollama(client, mensajes)
+        return await _llamar_groq(client, mensajes)
+    return await _llamar_ollama(client, mensajes)
 
 
 # ─── Pipeline principal ───────────────────────────────────────────────────────
@@ -356,7 +392,7 @@ async def generar_respuesta(mensaje: str, historial: list[dict]) -> str:
         try:
             timeout = int(os.getenv("OLLAMA_TIMEOUT", "120"))
             async with httpx.AsyncClient(timeout=timeout) as client:
-                respuesta = await _llamar_ollama(client, mensajes_base)
+                respuesta = await _llamar_llm(client, mensajes_base)
                 logger.info(f"Respuesta saludo ({len(respuesta)} chars)")
                 return respuesta
         except httpx.ConnectError:
@@ -421,7 +457,7 @@ async def generar_respuesta(mensaje: str, historial: list[dict]) -> str:
     try:
         timeout = int(os.getenv("OLLAMA_TIMEOUT", "120"))
         async with httpx.AsyncClient(timeout=timeout) as client:
-            respuesta = await _llamar_ollama(client, mensajes_base)
+            respuesta = await _llamar_llm(client, mensajes_base)
             modo = "tools" if tools_detectadas else ("RAG" if bloques_contexto else "sin contexto")
             logger.info(f"Respuesta generada (modo: {modo}, {len(respuesta)} chars)")
             return respuesta
