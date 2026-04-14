@@ -11,10 +11,13 @@ Mejoras vs versión anterior:
 - Búsqueda vectorial usa bindparam para el vector de query
 """
 
+from __future__ import annotations
+
 import os
 import json
 import hashlib
 from datetime import datetime
+from typing import Optional, List
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import (
@@ -86,8 +89,8 @@ class Documento(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     nombre: Mapped[str] = mapped_column(String(500))
     tipo: Mapped[str] = mapped_column(String(50), index=True)
-    url: Mapped[str | None] = mapped_column(Text, nullable=True)
-    hash_contenido: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True)
+    url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    hash_contenido: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, unique=True)
     total_chunks: Mapped[int] = mapped_column(Integer, default=0)
     fecha_ingestion: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
@@ -106,11 +109,11 @@ class Chunk(Base):
         Integer, ForeignKey("documentos.id", ondelete="CASCADE"), index=True
     )
     texto: Mapped[str] = mapped_column(Text)
-    seccion: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    pagina: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    seccion: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    pagina: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     metadata_json: Mapped[str] = mapped_column(Text, default="{}")
     # Vector nativo — evita casting ::vector en cada query
-    embedding: Mapped[list[float] | None] = mapped_column(_VectorType, nullable=True)
+    embedding: Mapped[Optional[List[float]]] = mapped_column(_VectorType, nullable=True)
 
 
 # ─── Inicialización ──────────────────────────────────────────────────────────
