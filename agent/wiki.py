@@ -20,6 +20,8 @@ Uso:
     python -m agent.wiki --finetune         # exporta dataset Q&A para fine-tuning
 """
 
+from __future__ import annotations
+
 import os
 import re
 import json

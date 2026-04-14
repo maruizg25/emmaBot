@@ -6,6 +6,8 @@ Define la interfaz común que todos los proveedores de WhatsApp deben implementa
 Esto permite cambiar de proveedor sin modificar el resto del código.
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from fastapi import Request

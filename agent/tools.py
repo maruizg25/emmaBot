@@ -5,6 +5,8 @@ Funciones utilitarias disponibles para el agente SERCOP.
 Complementan el RAG con lógica de dominio específica.
 """
 
+from __future__ import annotations
+
 import logging
 from datetime import datetime
 

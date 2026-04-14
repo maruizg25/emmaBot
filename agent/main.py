@@ -6,6 +6,8 @@ Maneja webhooks de WhatsApp y expone endpoints de administración
 para la base de conocimiento (ingestión, documentos, wiki).
 """
 
+from __future__ import annotations
+
 import os
 import logging
 from contextlib import asynccontextmanager
