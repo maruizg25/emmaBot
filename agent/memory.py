@@ -11,6 +11,8 @@ Mejoras vs versión anterior:
 - Búsqueda vectorial usa bindparam para el vector de query
 """
 
+from __future__ import annotations
+
 import os
 import json
 import hashlib
