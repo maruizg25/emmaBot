@@ -12,7 +12,7 @@ import os
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form, BackgroundTasks
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -89,11 +89,43 @@ async def webhook_verificacion(request: Request):
     return {"status": "ok"}
 
 
-@app.post("/webhook")
-async def webhook_handler(request: Request):
+async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
     """
-    Recibe mensajes de WhatsApp y genera respuesta con contexto SERCOP.
-    Pipeline: parse → historial → RAG → Gemma 4 → guardar → enviar
+    Procesa un mensaje en background: RAG → LLM → enviar respuesta.
+    Se ejecuta después de responder 200 OK a Meta para evitar timeouts.
+    """
+    try:
+        _texto_lower = texto.strip().lower()
+        _es_saludo = len(texto.split()) <= 3 and not any(
+            kw in _texto_lower for kw in ["qué", "que", "cómo", "como", "cuál",
+                                           "cual", "art", "rup", "contrat"]
+        )
+
+        # Acuse inmediato — llega al usuario en <1s mientras el LLM trabaja
+        if not _es_saludo:
+            await proveedor.enviar_mensaje(
+                telefono,
+                "🔍 Consultando la normativa SERCOP, un momento..."
+            )
+
+        historial = await obtener_historial(telefono, limite=HISTORIAL_LIMITE)
+        respuesta = await generar_respuesta(texto, historial)
+
+        await guardar_mensaje(telefono, "user", texto)
+        await guardar_mensaje(telefono, "assistant", respuesta)
+        await proveedor.enviar_mensaje(telefono, respuesta)
+
+        logger.info(f"SARA respondió a {telefono} ({len(respuesta)} chars)")
+
+    except Exception as e:
+        logger.error(f"Error procesando mensaje de {telefono}: {e}")
+
+
+@app.post("/webhook")
+async def webhook_handler(request: Request, background_tasks: BackgroundTasks):
+    """
+    Recibe mensajes de WhatsApp. Responde 200 OK inmediatamente a Meta
+    y procesa el LLM en background para evitar timeouts (Meta espera max 5s).
     """
     try:
         mensajes = await proveedor.parsear_webhook(request)
@@ -107,34 +139,14 @@ async def webhook_handler(request: Request):
                 continue
             _mensajes_procesados.add(msg.mensaje_id)
             if len(_mensajes_procesados) > _MAX_IDS_CACHE:
-                # Limpiar la mitad más antigua (set no tiene orden, borramos mitad aleatoria)
                 ids_a_borrar = list(_mensajes_procesados)[:_MAX_IDS_CACHE // 2]
                 for mid in ids_a_borrar:
                     _mensajes_procesados.discard(mid)
 
             logger.info(f"Mensaje de {msg.telefono}: {msg.texto[:80]}")
+            background_tasks.add_task(_procesar_mensaje, msg.telefono, msg.texto, msg.mensaje_id)
 
-            # Acuse inmediato — el usuario sabe que recibimos su mensaje
-            _texto_lower = msg.texto.strip().lower()
-            _es_saludo = len(msg.texto.split()) <= 3 and not any(
-                kw in _texto_lower for kw in ["qué", "que", "cómo", "como", "cuál",
-                                               "cual", "art", "rup", "contrat"]
-            )
-            if not _es_saludo:
-                await proveedor.enviar_mensaje(
-                    msg.telefono,
-                    "🔍 Consultando la normativa SERCOP, un momento..."
-                )
-
-            historial = await obtener_historial(msg.telefono, limite=HISTORIAL_LIMITE)
-            respuesta = await generar_respuesta(msg.texto, historial)
-
-            await guardar_mensaje(msg.telefono, "user", msg.texto)
-            await guardar_mensaje(msg.telefono, "assistant", respuesta)
-            await proveedor.enviar_mensaje(msg.telefono, respuesta)
-
-            logger.info(f"SARA respondió a {msg.telefono}")
-
+        # 200 OK inmediato — Meta no espera el LLM
         return {"status": "ok"}
 
     except Exception as e:
