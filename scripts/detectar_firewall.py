@@ -102,6 +102,67 @@ PRUEBAS: list[Prueba] = [
         url_https="http://localhost:8000/",
     ),
 
+    # ── Groq API (LLM externo) ─────────────────────────────────────────────────
+    Prueba(
+        categoria="GROQ API",
+        nombre="api.groq.com — HTTPS",
+        protocolo="HTTPS",
+        host="api.groq.com",
+        puerto=443,
+        descripcion="API de Groq para generación de respuestas con Llama 4 Scout 17B",
+        critico=True,
+        url_https="https://api.groq.com/",
+    ),
+    Prueba(
+        categoria="GROQ API",
+        nombre="console.groq.com — monitoreo",
+        protocolo="HTTPS",
+        host="console.groq.com",
+        puerto=443,
+        descripcion="Consola de Groq para monitoreo de uso y límites",
+        critico=False,
+        url_https="https://console.groq.com/",
+    ),
+
+    # ── Cloudflare Tunnel (webhook receptor) ───────────────────────────────────
+    Prueba(
+        categoria="CLOUDFLARE TUNNEL",
+        nombre="cloudflare.com — HTTPS",
+        protocolo="HTTPS",
+        host="www.cloudflare.com",
+        puerto=443,
+        descripcion="Infraestructura principal de Cloudflare para el túnel",
+        critico=True,
+        url_https="https://www.cloudflare.com/",
+    ),
+    Prueba(
+        categoria="CLOUDFLARE TUNNEL",
+        nombre="trycloudflare.com — túnel rápido",
+        protocolo="HTTPS",
+        host="trycloudflare.com",
+        puerto=443,
+        descripcion="Dominio de tunnels rápidos de Cloudflare (webhook URL)",
+        critico=True,
+    ),
+    Prueba(
+        categoria="CLOUDFLARE TUNNEL",
+        nombre="cloudflareaccess.com — acceso",
+        protocolo="HTTPS",
+        host="cloudflareaccess.com",
+        puerto=443,
+        descripcion="Cloudflare Access — autenticación del túnel",
+        critico=True,
+    ),
+    Prueba(
+        categoria="CLOUDFLARE TUNNEL",
+        nombre="Puerto 7844 TCP (canal de datos)",
+        protocolo="TCP",
+        host="region1.v2.argotunnel.com",
+        puerto=7844,
+        descripcion="Puerto de datos del túnel Cloudflare (fallback a 443 si está bloqueado)",
+        critico=False,
+    ),
+
     # ── Meta WhatsApp API ──────────────────────────────────────────────────────
     Prueba(
         categoria="META WHATSAPP",
