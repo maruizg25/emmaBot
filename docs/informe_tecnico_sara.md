@@ -137,10 +137,20 @@ velocidades muy superiores a GPU convencionales.
 | "Qué es el RUP" | ~97s (respuesta incorrecta) | **1.7s** (respuesta completa y correcta) |
 | Consulta normativa compleja | ~100s | **2-3s** |
 
-### 5.2 Modelo utilizado
+### 5.2 Modelo recomendado para plan gratuito
 
-**Llama 3.3 70B Versatile** — modelo de Meta con 70 mil millones de parámetros,
-excelente comprensión del español y razonamiento jurídico.
+**Llama 3.1 8B Instant** — modelo de Meta optimizado para velocidad.
+Con la arquitectura pre-tool de SARA, el modelo no necesita "conocer" la normativa
+de memoria: recibe los datos ya estructurados en el contexto (tools + RAG) y solo
+necesita redactar coherentemente. Un modelo de 8B es suficiente para esta tarea.
+
+| Modelo | TPD gratuito | Conv/día (~2,500 tok/conv) | Velocidad |
+|---|---|---|---|
+| llama-3.1-8b-instant (recomendado) | 500K | ~200 | <1s |
+| llama-3.3-70b-versatile | 100K | ~40 | ~1-2s |
+
+> Si se requiere mayor calidad de razonamiento jurídico (ej. preguntas sin contexto
+> RAG), se puede cambiar a `llama-3.3-70b-versatile` con plan de pago.
 
 ### 5.3 Flujo de datos con Groq
 
