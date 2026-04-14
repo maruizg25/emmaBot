@@ -116,6 +116,13 @@ async def _llamar_ollama(
         payload["tools"] = tools
 
     response = await client.post(f"{OLLAMA_URL}/api/chat", json=payload)
+
+    # Modelos pequeños (ej. gemma3:1b) no soportan tool calling → reintentar sin tools
+    if response.status_code == 400 and tools:
+        logger.warning(f"Modelo {OLLAMA_MODEL} no soporta tools, reintentando sin ellas")
+        payload.pop("tools")
+        response = await client.post(f"{OLLAMA_URL}/api/chat", json=payload)
+
     response.raise_for_status()
     return response.json()
 
