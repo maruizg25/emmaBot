@@ -166,12 +166,20 @@ excelente comprensión del español y razonamiento jurídico.
 
 ### 6.1 Plan gratuito de Groq (situación actual)
 
-| Límite | Valor | Impacto |
+Modelo: **llama-3.3-70b-versatile**
+
+| Límite | Valor | Impacto práctico |
 |---|---|---|
-| Requests por minuto | 30 RPM | Hasta 30 usuarios simultáneos por minuto |
-| Tokens por minuto | 6,000 TPM | ~2-3 conversaciones simultáneas |
-| Requests por día | 14,400 | ~480 conversaciones completas/día |
-| **Costo mensual** | **$0** | Gratuito indefinidamente dentro de límites |
+| Requests por minuto (RPM) | 30 | Hasta 30 mensajes por minuto |
+| Tokens por minuto (TPM) | 12,000 | ~4-5 mensajes simultáneos |
+| Requests por día (RPD) | 1,000 | ~333 mensajes/día |
+| **Tokens por día (TPD)** | **100,000** | **~40 conversaciones completas/día** |
+| **Costo mensual** | **$0** | Solo para piloto/pruebas |
+
+> **Advertencia:** El límite real que aplica primero es el de **tokens por día (100K)**.
+> Cada mensaje consume ~2,500 tokens (entrada + salida), lo que limita a
+> aproximadamente **40 conversaciones completas diarias** en el plan gratuito.
+> Para uso en producción con múltiples usuarios es necesario el plan de pago.
 
 ### 6.2 Plan de pago (si el uso supera el gratuito)
 
