@@ -118,7 +118,17 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
         logger.info(f"SercoBot respondió a {telefono} ({len(respuesta)} chars)")
 
     except Exception as e:
-        logger.error(f"Error procesando mensaje de {telefono}: {e}")
+        import traceback
+        logger.error(f"Error procesando mensaje de {telefono}: {e}\n{traceback.format_exc()}")
+        try:
+            await proveedor.enviar_mensaje(
+                telefono,
+                "Tuve un problema técnico respondiendo tu consulta 😔 "
+                "Por favor intenta de nuevo en un momento, o consulta en "
+                "compraspublicas.gob.ec o llama al 1800-737267."
+            )
+        except Exception:
+            pass
 
 
 @app.post("/webhook")

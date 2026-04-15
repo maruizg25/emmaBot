@@ -609,15 +609,56 @@ docker compose logs -f agent
 
 ---
 
-## 14. Estado actual del sistema (9 Abril 2026 rev. 2)
+## 14. Estado actual del sistema (15 Abril 2026 rev. 3)
 
-### Infraestructura PostgreSQL (Multipass)
+### Infraestructura de red — Producción (habilitada 15 Abril 2026)
 
-| VM | IP | Puerto | Rol |
-|---|---|---|---|
-| pg-db | 192.168.2.2 | 5432 | PostgreSQL 16 + pgvector 0.8.2 — base sercop_db |
-| pg-bouncer | 192.168.2.3 | 6432 | Connection pooler |
-| pg-pool | 192.168.2.4 | 9999 | Pooler avanzado |
+Publicación institucional vía Citrix/NAT — sin Cloudflare Tunnel.
+
+```
+sercobot.sercop.gob.ec
+        ↓ DNS interno (Rolando Coello — 20:16)
+  192.168.100.131  (red 100 — asignada por Rolando Coello)
+        ↓ NAT firewall perimetral (Franklin Arias — 19:48)
+  157.100.62.125   (IP pública — puertos 443 y 80)
+        ↓ Citrix reverse proxy
+  192.168.9.230:8000  (servidor app — FastAPI)
+```
+
+| Componente | Detalle |
+|---|---|
+| Dominio público | `sercobot.sercop.gob.ec` |
+| IP pública | 157.100.62.125 |
+| IP interna DMZ (red 100) | 192.168.100.131 / máscara 255.255.255.0 / GW 192.168.100.35 |
+| Servidor de aplicación | 192.168.9.230 — puerto 8000 |
+| Publicación | Citrix — NAT perimetral (HTTPS 443 + HTTP 80) |
+| Autorización | Hugo Yépez — 2026-04-15 17:34 |
+
+### Reglas de firewall habilitadas (Franklin Arias — 2026-04-15)
+
+Desde servidor 192.168.9.230 hacia internet — habilitadas en firewall perimetral:
+
+| Servicio | Host | Puerto |
+|---|---|---|
+| Groq API | api.groq.com | 443 |
+| Meta WhatsApp | graph.facebook.com | 443 |
+| Cloudflare Tunnel | *.cloudflare.com | 443 |
+| GitHub | github.com | 443 |
+| GitHub objetos | objects.githubusercontent.com | 443 |
+| PyPI | pypi.org | 443 |
+| PyPI archivos | files.pythonhosted.org | 443 |
+| Ollama | ollama.com | 443 |
+| HuggingFace | huggingface.co | 443 |
+| HuggingFace CDN | cdn-lfs.huggingface.co | 443 |
+
+### Infraestructura PostgreSQL
+
+| Componente | Detalle |
+|---|---|
+| Instancia activa | PostgreSQL 16 + pgvector 0.8.2 |
+| IP | 192.168.2.2 (VM Multipass — pg-db) |
+| Base de datos | `sercop_db` — puerto 5432 |
+| Nota | pg-bouncer (192.168.2.3) y pg-pool (192.168.2.4) creados pero NO activos en producción |
 
 DBeaver conectado a sercop_db para monitoreo visual.
 
@@ -704,8 +745,8 @@ source /Users/mauricioruiz/emmabot/.venv/bin/activate
 cd /Users/mauricioruiz/emmabot/whatsapp-agentkit
 uvicorn agent.main:app --host 0.0.0.0 --port 8000
 
-# 3. Verificar ngrok activo
-curl http://localhost:4040/api/tunnels
+# 3. Verificar dominio público
+curl https://sercobot.sercop.gob.ec/
 
 # Agregar documentos nuevos al RAG
 python scripts/scraper_biblioteca.py      # descarga + ingesta desde portal SERCOP
