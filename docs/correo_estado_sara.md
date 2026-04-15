@@ -1,18 +1,18 @@
-# Correo — Estado de Pruebas SARA y Próximos Pasos
+# Correo — Estado de Pruebas SercoBot y Próximos Pasos
 
 ---
 
 **Para:** Ing. Paúl Vásquez Méndez
 **Cargo:** Director de Infraestructura y Operaciones — Coordinación TIC, SERCOP
 **De:** Jonathan Ruiz
-**Asunto:** Estado de avance — Sistema SARA: pruebas completadas en servidor, pendiente validación WhatsApp Business
+**Asunto:** Estado de avance — Sistema SercoBot: pruebas completadas en servidor, pendiente validación WhatsApp Business
 **Fecha:** Abril 2026
 
 ---
 
 Estimado Ing. Vásquez Méndez,
 
-Me permito informarle el estado actual del sistema SARA y los pasos pendientes
+Me permito informarle el estado actual del sistema SercoBot y los pasos pendientes
 para su puesta en producción con WhatsApp Business.
 
 ---
@@ -45,7 +45,7 @@ recepción de mensajes de WhatsApp. Para completarla se requiere:
 
 1. Que el servidor tenga acceso saliente a los dominios de Meta y Cloudflare
    (detallados en el informe técnico adjunto).
-2. Disponer de un subdominio institucional (`sara.sercop.gob.ec`) o en su defecto
+2. Disponer de un subdominio institucional (`sercobot.sercop.gob.ec`) o en su defecto
    autorización para registrar un dominio externo para este fin.
 3. Acceso al panel de **Meta WhatsApp Business Manager** para registrar el webhook.
 
@@ -59,7 +59,7 @@ correspondientes para:
 | # | Acción | Equipo responsable |
 |---|---|---|
 | 1 | Apertura de reglas de firewall / Citrix (listado adjunto) | Equipo de Seguridad y Redes |
-| 2 | Creación del registro DNS `sara.sercop.gob.ec` | Equipo de DNS |
+| 2 | Creación del registro DNS `sercobot.sercop.gob.ec` | Equipo de DNS |
 | 3 | Acceso al panel Meta WhatsApp Business Manager | Coordinación TIC / quien administre la cuenta |
 
 El detalle técnico completo de cada solicitud — dominios, puertos, protocolos

@@ -1,7 +1,7 @@
 # agent/brain.py — Cerebro del agente SERCOP con RAG + Pre-tool execution
 
 """
-Pipeline de generación de respuestas de SARA:
+Pipeline de generación de respuestas de SercoBot:
 
   1. Clasificación del mensaje (saludo / consulta)
   2. Pre-tool execution — Python detecta intención y ejecuta tools sin LLM
@@ -37,7 +37,7 @@ LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama").lower()
 OLLAMA_URL    = os.getenv("OLLAMA_URL",   "http://localhost:11434")
 OLLAMA_MODEL  = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 
-# Ventana de contexto: el system prompt de SARA tiene ~3500 tokens solo.
+# Ventana de contexto: el system prompt de SercoBot tiene ~3500 tokens solo.
 # 4096 lo truncaba silenciosamente. 8192 es el mínimo real con RAG + historial corto.
 OLLAMA_NUM_CTX    = int(os.getenv("OLLAMA_NUM_CTX",    "8192"))
 OLLAMA_MAX_TOKENS = int(os.getenv("OLLAMA_MAX_TOKENS", "400"))
@@ -66,7 +66,7 @@ def _cargar_config() -> dict:
 def _system_prompt() -> str:
     return _cargar_config().get(
         "system_prompt",
-        "Eres SARA, asistente virtual del SERCOP Ecuador. "
+        "Eres SercoBot, asistente virtual del SERCOP Ecuador. "
         "Respondes preguntas sobre contratación pública citando siempre la normativa vigente.",
     )
 

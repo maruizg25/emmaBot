@@ -1,6 +1,6 @@
-# SARA — Guía de Instalación en Servidor Linux (RHEL 9)
+# SercoBot — Guía de Instalación en Servidor Linux (RHEL 9)
 
-> Guía completa para desplegar SARA en producción.
+> Guía completa para desplegar SercoBot en producción.
 > Sistema operativo: Red Hat Enterprise Linux 9.3
 > Servidor: DC-VS-APP&BDD-CHATBOT-PROD
 
@@ -10,7 +10,7 @@
 
 - [ ] Acceso SSH al servidor (puerto 22 desde tu equipo)
 - [ ] Salida a internet del servidor hacia `ollama.com`, `pypi.org`, `github.com`, `huggingface.co`
-- [ ] Subdominio con SSL, ej: `sara.sercop.gob.ec` (HTTPS requerido por WhatsApp/Meta)
+- [ ] Subdominio con SSL, ej: `sercobot.sercop.gob.ec` (HTTPS requerido por WhatsApp/Meta)
 - [ ] Puerto 443 abierto hacia internet (para recibir mensajes de WhatsApp)
 
 ---
@@ -148,8 +148,8 @@ ollama list
 
 ```bash
 cd /opt
-git clone https://github.com/Hainrixz/whatsapp-agentkit.git sara
-cd /opt/sara
+git clone https://github.com/Hainrixz/whatsapp-agentkit.git sercobot
+cd /opt/sercobot
 
 # Crear entorno virtual
 python3.11 -m venv .venv
@@ -165,8 +165,8 @@ pip install -r requirements.txt
 ## PASO 6 — Configurar variables de entorno
 
 ```bash
-cp /opt/sara/.env.example /opt/sara/.env
-nano /opt/sara/.env
+cp /opt/sercobot/.env.example /opt/sercobot/.env
+nano /opt/sercobot/.env
 ```
 
 Valores a completar:
@@ -202,8 +202,8 @@ psql -U sercop_admin -d sercop_db -c "SELECT COUNT(*) FROM chunks;"
 ## PASO 8 — Probar la aplicación
 
 ```bash
-source /opt/sara/.venv/bin/activate
-cd /opt/sara
+source /opt/sercobot/.venv/bin/activate
+cd /opt/sercobot
 uvicorn agent.main:app --host 0.0.0.0 --port 8000
 
 # En otra terminal — probar que responde
@@ -216,22 +216,22 @@ curl http://localhost:8000/
 
 ```bash
 # Copiar certificado SSL institucional a:
-# /etc/ssl/certs/sara.crt
-# /etc/ssl/private/sara.key
+# /etc/ssl/certs/sercobot.crt
+# /etc/ssl/private/sercobot.key
 
-cat > /etc/nginx/conf.d/sara.conf << 'NGINX'
+cat > /etc/nginx/conf.d/sercobot.conf << 'NGINX'
 server {
     listen 80;
-    server_name sara.sercop.gob.ec;
+    server_name sercobot.sercop.gob.ec;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name sara.sercop.gob.ec;
+    server_name sercobot.sercop.gob.ec;
 
-    ssl_certificate     /etc/ssl/certs/sara.crt;
-    ssl_certificate_key /etc/ssl/private/sara.key;
+    ssl_certificate     /etc/ssl/certs/sercobot.crt;
+    ssl_certificate_key /etc/ssl/private/sercobot.key;
     ssl_protocols       TLSv1.2 TLSv1.3;
 
     location / {
@@ -252,17 +252,17 @@ nginx -t && systemctl enable --now nginx
 ## PASO 10 — Servicios systemd (arranque automático)
 
 ```bash
-cat > /etc/systemd/system/sara.service << 'SERVICE'
+cat > /etc/systemd/system/sercobot.service << 'SERVICE'
 [Unit]
-Description=SARA — Asistente SERCOP
+Description=SercoBot — Asistente SERCOP
 After=network.target ollama.service postgresql-16.service
 
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/sara
-EnvironmentFile=/opt/sara/.env
-ExecStart=/opt/sara/.venv/bin/uvicorn agent.main:app \
+WorkingDirectory=/opt/sercobot
+EnvironmentFile=/opt/sercobot/.env
+ExecStart=/opt/sercobot/.venv/bin/uvicorn agent.main:app \
     --host 127.0.0.1 --port 8000 --workers 2
 Restart=always
 RestartSec=5
@@ -295,7 +295,7 @@ firewall-cmd --list-all
 
 En el panel de Meta for Developers:
 
-- **Webhook URL:** `https://sara.sercop.gob.ec/webhook`
+- **Webhook URL:** `https://sercobot.sercop.gob.ec/webhook`
 - **Verify Token:** el valor de `META_VERIFY_TOKEN` en `.env`
 
 ---
@@ -307,7 +307,7 @@ En el panel de Meta for Developers:
 systemctl status ollama sara nginx postgresql-16
 
 # Test de respuesta HTTPS
-curl https://sara.sercop.gob.ec/
+curl https://sercobot.sercop.gob.ec/
 
 # Logs en tiempo real
 journalctl -u sara -f
@@ -326,11 +326,11 @@ journalctl -u sara --since "1 hour ago"
 systemctl restart sara
 
 # Actualizar código
-cd /opt/sara && git pull && systemctl restart sara
+cd /opt/sercobot && git pull && systemctl restart sara
 
 # Agregar documentos nuevos al RAG
-source /opt/sara/.venv/bin/activate
-cd /opt/sara
+source /opt/sercobot/.venv/bin/activate
+cd /opt/sercobot
 python scripts/scraper_biblioteca.py
 
 # Backup de la base de datos
@@ -343,7 +343,7 @@ sudo -u postgres pg_dump sercop_db -Fc -f /tmp/backup_$(date +%Y%m%d).dump
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
-| `sara.service` no inicia | `.env` mal configurado | `journalctl -u sara -n 50` |
+| `sercobot.service` no inicia | `.env` mal configurado | `journalctl -u sara -n 50` |
 | Ollama no responde | Servicio caído | `systemctl restart ollama` |
 | Error 502 en nginx | App no corre en 8000 | `systemctl status sara` |
 | Embeddings lentos | Modelo no cargado aún | Esperar 30s tras reinicio de Ollama |

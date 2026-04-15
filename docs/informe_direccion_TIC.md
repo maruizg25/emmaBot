@@ -1,19 +1,19 @@
 # Informe Técnico y Solicitud de Infraestructura
-## Sistema SARA — Asistente Virtual de Contratación Pública
+## Sistema SercoBot — Asistente Virtual de Contratación Pública
 
 **Para:** Ing. Paúl Vásquez Méndez
 **Cargo:** Director de Infraestructura y Operaciones
 **Unidad:** Coordinación de Tecnología de la Información y Comunicaciones — SERCOP
 **Fecha:** Abril 2026
-**Asunto:** Estado del sistema SARA y requerimientos de infraestructura para puesta en producción
+**Asunto:** Estado del sistema SercoBot y requerimientos de infraestructura para puesta en producción
 
 ---
 
 ## 1. Resumen Ejecutivo
 
-El sistema **SARA** (Sistema de Asesoría y Respuesta Automatizada) ha sido
+El sistema **SercoBot** (Sistema de Asesoría y Respuesta Automatizada) ha sido
 desarrollado e instalado exitosamente en el servidor de producción del SERCOP.
-SARA es un asistente virtual de WhatsApp que responde preguntas ciudadanas sobre
+SercoBot es un asistente virtual de WhatsApp que responde preguntas ciudadanas sobre
 normativa de contratación pública, citando artículos de la LOSNCP, el Reglamento
 General y resoluciones vigentes.
 
@@ -90,14 +90,14 @@ El sistema tiene indexados **3,059 fragmentos** de 17 documentos oficiales:
           ▼
  ┌───────────────────┐
  │  Cloudflare CDN   │  ← Termina el TLS / HTTPS
- │  sara.sercop.gob.ec│    Certificado automático
+ │  sercobot.sercop.gob.ec│    Certificado automático
  └────────┬──────────┘
           │ Túnel cifrado (saliente desde servidor)
           ▼
  ┌─────────────────────────────────────────┐
  │     SERVIDOR app-bdd-chatbot — SERCOP   │
  │                                         │
- │  SARA (FastAPI)      → procesa consulta │
+ │  SercoBot (FastAPI)      → procesa consulta │
  │  Base normativa RAG  → busca normativa  │
  │  Ollama (IA local)   → embeddings       │
  │  PostgreSQL          → historial        │
@@ -126,7 +126,7 @@ Crear el siguiente registro en el servidor DNS institucional del SERCOP:
 |---|---|
 | **Tipo de registro** | CNAME |
 | **Nombre** | `sara` |
-| **Dominio resultante** | `sara.sercop.gob.ec` |
+| **Dominio resultante** | `sercobot.sercop.gob.ec` |
 | **Destino (apunta a)** | `<ID_TUNEL>.cfargotunnel.com` *(TIC entrega el ID)* |
 | **TTL** | 300 segundos |
 
@@ -135,7 +135,7 @@ Crear el siguiente registro en el servidor DNS institucional del SERCOP:
 > el comando de creación del túnel.
 
 **Certificado HTTPS:** Cloudflare emite y renueva automáticamente el certificado
-SSL/TLS para `sara.sercop.gob.ec`. El equipo de redes no requiere gestionar
+SSL/TLS para `sercobot.sercop.gob.ec`. El equipo de redes no requiere gestionar
 ningún certificado.
 
 ---
@@ -195,7 +195,7 @@ ningún certificado.
 | Groq API — plan gratuito (hasta ~200 conv/día) | **$0** | Mensual |
 | Groq API — plan de pago (si supera el gratuito) | **$3 — $56** | Mensual según uso |
 | Cloudflare Tunnel | **$0** | Gratuito |
-| Dominio `sara.sercop.gob.ec` | **$0** | Usa dominio institucional existente |
+| Dominio `sercobot.sercop.gob.ec` | **$0** | Usa dominio institucional existente |
 | Infraestructura del servidor | Ya existente | — |
 
 **Costo operativo estimado para el primer año: $0 — $56/mes** según volumen de uso,
@@ -210,11 +210,11 @@ Una vez aprobada y ejecutada la habilitación de infraestructura:
 | Paso | Responsable | Acción |
 |---|---|---|
 | 1 | **Equipo Firewall** | Aplicar reglas de firewall (sección 4.2) |
-| 2 | **Coordinación TIC** | Crear túnel: `cloudflared tunnel create sara` y entregar ID al equipo DNS |
-| 3 | **Equipo DNS** | Crear registro CNAME `sara.sercop.gob.ec` con el ID entregado |
-| 4 | **Coordinación TIC** | Verificar HTTPS: `curl https://sara.sercop.gob.ec/` |
-| 5 | **Coordinación TIC** | Registrar webhook en Meta: `https://sara.sercop.gob.ec/webhook` |
-| 6 | **Coordinación TIC** | Activar SARA como servicio del sistema (systemd) |
+| 2 | **Coordinación TIC** | Crear túnel: `cloudflared tunnel create sercobot` y entregar ID al equipo DNS |
+| 3 | **Equipo DNS** | Crear registro CNAME `sercobot.sercop.gob.ec` con el ID entregado |
+| 4 | **Coordinación TIC** | Verificar HTTPS: `curl https://sercobot.sercop.gob.ec/` |
+| 5 | **Coordinación TIC** | Registrar webhook en Meta: `https://sercobot.sercop.gob.ec/webhook` |
+| 6 | **Coordinación TIC** | Activar SercoBot como servicio del sistema (systemd) |
 | 7 | **Coordinación TIC** | Prueba funcional con número WhatsApp Business |
 
 **Tiempo estimado de implementación:** 1 día hábil una vez habilitada la infraestructura.
@@ -227,7 +227,7 @@ Para confirmar que las reglas de firewall están correctamente aplicadas,
 ejecutar el script de diagnóstico incluido en el sistema:
 
 ```bash
-cd /home/jonathan.ruiz/sara-sercop
+cd /home/jonathan.ruiz/sercobot-sercop
 python scripts/detectar_firewall.py --salida reporte_verificacion.txt
 ```
 
@@ -236,4 +236,4 @@ Genera un reporte con estado ✅/❌ por cada endpoint requerido.
 ---
 
 *Documento generado por la Coordinación de TIC — SERCOP Ecuador*
-*Sistema SARA v2.0 — Abril 2026*
+*Sistema SercoBot v2.0 — Abril 2026*

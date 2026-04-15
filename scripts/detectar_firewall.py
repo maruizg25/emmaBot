@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-detectar_firewall.py — Diagnóstico de conectividad para SARA Bot (SERCOP)
+detectar_firewall.py — Diagnóstico de conectividad para SercoBot (SERCOP)
 
 Prueba todas las conexiones de red que necesita el sistema y genera
 un reporte listo para solicitar habilitación al equipo de Seguridad/Redes.
@@ -97,7 +97,7 @@ PRUEBAS: list[Prueba] = [
         protocolo="HTTP",
         host="localhost",
         puerto=8000,
-        descripcion="Servidor principal de SARA — webhook WhatsApp",
+        descripcion="Servidor principal de SercoBot — webhook WhatsApp",
         critico=False,  # puede no estar corriendo al momento del diagnóstico
         url_https="http://localhost:8000/",
     ),
@@ -343,7 +343,7 @@ def imprimir_reporte(resultados: list[Resultado], sin_color: bool = False) -> st
     separador = "═" * 72
 
     lineas.append(f"\n{color(separador, AZUL, sin_color)}")
-    lineas.append(f"{color('  DIAGNÓSTICO DE FIREWALL — SARA Bot (SERCOP)', NEGRITA, sin_color)}")
+    lineas.append(f"{color('  DIAGNÓSTICO DE FIREWALL — SercoBot (SERCOP)', NEGRITA, sin_color)}")
     lineas.append(f"  Equipo: {hostname}   Fecha: {ahora}")
     lineas.append(f"{color(separador, AZUL, sin_color)}\n")
 
@@ -388,7 +388,7 @@ def imprimir_reporte(resultados: list[Resultado], sin_color: bool = False) -> st
     if bloqueados_todos:
         lineas.append(f"\n{color(separador, AZUL, sin_color)}")
         lineas.append(color("  SOLICITUD DE HABILITACIÓN DE FIREWALL", NEGRITA, sin_color))
-        lineas.append(f"  Sistema: SARA Bot — Asistente normativo SERCOP")
+        lineas.append(f"  Sistema: SercoBot — Asistente normativo SERCOP")
         lineas.append(f"  Equipo:  {hostname}")
         lineas.append(f"  Fecha:   {ahora}")
         lineas.append(f"{color(separador, AZUL, sin_color)}\n")
@@ -420,7 +420,7 @@ def exportar_json(resultados: list[Resultado]) -> dict:
     return {
         "equipo": socket.gethostname(),
         "fecha": datetime.now().isoformat(),
-        "sistema": "SARA Bot — SERCOP",
+        "sistema": "SercoBot — SERCOP",
         "pruebas": [
             {
                 "categoria": r.prueba.categoria,
@@ -453,7 +453,7 @@ def exportar_json(resultados: list[Resultado]) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Detecta restricciones de firewall para SARA Bot (SERCOP)"
+        description="Detecta restricciones de firewall para SercoBot (SERCOP)"
     )
     parser.add_argument(
         "--salida", "-o",

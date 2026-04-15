@@ -52,15 +52,15 @@ def _verificar_admin(request: Request):
 async def lifespan(app: FastAPI):
     await inicializar_db()
     logger.info("Base de datos inicializada")
-    logger.info(f"Agente SERCOP — SARA corriendo en puerto {PORT}")
+    logger.info(f"Agente SERCOP — SercoBot corriendo en puerto {PORT}")
     logger.info(f"Proveedor WhatsApp: {proveedor.__class__.__name__}")
 
     yield
 
 
 app = FastAPI(
-    title="SARA — Asistente Virtual SERCOP",
-    description="Sistema de Asesoría y Respuesta Automatizada del SERCOP Ecuador",
+    title="SercoBot — Asistente Virtual SERCOP",
+    description="SercoBot — Asistente Virtual de Contratación Pública del SERCOP Ecuador",
     version="2.0.0",
     lifespan=lifespan,
 )
@@ -72,7 +72,7 @@ app = FastAPI(
 async def health_check():
     return {
         "status": "ok",
-        "agente": "SARA",
+        "agente": "SercoBot",
         "organizacion": "SERCOP Ecuador",
         "version": "2.0.0",
     }
@@ -115,7 +115,7 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
         await guardar_mensaje(telefono, "assistant", respuesta)
         await proveedor.enviar_mensaje(telefono, respuesta)
 
-        logger.info(f"SARA respondió a {telefono} ({len(respuesta)} chars)")
+        logger.info(f"SercoBot respondió a {telefono} ({len(respuesta)} chars)")
 
     except Exception as e:
         logger.error(f"Error procesando mensaje de {telefono}: {e}")

@@ -1,4 +1,4 @@
-# Informe Técnico — SARA: Asistente Virtual de Contratación Pública
+# Informe Técnico — SercoBot: Asistente Virtual de Contratación Pública
 **SERCOP — Coordinación de Tecnología de la Información y Comunicaciones**
 Fecha: Abril 2026 | Versión: 1.0
 
@@ -6,7 +6,7 @@ Fecha: Abril 2026 | Versión: 1.0
 
 ## 1. Resumen Ejecutivo
 
-SARA (Sistema de Asesoría y Respuesta Automatizada) es un asistente virtual de WhatsApp
+SercoBot (Sistema de Asesoría y Respuesta Automatizada) es un asistente virtual de WhatsApp
 que responde preguntas sobre normativa de contratación pública ecuatoriana, citando
 artículos de la LOSNCP, el Reglamento General y resoluciones vigentes del SERCOP.
 
@@ -34,7 +34,7 @@ infraestructura local del SERCOP.
 
 | Servicio | Puerto | Descripción |
 |---|---|---|
-| SARA (FastAPI + Uvicorn) | 8000 | Servidor principal del bot |
+| SercoBot (FastAPI + Uvicorn) | 8000 | Servidor principal del bot |
 | Ollama | 11434 | Motor LLM local (CPU) |
 | PostgreSQL | 5432 | Base de datos conversaciones + RAG |
 | nomic-embed-text | — | Modelo de embeddings (vía Ollama) |
@@ -140,7 +140,7 @@ velocidades muy superiores a GPU convencionales.
 ### 5.2 Modelo recomendado para plan gratuito
 
 **Llama 3.1 8B Instant** — modelo de Meta optimizado para velocidad.
-Con la arquitectura pre-tool de SARA, el modelo no necesita "conocer" la normativa
+Con la arquitectura pre-tool de SercoBot, el modelo no necesita "conocer" la normativa
 de memoria: recibe los datos ya estructurados en el contexto (tools + RAG) y solo
 necesita redactar coherentemente. Un modelo de 8B es suficiente para esta tarea.
 
@@ -197,7 +197,7 @@ Precio Groq para **Llama 3.3 70B**: $0.59 / millón tokens entrada · $0.79 / mi
 
 Cada mensaje consume aproximadamente:
 - **Entrada:** ~2,100 tokens (system prompt + RAG + historial + pregunta)
-- **Salida:** ~400 tokens (respuesta de SARA)
+- **Salida:** ~400 tokens (respuesta de SercoBot)
 
 | Escenario | Mensajes/día | Costo input/mes | Costo output/mes | **Total/mes** |
 |---|---|---|---|---|

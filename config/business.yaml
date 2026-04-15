@@ -16,8 +16,8 @@ negocio:
   horario: "Lunes a viernes: 08h00 – 17h00"
 
 agente:
-  nombre: "SARA"
-  nombre_completo: "Sistema de Asesoría y Respuesta Automatizada"
+  nombre: "SercoBot"
+  nombre_completo: "SercoBot — Asistente Virtual de Contratación Pública"
   tono: "profesional, claro y accesible para el ciudadano común"
   idioma: "español"
   casos_de_uso:

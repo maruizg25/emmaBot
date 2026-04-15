@@ -1,4 +1,4 @@
-# Solicitud de Infraestructura de Red — Sistema SARA
+# Solicitud de Infraestructura de Red — Sistema SercoBot
 ## Asistente Virtual de Contratación Pública — SERCOP
 **Dirigido a:** Equipo de Redes, DNS y Seguridad Informática
 **Solicitante:** Coordinación de Tecnología de la Información y Comunicaciones
@@ -9,7 +9,7 @@
 
 ## 1. Contexto
 
-La Coordinación TIC del SERCOP ha desarrollado **SARA** (Sistema de Asesoría y
+La Coordinación TIC del SERCOP ha desarrollado **SercoBot** (Sistema de Asesoría y
 Respuesta Automatizada), un asistente virtual de WhatsApp que responde preguntas
 sobre normativa de contratación pública. El sistema ya está instalado y probado
 en el servidor `app-bdd-chatbot`.
@@ -31,20 +31,20 @@ Crear un registro **CNAME** en el servidor DNS del SERCOP:
 |---|---|
 | **Tipo** | CNAME |
 | **Nombre (subdominio)** | `sara` |
-| **Dominio completo resultante** | `sara.sercop.gob.ec` |
+| **Dominio completo resultante** | `sercobot.sercop.gob.ec` |
 | **Apunta a (destino)** | `<ID_TUNEL>.cfargotunnel.com` |
 | **TTL** | 300 segundos (5 minutos) |
 | **Proxy Cloudflare** | Sí (nube naranja en Cloudflare) |
 
 > **Nota:** El valor `<ID_TUNEL>` será proporcionado por la Coordinación TIC
 > una vez que se cree el túnel en Cloudflare. El proceso es:
-> 1. TIC ejecuta `cloudflared tunnel create sara` en el servidor
+> 1. TIC ejecuta `cloudflared tunnel create sercobot` en el servidor
 > 2. Cloudflare genera un ID único (ej: `a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)
 > 3. TIC entrega ese ID al equipo de DNS para completar el CNAME
 
 ### Por qué este subdominio
 
-`sara.sercop.gob.ec` es la URL pública que se configurará como webhook en
+`sercobot.sercop.gob.ec` es la URL pública que se configurará como webhook en
 Meta WhatsApp Business. Esta URL debe ser estable y con HTTPS válido para
 que Meta la acepte.
 
@@ -52,7 +52,7 @@ que Meta la acepte.
 
 **No se requiere gestión manual del certificado.** Cloudflare emite y renueva
 automáticamente un certificado SSL/TLS gratuito (Cloudflare CA o Let's Encrypt)
-para `sara.sercop.gob.ec` una vez que el CNAME esté activo y apuntando al túnel.
+para `sercobot.sercop.gob.ec` una vez que el CNAME esté activo y apuntando al túnel.
 El equipo de redes no necesita instalar ni renovar ningún certificado.
 
 ---
@@ -127,7 +127,7 @@ que establece conexiones salientes desde el servidor.
                        │
          ┌─────────────▼──────────────┐
          │      Cloudflare CDN        │
-         │  sara.sercop.gob.ec :443   │
+         │  sercobot.sercop.gob.ec :443   │
          │  (TLS terminado aquí)      │
          └─────────────┬──────────────┘
                        │ Túnel cifrado
@@ -135,7 +135,7 @@ que establece conexiones salientes desde el servidor.
          │   SERVIDOR app-bdd-chatbot │  ← Sin puertos de entrada abiertos
          │                            │
          │  cloudflared (túnel) :7844 │ ──SALIENTE──▶ Cloudflare
-         │  SARA FastAPI        :8000 │ ──SALIENTE──▶ api.groq.com :443
+         │  SercoBot FastAPI        :8000 │ ──SALIENTE──▶ api.groq.com :443
          │  Ollama LLM          :11434│   (local)
          │  PostgreSQL          :5432 │   (local)
          └────────────────────────────┘
@@ -163,7 +163,7 @@ que establece conexiones salientes desde el servidor.
 Una vez aplicadas las reglas, ejecutar desde el servidor para confirmar conectividad:
 
 ```bash
-cd /home/jonathan.ruiz/sara-sercop
+cd /home/jonathan.ruiz/sercobot-sercop
 python scripts/detectar_firewall.py --salida reporte_post_firewall.txt
 ```
 
@@ -181,26 +181,26 @@ Paso 1 — Equipo de Redes/Firewall
   └─ Confirmar con: python scripts/detectar_firewall.py
 
 Paso 2 — Coordinación TIC
-  └─ Ejecutar: cloudflared tunnel create sara
+  └─ Ejecutar: cloudflared tunnel create sercobot
   └─ Obtener el ID del túnel generado
   └─ Entregar ID al equipo de DNS
 
 Paso 3 — Equipo de DNS
-  └─ Crear registro CNAME: sara.sercop.gob.ec → <ID>.cfargotunnel.com
+  └─ Crear registro CNAME: sercobot.sercop.gob.ec → <ID>.cfargotunnel.com
   └─ TTL: 300 segundos
 
 Paso 4 — Coordinación TIC
   └─ Configurar el túnel para apuntar a localhost:8000
-  └─ Verificar HTTPS: curl https://sara.sercop.gob.ec/
-  └─ Registrar webhook en Meta: https://sara.sercop.gob.ec/webhook
-  └─ Iniciar SARA en producción
+  └─ Verificar HTTPS: curl https://sercobot.sercop.gob.ec/
+  └─ Registrar webhook en Meta: https://sercobot.sercop.gob.ec/webhook
+  └─ Iniciar SercoBot en producción
 ```
 
 ---
 
 ## 9. Contacto
 
-**Sistema:** SARA v2.0 — Asistente Virtual de Contratación Pública
+**Sistema:** SercoBot v2.0 — Asistente Virtual de Contratación Pública
 **Servidor:** `app-bdd-chatbot` (Linux RHEL — infraestructura interna SERCOP)
 **Responsable técnico:** Coordinación de TIC — SERCOP Ecuador
 **Director TIC:** Paúl Vásquez Méndez

@@ -1,5 +1,5 @@
 # Solicitud de Apertura de Reglas de Firewall / Citrix
-## Sistema SARA — Asistente Virtual de Contratación Pública
+## Sistema SercoBot — Asistente Virtual de Contratación Pública
 **SERCOP — Coordinación de Tecnología de la Información y Comunicaciones**
 Fecha: Abril 2026
 
@@ -7,7 +7,7 @@ Fecha: Abril 2026
 
 ## 1. Descripción del Sistema
 
-SARA es un asistente virtual de WhatsApp que responde preguntas sobre normativa
+SercoBot es un asistente virtual de WhatsApp que responde preguntas sobre normativa
 de contratación pública. El sistema corre en el servidor Linux de la Coordinación TIC
 y requiere conectividad saliente hacia los siguientes servicios externos.
 
@@ -117,7 +117,7 @@ Para verificar que las reglas están aplicadas correctamente, ejecutar
 en el servidor después de los cambios:
 
 ```bash
-cd /home/jonathan.ruiz/sara-sercop
+cd /home/jonathan.ruiz/sercobot-sercop
 python scripts/detectar_firewall.py --salida reporte_post_firewall.txt
 ```
 
@@ -140,5 +140,5 @@ El script prueba cada endpoint y genera un reporte de resultados.
 ## 7. Contacto Técnico
 
 **Responsable:** Coordinación de TIC — SERCOP Ecuador
-**Sistema:** SARA v2.0 — Asistente Virtual de Contratación Pública
+**Sistema:** SercoBot v2.0 — Asistente Virtual de Contratación Pública
 **Servidor:** `app-bdd-chatbot` (Linux RHEL)

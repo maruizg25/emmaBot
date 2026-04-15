@@ -17,7 +17,7 @@ contratación pública citando artículos y resoluciones fuente.
 
 ### Audiencia objetivo
 
-SARA atiende a **ciudadanos y proveedores del Estado** — no solo a funcionarios del SERCOP.
+SercoBot atiende a **ciudadanos y proveedores del Estado** — no solo a funcionarios del SERCOP.
 Las preguntas típicas vienen de personas que quieren participar en contratación pública,
 registrarse como proveedores, entender un proceso o saber qué documentos necesitan.
 
@@ -682,7 +682,7 @@ El agente decide solo cuándo usar cada tool vs. el RAG:
 
 **CRÍTICO:** `gemma4:26b` en Mac = 3-5 min/respuesta + crash del sistema. Configurado en `.env` como `OLLAMA_MODEL=gemma4:e2b`. No cambiar.
 
-### SARA — prompt v3 activo (`config/prompts.yaml`)
+### SercoBot — prompt v3 activo (`config/prompts.yaml`)
 
 - **Identidad:** asistente cálida, directa, "colega experta" — no robot institucional
 - **Audiencia:** ciudadanos y proveedores, no solo funcionarios
@@ -754,7 +754,7 @@ Luego de descargar, ejecutar: `python scripts/scraper_biblioteca.py` (ya detecta
 |---|---|---|
 | AgentKit base | ✅ Completo | FastAPI + WhatsApp + memoria |
 | RAG + pgvector | ✅ Completo | Pipeline híbrido + reranker + 3,059 chunks |
-| SARA prompt v3 | ✅ Completo | Anti-alucinación + menú + siglas + UX WhatsApp |
+| SercoBot prompt v3 | ✅ Completo | Anti-alucinación + menú + siglas + UX WhatsApp |
 | Tool calling nativo | ✅ Completo | 5 tools: montos PIE, tipos, plazos, RUP, fecha |
 | Base de conocimiento v2 | ✅ Completo | +7 documentos nuevos, incluyendo Reglamento oct 2025 |
 | Documentos faltantes | 🔧 En curso | 5 manuales SOCE + COA + PIE 2026 |

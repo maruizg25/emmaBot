@@ -1,4 +1,4 @@
-# DEPLOY.md — Guía completa de instalación SARA en servidor Linux
+# DEPLOY.md — Guía completa de instalación SercoBot en servidor Linux
 # Para alguien que nunca ha trabajado en Linux
 
 > Sigue cada paso en orden. No saltes pasos.
@@ -12,7 +12,7 @@ Antes de tocar el servidor, confirma que tienes:
 
 - [ ] La **IP del servidor** (ej: 192.168.1.100)
 - [ ] Usuario: `root` y la **contraseña** del servidor
-- [ ] Un **subdominio con SSL** asignado (ej: `sara.sercop.gob.ec`) — pedirlo al equipo de TI
+- [ ] Un **subdominio con SSL** asignado (ej: `sercobot.sercop.gob.ec`) — pedirlo al equipo de TI
 - [ ] Tu **token de Meta** (META_ACCESS_TOKEN) y **Phone Number ID**
 - [ ] Acceso SSH habilitado desde tu equipo al servidor (pedirlo a TI)
 
@@ -136,7 +136,7 @@ systemctl status postgresql-16
 
 Debe decir `Active: active (running)` en verde.
 
-**Crear el usuario y base de datos para SARA:**
+**Crear el usuario y base de datos para SercoBot:**
 
 ```bash
 sudo -u postgres psql << 'SQL'
@@ -252,12 +252,12 @@ Debes ver `nomic-embed-text` y `gemma4:e2b` en la lista.
 
 ---
 
-### PASO 5 — Clonar el código de SARA
+### PASO 5 — Clonar el código de SercoBot
 
 ```bash
 cd /opt
-git clone https://github.com/maruizg25/emmaBot.git sara
-cd /opt/sara
+git clone https://github.com/maruizg25/emmaBot.git sercobot
+cd /opt/sercobot
 ```
 
 Crear entorno Python e instalar dependencias:
@@ -276,8 +276,8 @@ Esto tarda 3-5 minutos. Al terminar no debe mostrar errores en rojo.
 ### PASO 6 — Configurar las variables del sistema
 
 ```bash
-cp /opt/sara/.env.example /opt/sara/.env
-nano /opt/sara/.env
+cp /opt/sercobot/.env.example /opt/sercobot/.env
+nano /opt/sercobot/.env
 ```
 
 Se abre un editor de texto. Modifica estos valores:
@@ -322,11 +322,11 @@ psql -U sercop_admin -h 127.0.0.1 -d sercop_db \
 
 ---
 
-### PASO 8 — Probar que SARA responde
+### PASO 8 — Probar que SercoBot responde
 
 ```bash
-source /opt/sara/.venv/bin/activate
-cd /opt/sara
+source /opt/sercobot/.venv/bin/activate
+cd /opt/sercobot
 uvicorn agent.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -351,26 +351,26 @@ Copia los archivos del certificado al servidor:
 
 ```bash
 # Desde tu Mac (te los habrá dado TI)
-scp certificado.crt root@IP_DEL_SERVIDOR:/etc/ssl/certs/sara.crt
-scp certificado.key root@IP_DEL_SERVIDOR:/etc/ssl/private/sara.key
+scp certificado.crt root@IP_DEL_SERVIDOR:/etc/ssl/certs/sercobot.crt
+scp certificado.key root@IP_DEL_SERVIDOR:/etc/ssl/private/sercobot.key
 ```
 
 Crear la configuración de nginx:
 
 ```bash
-cat > /etc/nginx/conf.d/sara.conf << 'NGINX'
+cat > /etc/nginx/conf.d/sercobot.conf << 'NGINX'
 server {
     listen 80;
-    server_name sara.sercop.gob.ec;
+    server_name sercobot.sercop.gob.ec;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name sara.sercop.gob.ec;
+    server_name sercobot.sercop.gob.ec;
 
-    ssl_certificate     /etc/ssl/certs/sara.crt;
-    ssl_certificate_key /etc/ssl/private/sara.key;
+    ssl_certificate     /etc/ssl/certs/sercobot.crt;
+    ssl_certificate_key /etc/ssl/private/sercobot.key;
     ssl_protocols       TLSv1.2 TLSv1.3;
 
     location / {
@@ -394,20 +394,20 @@ systemctl enable --now nginx
 
 ---
 
-### PASO 10 — Hacer que SARA arranque automáticamente
+### PASO 10 — Hacer que SercoBot arranque automáticamente
 
 ```bash
-cat > /etc/systemd/system/sara.service << 'EOF'
+cat > /etc/systemd/system/sercobot.service << 'EOF'
 [Unit]
-Description=SARA Asistente SERCOP
+Description=SercoBot Asistente SERCOP
 After=network.target ollama.service postgresql-16.service
 
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/sara
-EnvironmentFile=/opt/sara/.env
-ExecStart=/opt/sara/.venv/bin/uvicorn agent.main:app --host 127.0.0.1 --port 8000 --workers 2
+WorkingDirectory=/opt/sercobot
+EnvironmentFile=/opt/sercobot/.env
+ExecStart=/opt/sercobot/.venv/bin/uvicorn agent.main:app --host 127.0.0.1 --port 8000 --workers 2
 Restart=always
 RestartSec=5
 StandardOutput=journal
@@ -446,7 +446,7 @@ systemctl status ollama
 systemctl status postgresql-16
 
 # Probar HTTPS (reemplaza con tu dominio)
-curl https://sara.sercop.gob.ec/
+curl https://sercobot.sercop.gob.ec/
 ```
 
 ---
@@ -455,7 +455,7 @@ curl https://sara.sercop.gob.ec/
 
 En el panel de Meta for Developers → WhatsApp → Configuración:
 
-- **Webhook URL:** `https://sara.sercop.gob.ec/webhook`
+- **Webhook URL:** `https://sercobot.sercop.gob.ec/webhook`
 - **Verify Token:** `sercop-verify-prod`
 
 ---
@@ -466,11 +466,11 @@ En el panel de Meta for Developers → WhatsApp → Configuración:
 # Ver qué está pasando en tiempo real
 journalctl -u sara -f
 
-# Reiniciar SARA (tras cambios)
+# Reiniciar SercoBot (tras cambios)
 systemctl restart sara
 
 # Actualizar el código
-cd /opt/sara
+cd /opt/sercobot
 git pull
 systemctl restart sara
 
@@ -485,11 +485,11 @@ journalctl -u sara -n 50 --no-pager
 | Qué ves | Qué significa | Qué hacer |
 |---|---|---|
 | `Connection refused` al hacer SSH | SSH no habilitado | Pedir a TI que habiliten el puerto 22 |
-| `sara.service` en rojo | La app no arranca | Correr `journalctl -u sara -n 30` y mandar el error al desarrollador |
-| `502 Bad Gateway` en nginx | SARA no está corriendo | `systemctl restart sara` |
+| `sercobot.service` en rojo | La app no arranca | Correr `journalctl -u sara -n 30` y mandar el error al desarrollador |
+| `502 Bad Gateway` en nginx | SercoBot no está corriendo | `systemctl restart sara` |
 | Ollama no responde | Servicio caído | `systemctl restart ollama` y esperar 30 segundos |
 | Error de base de datos | PostgreSQL detenido o mal configurado | `systemctl status postgresql-16` |
-| `curl: SSL certificate problem` | Certificado mal instalado | Verificar rutas en `/etc/nginx/conf.d/sara.conf` |
+| `curl: SSL certificate problem` | Certificado mal instalado | Verificar rutas en `/etc/nginx/conf.d/sercobot.conf` |
 
 ---
 
@@ -513,19 +513,19 @@ scp -r ~/.ollama/models root@IP_DEL_SERVIDOR:/usr/share/ollama/.ollama/
 ```bash
 cd /Users/mauricioruiz/emmabot/whatsapp-agentkit
 source /Users/mauricioruiz/emmabot/.venv/bin/activate
-pip download -r requirements.txt -d /tmp/sara_wheels/
-tar czf /tmp/sara_wheels.tar.gz -C /tmp sara_wheels/
-scp /tmp/sara_wheels.tar.gz root@IP_DEL_SERVIDOR:/tmp/
+pip download -r requirements.txt -d /tmp/sercobot_wheels/
+tar czf /tmp/sercobot_wheels.tar.gz -C /tmp sercobot_wheels/
+scp /tmp/sercobot_wheels.tar.gz root@IP_DEL_SERVIDOR:/tmp/
 ```
 
 **En el servidor — instalar sin internet:**
 
 ```bash
-cd /opt/sara
+cd /opt/sercobot
 python3.11 -m venv .venv
 source .venv/bin/activate
-tar xzf /tmp/sara_wheels.tar.gz -C /tmp/
-pip install --no-index --find-links=/tmp/sara_wheels -r requirements.txt
+tar xzf /tmp/sercobot_wheels.tar.gz -C /tmp/
+pip install --no-index --find-links=/tmp/sercobot_wheels -r requirements.txt
 ```
 
 ---
@@ -534,7 +534,7 @@ pip install --no-index --find-links=/tmp/sara_wheels -r requirements.txt
 
 | Servicio | Puerto | Para qué |
 |---|---|---|
-| SARA (FastAPI) | 8000 interno | La aplicación — solo accesible desde nginx |
+| SercoBot (FastAPI) | 8000 interno | La aplicación — solo accesible desde nginx |
 | nginx | 443 externo | HTTPS público — recibe mensajes de WhatsApp |
 | PostgreSQL | 5432 interno | Base de datos — solo accesible localmente |
 | Ollama | 11434 interno | Motor de IA — solo accesible localmente |

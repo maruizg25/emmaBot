@@ -1,0 +1,67 @@
+
+════════════════════════════════════════════════════════════════════════
+  DIAGNÓSTICO DE FIREWALL — SercoBot (SERCOP)
+  Equipo: JRUI-L9790-UIO   Fecha: 2026-04-13 09:46:58
+════════════════════════════════════════════════════════════════════════
+
+  [LOCAL]
+  ❌ BLOQUEADO   Ollama (LLM + embeddings)                  localhost:11434         —
+            → El paquete llega pero el servicio no está activo en ese puerto
+  ❌ BLOQUEADO   PostgreSQL (base de conocimiento)          localhost:5432          —
+            → El paquete llega pero el servicio no está activo en ese puerto
+  ❌ BLOQUEADO   FastAPI (servidor del bot)                 localhost:8000          —
+            → El paquete llega pero el servicio no está activo en ese puerto
+
+  [META WHATSAPP]
+  ⚠️  PARCIAL     graph.facebook.com — HTTPS                 graph.facebook.com:443        28ms
+            → CONEXIÓN RECHAZADA: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+  ✅ ABIERTO     graph.facebook.com — DNS                   graph.facebook.com:443        20ms
+
+  [SERCOP PORTAL]
+  ✅ ABIERTO     compraspublicas.gob.ec                     portal.compraspublicas.gob.ec:443        27ms  HTTP 200
+  ✅ ABIERTO     sercop.gob.ec                              www.sercop.gob.ec:443        16ms  HTTP 200
+
+  [INTERNET]
+  ❌ BLOQUEADO   DNS público (8.8.8.8)                      8.8.8.8:53            —
+            → El firewall descarta silenciosamente los paquetes (DROP)
+  ✅ ABIERTO     PyPI (instalar dependencias Python)        pypi.org:443        41ms  HTTP 200
+  ✅ ABIERTO     Docker Hub (imágenes de contenedor)        registry-1.docker.io:443       110ms
+  ⚠️  PARCIAL     Hugging Face (modelos cross-encoder)       huggingface.co:443        58ms
+            → CONEXIÓN RECHAZADA: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+  ✅ ABIERTO     Ollama Download (modelos LLM)              registry.ollama.ai:443        22ms
+
+  ────────────────────────────────────────────────────────────────────
+  Resultado:  6 abiertos   6 bloqueados   de 12 pruebas
+
+  CRÍTICO — El sistema NO puede funcionar sin estas conexiones:
+    • Ollama (LLM + embeddings)  (localhost:11434)
+    • PostgreSQL (base de conocimiento)  (localhost:5432)
+    • graph.facebook.com — HTTPS  (graph.facebook.com:443)
+    • DNS público (8.8.8.8)  (8.8.8.8:53)
+
+════════════════════════════════════════════════════════════════════════
+  SOLICITUD DE HABILITACIÓN DE FIREWALL
+  Sistema: SercoBot — Asistente normativo SERCOP
+  Equipo:  JRUI-L9790-UIO
+  Fecha:   2026-04-13 09:46:58
+════════════════════════════════════════════════════════════════════════
+
+  Se solicita habilitar las siguientes reglas de firewall:
+  ────────────────────────────────────────────────────────────────────
+  #    DIRECCIÓN PROTOCOLO  DESTINO                                PUERTO  USO
+  ────────────────────────────────────────────────────────────────────
+  1    LOCAL    HTTP       localhost                              11434   Motor de IA local — gemma4:e2b y nomic-embed-text
+  2    LOCAL    TCP        localhost                              5432    Base de datos con pgvector — chunks normativos SERCOP
+  3    LOCAL    HTTP       localhost                              8000    Servidor principal de SercoBot — webhook WhatsApp
+  4    SALIDA   HTTPS      graph.facebook.com                     443     API de Meta para enviar/recibir mensajes de WhatsApp Business
+  5    SALIDA   TCP        8.8.8.8                                53      Resolución DNS externa — necesaria para Meta API y descarga de PDFs
+  6    SALIDA   HTTPS      huggingface.co                         443     Descarga del modelo de reranking — solo primera vez
+  ────────────────────────────────────────────────────────────────────
+
+  Justificación técnica:
+  Las conexiones marcadas SALIDA son necesarias para que el bot reciba
+  y envíe mensajes de WhatsApp Business a través de Meta Cloud API.
+  Las conexiones locales son entre servicios en este mismo equipo (Ollama,
+  PostgreSQL) y no salen de la red institucional.
+
+════════════════════════════════════════════════════════════════════════

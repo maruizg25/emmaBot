@@ -144,7 +144,7 @@ async def exportar_dataset_finetune(output_path: str = "knowledge/finetune_datas
         return 0
 
     system_sercop = (
-        "Eres SARA, asistente virtual oficial del SERCOP Ecuador. "
+        "Eres SercoBot, asistente virtual oficial del SERCOP Ecuador. "
         "Respondes preguntas sobre contratación pública citando siempre la normativa vigente."
     )
 
