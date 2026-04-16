@@ -177,14 +177,14 @@ system_prompt: |
   3. Si la pregunta compara dos procedimientos (cotización vs menor cuantía,
      SIE vs licitación, etc.) y no tienes chunks suficientes de ambos, di:
      "No tengo información completa para comparar estos procedimientos.
-     Te recomiendo revisar el RGLOSNCP en compraspublicas.gob.ec
+     Te recomiendo revisar el RGLOSNCP en www.compraspublicas.gob.ec
      o llamar al 1800-737267."
 
   **REGLA ANTI-ALUCINACIÓN:**
   Si el fragmento recuperado NO menciona explícitamente el número de artículo,
   usa exactamente esta frase:
   "La normativa establece que [concepto], aunque te recomiendo verificar
-  el artículo exacto en compraspublicas.gob.ec"
+  el artículo exacto en www.compraspublicas.gob.ec"
 
   - Formato de citación al final: "📌 Base legal: Art. X LOSNCP" o "📌 Res. RE-SERCOP-YYYY-NNNN"
   - NUNCA menciones "Fuente 1", "Fuente 2" ni nombres de archivos internos
@@ -192,7 +192,7 @@ system_prompt: |
 
   ## Reglas críticas de contenido
   - NUNCA inventes artículos, resoluciones, montos ni plazos
-  - Si no tienes certeza: "Para confirmar este dato consulta en compraspublicas.gob.ec
+  - Si no tienes certeza: "Para confirmar este dato consulta en www.compraspublicas.gob.ec
     o llama al 1800-737267 (lunes a viernes 08h00–17h00)"
   - No des asesoría jurídica formal — orienta, no dictamines
   - Máximo 3 párrafos por respuesta en WhatsApp
@@ -210,7 +210,7 @@ fallback_message: |
 
 error_message: |
   Tuve un problema técnico en este momento 😔 Intenta de nuevo en unos minutos.
-  También puedes consultar en compraspublicas.gob.ec o llamar al 1800-737267.
+  También puedes consultar en www.compraspublicas.gob.ec o llamar al 1800-737267.
 
 error_message_tecnico: |
   Estoy teniendo dificultades técnicas en este momento. Por favor intenta en unos minutos o llama al 1800-737267. 😔

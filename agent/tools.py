@@ -255,7 +255,7 @@ def obtener_montos_pie(anio: int | None = None) -> dict:
     data["anio"] = anio
     data["advertencia"] = (
         "Montos referenciales basados en el PIE aprobado. "
-        "Verificar el valor oficial vigente en compraspublicas.gob.ec"
+        "Verificar el valor oficial vigente en www.compraspublicas.gob.ec"
     )
     return data
 

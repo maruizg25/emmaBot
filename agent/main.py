@@ -140,7 +140,7 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
                 telefono,
                 "Tuve un problema técnico respondiendo tu consulta 😔 "
                 "Por favor intenta de nuevo en un momento, o consulta en "
-                "compraspublicas.gob.ec o llama al 1800-737267."
+                "www.compraspublicas.gob.ec o llama al 1800-737267."
             )
         except Exception:
             pass
