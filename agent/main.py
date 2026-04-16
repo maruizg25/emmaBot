@@ -89,6 +89,21 @@ async def webhook_verificacion(request: Request):
     return {"status": "ok"}
 
 
+async def _responder_multimedia(telefono: str) -> None:
+    """Responde a mensajes multimedia (audio, imagen, sticker) con orientación textual."""
+    try:
+        await proveedor.enviar_mensaje(
+            telefono,
+            "Recibí tu mensaje 😊 Por ahora solo puedo responder preguntas de texto.\n\n"
+            "Escribe tu consulta y te ayudo enseguida. Por ejemplo:\n"
+            "• _¿Qué es el RUP?_\n"
+            "• _¿Cómo me registro como proveedor?_\n"
+            "• _¿Cuáles son los tipos de contratación?_"
+        )
+    except Exception as e:
+        logger.error(f"Error enviando respuesta multimedia a {telefono}: {e}")
+
+
 async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
     """
     Procesa un mensaje en background: RAG → LLM → enviar respuesta.
@@ -109,7 +124,7 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
             )
 
         historial = await obtener_historial(telefono, limite=HISTORIAL_LIMITE)
-        respuesta = await generar_respuesta(texto, historial)
+        respuesta = await generar_respuesta(texto, historial, telefono=telefono)
 
         await guardar_mensaje(telefono, "user", texto)
         await guardar_mensaje(telefono, "assistant", respuesta)
@@ -140,7 +155,11 @@ async def webhook_handler(request: Request, background_tasks: BackgroundTasks):
     try:
         mensajes = await proveedor.parsear_webhook(request)
         for msg in mensajes:
-            if msg.es_propio or not msg.texto:
+            if msg.es_propio:
+                continue
+            if not msg.texto:
+                # Mensaje multimedia (audio, imagen, sticker) — responde sin pasar al LLM
+                background_tasks.add_task(_responder_multimedia, msg.telefono)
                 continue
 
             # Deduplicar por mensaje_id
@@ -283,3 +302,31 @@ async def buscar_en_kb(body: BusquedaRequest, request: Request):
         "contexto": formatear_contexto(chunks),
         "chunks_raw": chunks[:body.top_k],
     }
+
+
+# ─── Admin: Estadísticas ──────────────────────────────────────────────────────
+
+@app.post("/admin/faq/reload")
+async def recargar_faq(request: Request):
+    """Recarga el faq_cache.yaml en memoria sin reiniciar el servidor."""
+    _verificar_admin(request)
+    from agent.brain import _cargar_faq_cache, _cargar_config
+    _cargar_faq_cache.cache_clear()
+    _cargar_config.cache_clear()
+    faqs = _cargar_faq_cache()
+    return {"status": "ok", "faqs_cargados": len(faqs)}
+
+
+@app.get("/admin/stats")
+async def estadisticas(request: Request):
+    """
+    Estadísticas de uso del bot:
+    - Consultas hoy / semana
+    - % ahorro por shortcuts
+    - Proveedor LLM más usado
+    - Top preguntas frecuentes
+    - Cache hits del FAQ
+    """
+    _verificar_admin(request)
+    from agent.memory import obtener_estadisticas
+    return await obtener_estadisticas()

@@ -138,6 +138,30 @@ async def inicializar_db():
                 CREATE INDEX IF NOT EXISTS idx_chunks_tsvector_es
                 ON chunks USING gin(to_tsvector('spanish', texto))
             """))
+            # Tabla de aprendizaje continuo
+            await conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS consultas_log (
+                    id                BIGSERIAL PRIMARY KEY,
+                    telefono_hash     VARCHAR(64),
+                    pregunta          TEXT NOT NULL,
+                    pregunta_normalizada TEXT,
+                    respuesta         TEXT,
+                    proveedor_llm     VARCHAR(20),
+                    tiempo_ms         INTEGER,
+                    fue_shortcut      BOOLEAN DEFAULT FALSE,
+                    shortcut_tipo     VARCHAR(30),
+                    rag_chunks        INTEGER DEFAULT 0,
+                    timestamp         TIMESTAMPTZ DEFAULT NOW()
+                )
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_consultas_timestamp
+                ON consultas_log (timestamp DESC)
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_consultas_shortcut
+                ON consultas_log (fue_shortcut, timestamp DESC)
+            """))
 
 
 # ─── Mensajes ────────────────────────────────────────────────────────────────
@@ -284,6 +308,132 @@ async def buscar_chunks_semantico(query_embedding: list[float], top_k: int = 12)
             }
             for row in result.fetchall()
         ]
+
+
+async def registrar_consulta(
+    pregunta: str,
+    pregunta_normalizada: str,
+    respuesta: str,
+    proveedor_llm: str,
+    tiempo_ms: int,
+    fue_shortcut: bool,
+    shortcut_tipo: str | None,
+    rag_chunks: int,
+    telefono: str = "",
+) -> None:
+    """Registra cada consulta en consultas_log para aprendizaje continuo."""
+    if not _is_postgres:
+        return  # Solo disponible con PostgreSQL
+    telefono_hash = hashlib.sha256(telefono.encode()).hexdigest() if telefono else None
+    async with async_session() as session:
+        await session.execute(text("""
+            INSERT INTO consultas_log
+                (telefono_hash, pregunta, pregunta_normalizada, respuesta,
+                 proveedor_llm, tiempo_ms, fue_shortcut, shortcut_tipo, rag_chunks)
+            VALUES
+                (:th, :p, :pn, :r, :llm, :ms, :sc, :st, :rc)
+        """), {
+            "th":  telefono_hash,
+            "p":   pregunta[:1000],
+            "pn":  pregunta_normalizada[:500],
+            "r":   respuesta[:2000],
+            "llm": proveedor_llm[:20],
+            "ms":  tiempo_ms,
+            "sc":  fue_shortcut,
+            "st":  shortcut_tipo,
+            "rc":  rag_chunks,
+        })
+        await session.commit()
+
+
+async def obtener_estadisticas() -> dict:
+    """Estadísticas para el endpoint GET /admin/stats."""
+    if not _is_postgres:
+        return {"error": "estadísticas disponibles solo con PostgreSQL"}
+
+    async with engine.connect() as conn:
+        # Hoy
+        hoy = await conn.execute(text("""
+            SELECT
+                COUNT(*)                                              AS total,
+                SUM(CASE WHEN fue_shortcut     THEN 1 ELSE 0 END)    AS shortcuts,
+                SUM(CASE WHEN NOT fue_shortcut THEN 1 ELSE 0 END)    AS rag_api,
+                SUM(CASE WHEN shortcut_tipo = 'faq_cache' THEN 1 ELSE 0 END) AS cache_hits,
+                AVG(tiempo_ms)                                        AS avg_ms,
+                MODE() WITHIN GROUP (ORDER BY proveedor_llm)          AS proveedor_top
+            FROM consultas_log
+            WHERE timestamp >= CURRENT_DATE
+        """))
+        fila_hoy = hoy.fetchone()
+
+        # Semana
+        semana = await conn.execute(text("""
+            SELECT
+                COUNT(*)                                              AS total,
+                SUM(CASE WHEN fue_shortcut     THEN 1 ELSE 0 END)    AS shortcuts,
+                SUM(CASE WHEN NOT fue_shortcut THEN 1 ELSE 0 END)    AS rag_api,
+                SUM(CASE WHEN shortcut_tipo = 'faq_cache' THEN 1 ELSE 0 END) AS cache_hits,
+                AVG(tiempo_ms)                                        AS avg_ms
+            FROM consultas_log
+            WHERE timestamp >= NOW() - INTERVAL '7 days'
+        """))
+        fila_sem = semana.fetchone()
+
+        # Top preguntas (última semana, no shortcuts)
+        top_q = await conn.execute(text("""
+            SELECT pregunta_normalizada, COUNT(*) AS frecuencia
+            FROM consultas_log
+            WHERE timestamp >= NOW() - INTERVAL '7 days'
+              AND NOT fue_shortcut
+            GROUP BY pregunta_normalizada
+            ORDER BY frecuencia DESC
+            LIMIT 10
+        """))
+        top_preguntas = [{"pregunta": r.pregunta_normalizada, "frecuencia": r.frecuencia}
+                         for r in top_q.fetchall()]
+
+        # Desglose por proveedor (hoy)
+        prov = await conn.execute(text("""
+            SELECT proveedor_llm, COUNT(*) AS total
+            FROM consultas_log
+            WHERE timestamp >= CURRENT_DATE
+            GROUP BY proveedor_llm
+        """))
+        proveedores = {r.proveedor_llm: r.total for r in prov.fetchall()}
+
+    def _porcentaje_ahorro(sh, total):
+        if not total:
+            return "0%"
+        return f"{int(sh / total * 100)}%"
+
+    total_hoy  = int(fila_hoy.total or 0)
+    sh_hoy     = int(fila_hoy.shortcuts or 0)
+    ch_hoy     = int(fila_hoy.cache_hits or 0)
+
+    total_sem  = int(fila_sem.total or 0)
+    sh_sem     = int(fila_sem.shortcuts or 0)
+
+    return {
+        "hoy": {
+            "total_consultas":      total_hoy,
+            "shortcuts":            sh_hoy,
+            "rag_api":              int(fila_hoy.rag_api or 0),
+            "porcentaje_ahorro":    _porcentaje_ahorro(sh_hoy, total_hoy),
+            "proveedor_mas_usado":  fila_hoy.proveedor_top or "ninguno",
+            "tiempo_promedio_ms":   int(fila_hoy.avg_ms or 0),
+            "cache_hits":           ch_hoy,
+        },
+        "semana": {
+            "total_consultas":      total_sem,
+            "shortcuts":            sh_sem,
+            "rag_api":              int(fila_sem.rag_api or 0),
+            "porcentaje_ahorro":    _porcentaje_ahorro(sh_sem, total_sem),
+            "tiempo_promedio_ms":   int(fila_sem.avg_ms or 0),
+            "cache_hits":           int(fila_sem.cache_hits or 0),
+        },
+        "top_preguntas": top_preguntas,
+        "proveedores":   proveedores,
+    }
 
 
 async def buscar_chunks_fulltext(query: str, top_k: int = 12) -> list[dict]:

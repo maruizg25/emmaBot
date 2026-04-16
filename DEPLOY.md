@@ -418,8 +418,8 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-systemctl enable --now sara
-systemctl status sara
+systemctl enable --now sercobot
+systemctl status sercobot
 ```
 
 Debe decir `Active: active (running)`.
@@ -440,7 +440,7 @@ firewall-cmd --reload
 
 ```bash
 # Ver todos los servicios activos
-systemctl status sara
+systemctl status sercobot
 systemctl status nginx
 systemctl status ollama
 systemctl status postgresql-16
@@ -464,18 +464,18 @@ En el panel de Meta for Developers → WhatsApp → Configuración:
 
 ```bash
 # Ver qué está pasando en tiempo real
-journalctl -u sara -f
+journalctl -u sercobot -f
 
 # Reiniciar SercoBot (tras cambios)
-systemctl restart sara
+systemctl restart sercobot
 
 # Actualizar el código
 cd /opt/sercobot
 git pull
-systemctl restart sara
+systemctl restart sercobot
 
 # Ver los últimos errores
-journalctl -u sara -n 50 --no-pager
+journalctl -u sercobot -n 50 --no-pager
 ```
 
 ---
@@ -485,8 +485,8 @@ journalctl -u sara -n 50 --no-pager
 | Qué ves | Qué significa | Qué hacer |
 |---|---|---|
 | `Connection refused` al hacer SSH | SSH no habilitado | Pedir a TI que habiliten el puerto 22 |
-| `sercobot.service` en rojo | La app no arranca | Correr `journalctl -u sara -n 30` y mandar el error al desarrollador |
-| `502 Bad Gateway` en nginx | SercoBot no está corriendo | `systemctl restart sara` |
+| `sercobot.service` en rojo | La app no arranca | Correr `journalctl -u sercobot -n 30` y mandar el error al desarrollador |
+| `502 Bad Gateway` en nginx | SercoBot no está corriendo | `systemctl restart sercobot` |
 | Ollama no responde | Servicio caído | `systemctl restart ollama` y esperar 30 segundos |
 | Error de base de datos | PostgreSQL detenido o mal configurado | `systemctl status postgresql-16` |
 | `curl: SSL certificate problem` | Certificado mal instalado | Verificar rutas en `/etc/nginx/conf.d/sercobot.conf` |

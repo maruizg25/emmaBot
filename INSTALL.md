@@ -274,8 +274,8 @@ WantedBy=multi-user.target
 SERVICE
 
 systemctl daemon-reload
-systemctl enable --now sara
-systemctl status sara
+systemctl enable --now sercobot
+systemctl status sercobot
 ```
 
 ---
@@ -304,13 +304,13 @@ En el panel de Meta for Developers:
 
 ```bash
 # Todos los servicios corriendo
-systemctl status ollama sara nginx postgresql-16
+systemctl status ollama sercobot nginx postgresql-16
 
 # Test de respuesta HTTPS
 curl https://sercobot.sercop.gob.ec/
 
 # Logs en tiempo real
-journalctl -u sara -f
+journalctl -u sercobot -f
 ```
 
 ---
@@ -319,14 +319,14 @@ journalctl -u sara -f
 
 ```bash
 # Ver logs
-journalctl -u sara -f
-journalctl -u sara --since "1 hour ago"
+journalctl -u sercobot -f
+journalctl -u sercobot --since "1 hour ago"
 
 # Reiniciar tras cambios en .env o código
-systemctl restart sara
+systemctl restart sercobot
 
 # Actualizar código
-cd /opt/sercobot && git pull && systemctl restart sara
+cd /opt/sercobot && git pull && systemctl restart sercobot
 
 # Agregar documentos nuevos al RAG
 source /opt/sercobot/.venv/bin/activate
@@ -343,8 +343,8 @@ sudo -u postgres pg_dump sercop_db -Fc -f /tmp/backup_$(date +%Y%m%d).dump
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
-| `sercobot.service` no inicia | `.env` mal configurado | `journalctl -u sara -n 50` |
+| `sercobot.service` no inicia | `.env` mal configurado | `journalctl -u sercobot -n 50` |
 | Ollama no responde | Servicio caído | `systemctl restart ollama` |
-| Error 502 en nginx | App no corre en 8000 | `systemctl status sara` |
+| Error 502 en nginx | App no corre en 8000 | `systemctl status sercobot` |
 | Embeddings lentos | Modelo no cargado aún | Esperar 30s tras reinicio de Ollama |
 | DB connection refused | PostgreSQL detenido | `systemctl start postgresql-16` |

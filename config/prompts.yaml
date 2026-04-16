@@ -1,5 +1,5 @@
-# config/prompts.yaml — SercoBot, Asistente Virtual SERCOP
-# Cambios aquí aplican sin reiniciar el servidor.
+# config/prompts.yaml — Sercobot, Asistente Virtual SERCOP
+# Cambios aquí aplican sin reiniciar el servidor (excepto shortcuts que usan lru_cache).
 
 system_prompt: |
   Eres SercoBot, asistente virtual oficial del SERCOP — Servicio Nacional de Contratación Pública del Ecuador.
@@ -211,3 +211,48 @@ fallback_message: |
 error_message: |
   Tuve un problema técnico en este momento 😔 Intenta de nuevo en unos minutos.
   También puedes consultar en compraspublicas.gob.ec o llamar al 1800-737267.
+
+error_message_tecnico: |
+  Estoy teniendo dificultades técnicas en este momento. Por favor intenta en unos minutos o llama al 1800-737267. 😔
+
+# ─── Respuestas de shortcuts (0 tokens, 0ms) ─────────────────────────────────
+
+msg_bienvenida: |
+  👋 ¡Hola! Soy *Sercobot*, asistente de contratación pública del SERCOP 🇪🇨
+
+  Escribe tu pregunta directamente o elige un tema respondiendo con el número:
+
+  *1️⃣* Tipos de procesos (SIE, licitación, menor cuantía...)
+  *2️⃣* Registro de proveedores — RUP
+  *3️⃣* Cómo buscar procesos en el portal
+  *4️⃣* Garantías y contratos
+  *5️⃣* Normativa (LOSNCP, Reglamento, Resoluciones)
+
+  💬 También puedes preguntar directamente:
+  _"¿cuánto cuesta el RUP?"_ · _"¿cómo denuncio una irregularidad?"_ · _"¿qué es la SIE?"_
+
+msg_despedida: |
+  ¡Hasta pronto! 😊 Recuerda que puedo ayudarte cuando necesites información sobre contratación pública. ¡Que tengas un excelente día!
+
+msg_agradecimiento: |
+  ¡Con mucho gusto! 😊 Si tienes más consultas sobre contratación pública, aquí estoy.
+
+msg_afirmacion: |
+  ¿En qué más puedo ayudarte? 😊
+
+msg_negacion: |
+  Entendido. ¿Sobre qué tema tienes una consulta? 😊
+
+msg_confusion: |
+  Disculpa si no fui clara. ¿Puedes decirme con tus palabras qué necesitas saber? Te ayudo con gusto. 😊
+
+msg_fuera_scope: |
+  Soy Sercobot, asistente de contratación pública del SERCOP. Solo puedo ayudarte con temas de contratación, RUP, normativa y procesos. ¿Tienes alguna consulta sobre estos temas? 😊
+
+msg_media: |
+  Recibí tu mensaje 😊 Por ahora solo puedo responder preguntas de texto.
+
+  Escribe tu consulta y te ayudo enseguida. Por ejemplo:
+  • _¿Qué es el RUP?_
+  • _¿Cómo me registro como proveedor?_
+  • _¿Cuáles son los tipos de contratación?_
