@@ -107,6 +107,7 @@ _KW_SALUDO = {_normalizar(w) for w in {
     "buenas noches", "buen dia", "que tal", "como estas", "como esta",
     "como te va", "good morning", "good afternoon", "good evening",
     "inicio", "empezar", "comenzar", "start",
+    "menu", "menú", "opciones", "ayuda", "help",
 }}
 _EMOJIS_SALUDO = {"👋", "🙋", "😊"}
 
