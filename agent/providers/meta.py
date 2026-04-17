@@ -34,7 +34,10 @@ class ProveedorMeta(ProveedorWhatsApp):
 
     async def parsear_webhook(self, request: Request) -> list[MensajeEntrante]:
         """Parsea el payload anidado de Meta Cloud API."""
-        body = await request.json()
+        try:
+            body = await request.json()
+        except Exception:
+            return []
         mensajes = []
         for entry in body.get("entry", []):
             for change in entry.get("changes", []):
