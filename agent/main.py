@@ -80,6 +80,7 @@ async def health_check():
 
 # ─── Webhook WhatsApp ─────────────────────────────────────────────────────────
 
+@app.get("/webhook/webhook")
 @app.get("/webhook")
 async def webhook_verificacion(request: Request):
     """Verificación GET del webhook (Meta Cloud API)."""
@@ -146,6 +147,7 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
             pass
 
 
+@app.post("/webhook/webhook")
 @app.post("/webhook")
 async def webhook_handler(request: Request, background_tasks: BackgroundTasks):
     """
