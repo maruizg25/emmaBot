@@ -416,18 +416,20 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
     ) and _es_fuera_scope(texto_norm):
         return ("negacion", cfg.get("msg_negacion", ""))
 
-    # Cat 9 — FAQ cache hit (antes de scope para dar respuesta directa si existe)
-    # Para queries cortas (< 3 tokens significativos): verificar scope primero.
-    # Si no tiene ningún stem de contratación → fuera de scope.
-    # Si tiene scope pero es ambigua → intentar FAQ, luego menú.
+    # Cat 9 — FAQ cache hit
+    # Umbral para menú genérico: < 2 tokens significativos.
+    # Con 0-1 tokens la query es demasiado vaga para RAG.
+    # Con ≥ 2 tokens (ej. "saca rup", "gana sie") hay contexto suficiente → RAG.
+    # Si contiene al menos un stem SERCOP → intentar FAQ siempre, luego RAG.
+    # Si no tiene scope → fuera_scope (tema ajeno al bot).
     _tokens_sig_sc = _tokens_sin_stopwords(texto_norm)
-    if len(_tokens_sig_sc) < 3:
+    if len(_tokens_sig_sc) < 2:
         if _es_fuera_scope(texto_norm):
             return ("fuera_scope", cfg.get("msg_fuera_scope", ""))
         faq_resp = _check_faq(texto_norm)
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
-        # Query corta con scope pero sin match específico → mostrar menú
+        # 0-1 tokens con scope pero sin FAQ específico → menú
         return ("consulta_ambigua", cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", "")))
     else:
         faq_resp = _check_faq(texto_norm)
@@ -844,11 +846,10 @@ async def generar_respuesta(
         return respuesta
 
     # ── 1b. Consulta demasiado corta — pedir clarificación ───────────────────
-    # Queries con < 3 tokens significativos son demasiado ambiguas para RAG.
-    # El FAQ cache ya intentó matchear; si llegó aquí sin respuesta, el tema
-    # es genuinamente ambiguo → mostrar menú de categorías.
+    # Solo si llegó aquí (shortcut no aplica) y tiene < 2 tokens significativos.
+    # Con ≥ 2 tokens hay contexto suficiente para RAG ("saca rup", "gana sie").
     _tokens_sig = _tokens_sin_stopwords(_normalizar(mensaje))
-    if len(_tokens_sig) < 3:
+    if len(_tokens_sig) < 2:
         cfg = _cargar_config()
         respuesta_menu = cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", ""))
         elapsed_ms = int((time.time() - t_inicio) * 1000)

@@ -114,6 +114,11 @@ CASOS: list[Caso] = [
     Caso("A", "cuál es la capital de Francia","geografía",   cat_esperada="fuera_scope"),
     Caso("A", "dame una receta de arroz",     "receta",      cat_esperada="fuera_scope"),
 
+    # Queries con 2 tokens significativos → deben pasar al RAG, no al menú
+    Caso("A", "como se saca el rup",    "2 tokens → RAG (no menú)",  cat_esperada="LLM/RAG"),
+    Caso("A", "como se gana una sie",   "2 tokens → RAG",            cat_esperada="LLM/RAG"),
+    Caso("A", "inscribirse rup",        "2 tokens → RAG",            cat_esperada="LLM/RAG"),
+
     # Short queries → consulta_ambigua  [REGR: bugs #3 y #4]
     Caso("A", "procesos",        "token genérico → menú [REGR-BUG3]",
          cat_esperada="consulta_ambigua",
@@ -296,7 +301,7 @@ async def ejecutar_caso(caso: Caso, usar_llm: bool) -> dict:
 
     if caso.grupo in ("A", "B"):
         sc = _detectar_shortcut(caso.mensaje)
-        cat = sc[0] if sc else "LLM"
+        cat = sc[0] if sc else "LLM/RAG"
         respuesta = sc[1] if sc else ""
 
         # Para grupo B con categoria LLM (no shortcut), igual evaluamos contenido
