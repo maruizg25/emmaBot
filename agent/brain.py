@@ -32,7 +32,7 @@ GROQ_MODEL    = os.getenv("GROQ_MODEL_CASCADE", "llama-3.3-70b-versatile")
 GROQ_URL      = "https://api.groq.com/openai/v1/chat/completions"
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-CLAUDE_MODEL      = "claude-haiku-4-5-20251001"
+CLAUDE_MODEL      = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite-preview-06-17")
