@@ -47,7 +47,7 @@ WIKI_FALLBACK = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 
 # Orden de la cascada (configurable vía .env)
 LLM_FALLBACK_ORDER = [p.strip() for p in
-                      os.getenv("LLM_FALLBACK_ORDER", "groq,claude,gemini,local").split(",")]
+                      os.getenv("LLM_FALLBACK_ORDER", "groq,gemini,claude,local").split(",")]
 
 # ── Patrón emoji ──────────────────────────────────────────────────────────────
 _EMOJI_RE = re.compile(
