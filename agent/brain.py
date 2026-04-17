@@ -82,6 +82,14 @@ _STOPWORDS = {_normalizar(w) for w in {
     "me", "para", "en", "con", "a", "y", "o", "por", "del", "al",
     "le", "se", "mi", "tu", "su", "lo", "hay", "tiene", "tengo",
     "cual", "como", "cuando", "donde", "quien", "cuanto", "cuantos",
+    # Verbos comunes sin contenido semántico en contratación
+    "son", "ser", "esta", "estan", "esto", "ese", "esa",
+    "aqui", "ahi", "si", "no", "mas", "muy", "bien", "solo",
+    "puede", "puedo", "quiero", "necesito", "debo", "tengo",
+    "hacer", "saber", "decir", "ver", "haber", "tener",
+    # Términos genéricos del dominio que no distinguen entre FAQs
+    "proceso", "procesos", "contrato", "contratos",
+    "informacion", "informaciones", "informacion",
 }}
 
 
@@ -221,9 +229,15 @@ def _cargar_faq_cache() -> list[dict]:
         with open("config/faq_cache.yaml", "r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         faqs = data.get("faqs", [])
-        # Pre-normalizar keywords para comparación eficiente
+        # Pre-normalizar keywords para comparación eficiente.
+        # Se excluyen stopwords para evitar que palabras vacías como "que",
+        # "es", "un" inflen el conteo de matches y produzcan falsos positivos.
         for faq in faqs:
-            faq["_kw_norm"] = [_normalizar(str(kw)) for kw in faq.get("keywords", [])]
+            faq["_kw_norm"] = [
+                _normalizar(str(kw))
+                for kw in faq.get("keywords", [])
+                if _normalizar(str(kw)) not in _STOPWORDS
+            ]
         logger.info(f"[Sercobot] FAQ cache cargado: {len(faqs)} entradas")
         return faqs
     except FileNotFoundError:
@@ -290,7 +304,8 @@ def _check_faq(texto_norm: str) -> Optional[str]:
         if not n:
             continue
 
-        matches = sum(1 for kw in kw_norm if kw in texto_norm)
+        tokens_texto = set(texto_norm.split())
+        matches = sum(1 for kw in kw_norm if kw in tokens_texto)
         ratio = matches / n
 
         # Umbral adaptativo
@@ -308,15 +323,17 @@ def _check_faq(texto_norm: str) -> Optional[str]:
     if mejor_score >= 0.50:
         return mejor_respuesta
 
-    # ── Fallback para queries muy cortas (1 token significativo) ──────────────
-    # Cubre "rup", "pac", "garantias", "soce", etc. escritos solos
+    # ── Fallback para queries de 1 token significativo ────────────────────────
+    # Cubre "rup", "pac", "sie", "puja", "garantias", "soce", etc. solos.
+    # Usa coincidencia EXACTA para evitar falsos positivos como
+    # "proceso" → "procesos" o "contrat" → "contratacion".
     q_tokens = _tokens_sin_stopwords(texto_norm)
     if len(q_tokens) == 1:
         qt = next(iter(q_tokens))
         if len(qt) >= 3:  # ignorar letras sueltas
             for faq in faqs:
                 kw_norm = faq.get("_kw_norm", [])
-                if any(_token_matches_keyword(qt, kw) for kw in kw_norm):
+                if qt in kw_norm:  # coincidencia exacta — no prefijos
                     return faq.get("respuesta", "").strip() or None
 
     return None
@@ -396,9 +413,20 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
         return ("negacion", cfg.get("msg_negacion", ""))
 
     # Cat 9 — FAQ cache hit (antes de scope para dar respuesta directa si existe)
-    faq_resp = _check_faq(texto_norm)
-    if faq_resp:
-        return ("faq_cache", faq_resp.strip())
+    # Pero primero: si la query es demasiado corta (< 3 tokens significativos),
+    # mostramos el menú en lugar de intentar el single-token fallback del FAQ,
+    # que produciría respuestas incorrectas para palabras genéricas como "proceso".
+    _tokens_sig_sc = _tokens_sin_stopwords(texto_norm)
+    if len(_tokens_sig_sc) < 3:
+        faq_resp = _check_faq(texto_norm)
+        if faq_resp:
+            return ("faq_cache", faq_resp.strip())
+        # Query corta sin match específico → mostrar menú
+        return ("consulta_ambigua", cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", "")))
+    else:
+        faq_resp = _check_faq(texto_norm)
+        if faq_resp:
+            return ("faq_cache", faq_resp.strip())
 
     # Cat 8 — Fuera de scope → redirección
     if _es_fuera_scope(texto_norm):
@@ -808,6 +836,24 @@ async def generar_respuesta(
             rag_chunks=0, telefono=telefono,
         ))
         return respuesta
+
+    # ── 1b. Consulta demasiado corta — pedir clarificación ───────────────────
+    # Queries con < 3 tokens significativos son demasiado ambiguas para RAG.
+    # El FAQ cache ya intentó matchear; si llegó aquí sin respuesta, el tema
+    # es genuinamente ambiguo → mostrar menú de categorías.
+    _tokens_sig = _tokens_sin_stopwords(_normalizar(mensaje))
+    if len(_tokens_sig) < 3:
+        cfg = _cargar_config()
+        respuesta_menu = cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", ""))
+        elapsed_ms = int((time.time() - t_inicio) * 1000)
+        logger.info(f"[Sercobot] Query corta ({len(_tokens_sig)} tokens) → menú ({elapsed_ms}ms)")
+        asyncio.ensure_future(_log_consulta(
+            pregunta=mensaje, respuesta=respuesta_menu,
+            proveedor_llm="shortcut", tiempo_ms=elapsed_ms,
+            fue_shortcut=True, shortcut_tipo="consulta_ambigua",
+            rag_chunks=0, telefono=telefono,
+        ))
+        return respuesta_menu
 
     # ── 2. Construir contexto ────────────────────────────────────────────────
     system = _system_prompt()

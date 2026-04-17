@@ -26,6 +26,12 @@ RRF_K           = 60   # Constante estándar de investigación
 TOP_K_BUSQUEDA  = 12   # Candidatos por búsqueda antes de fusionar
 TOP_K_RERANK    = int(os.getenv("TOP_K_CHUNKS", "2"))  # Chunks finales al prompt
 
+# Similitud coseno mínima para aceptar un chunk semántico.
+# Por debajo de este umbral el chunk es demasiado distante de la query
+# y se descarta para evitar respuestas sobre temas incorrectos.
+# (Configurable vía RAG_SCORE_MINIMO; solo aplica a chunks semánticos)
+RAG_SCORE_MINIMO = float(os.getenv("RAG_SCORE_MINIMO", "0.55"))
+
 # ── Diccionario de expansión de queries ──────────────────────────────────────
 # Siglas y términos técnicos del dominio de contratación pública ecuatoriana
 # Clave: término corto/sigla que puede aparecer en la pregunta del usuario
@@ -210,6 +216,20 @@ async def recuperar_contexto_formateado(query: str) -> tuple[str, int]:
         logger.info(f"RAG: sin resultados para '{query[:60]}'")
         return "", 0
 
+    # ── Filtro de relevancia semántica ────────────────────────────────────────
+    # Descartar chunks semánticos con score < RAG_SCORE_MINIMO para evitar
+    # que el LLM responda sobre temas incorrectos por chunks de baja similitud.
+    # Los chunks fulltext (ts_rank) tienen escala diferente y no se filtran aquí.
+    sem_chunks = [c for c in chunks if c.get("source") == "semantic"]
+    if sem_chunks:
+        top_score = max(c["score"] for c in sem_chunks)
+        if top_score < RAG_SCORE_MINIMO:
+            logger.info(
+                f"RAG: descartado — top score semántico {top_score:.3f} < {RAG_SCORE_MINIMO} "
+                f"para '{query[:60]}'"
+            )
+            return "", 0
+
     contexto = formatear_contexto(chunks)
-    logger.info(f"RAG: {len(chunks)} chunks finales para '{query[:60]}'")
+    logger.info(f"RAG: {len(chunks)} chunks finales (top semántico: {sem_chunks[0]['score']:.3f}) para '{query[:60]}'")
     return contexto, len(chunks)

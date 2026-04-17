@@ -255,6 +255,39 @@ faqs:
     '
   frecuencia: 0
 - keywords:
+  - puja
+  - procesos
+  pregunta: ¿En qué procesos existe puja?
+  respuesta: |
+    La *puja existe únicamente en la Subasta Inversa Electrónica (SIE)*.
+
+    En la SIE los proveedores habilitados compiten ofertando precios *a la baja en tiempo real*. El sistema oculta las identidades (Proveedor 1, Proveedor 2…) y solo el Gestor del proceso ve la puja en tiempo real.
+
+    ❌ Los demás procesos *NO tienen puja*:
+    🔹 Licitación — evaluación de ofertas técnicas y económicas
+    🔹 Cotización — comparación de propuestas
+    🔹 Menor cuantía — invitación directa
+    🔹 Ínfima cuantía — compra directa con factura
+
+    📌 Base legal: Art. 47 LOSNCP
+  frecuencia: 0
+- keywords:
+  - puja
+  pregunta: ¿Qué es la puja en contratación pública?
+  respuesta: |
+    La *puja* es la etapa competitiva de la *Subasta Inversa Electrónica (SIE)* donde los proveedores habilitados compiten ofertando precios a la baja en tiempo real.
+
+    🔹 El sistema oculta las identidades (Proveedor 1, Proveedor 2…)
+    🔹 Solo el Gestor del proceso ve la puja en tiempo real
+    🔹 Gana quien oferte el precio más bajo al cierre
+    🔹 La puja tiene una duración definida (generalmente 15-30 min)
+
+    💡 La puja *solo existe en SIE* — no en licitación, cotización ni menor cuantía.
+
+    📌 Base legal: Art. 47 LOSNCP
+    📌 Manual SOCE — Subasta Inversa Electrónica p.72
+  frecuencia: 0
+- keywords:
   - sie
   - subasta
   - inversa

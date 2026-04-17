@@ -305,6 +305,7 @@ async def buscar_chunks_semantico(query_embedding: list[float], top_k: int = 12)
                 "pagina": row.pagina,
                 "metadata": json.loads(row.metadata_json or "{}"),
                 "score": 1.0 - float(row.distancia),
+                "source": "semantic",
             }
             for row in result.fetchall()
         ]
@@ -471,6 +472,7 @@ async def buscar_chunks_fulltext(query: str, top_k: int = 12) -> list[dict]:
                 "pagina": row.pagina,
                 "metadata": json.loads(row.metadata_json or "{}"),
                 "score": float(row.rank),
+                "source": "fulltext",
             }
             for row in result.fetchall()
         ]
