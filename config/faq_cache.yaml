@@ -1,5 +1,23 @@
 faqs:
 - keywords:
+  - entidad
+  - registro
+  - nueva
+  pregunta: ¿Cómo se registra una entidad contratante nueva en el SOCE?
+  respuesta: 'Para registrar una *entidad contratante nueva* en el portal de compras públicas:
+
+    1️⃣ Ingresa a *www.compraspublicas.gob.ec*
+    2️⃣ Ve a la sección *"Entidades Contratantes"* → *"Registro de Entidad"*
+    3️⃣ Completa el formulario con los datos institucionales (RUC, razón social, representante legal)
+    4️⃣ Adjunta los documentos habilitantes de la institución
+    5️⃣ Espera la aprobación del SERCOP (generalmente 1-3 días hábiles)
+
+    📞 Para soporte: *1800-737267* (lunes a viernes, 08h00–17h00)
+    📌 Base legal: Art. 21 LOSNCP — todas las entidades del sector público deben registrarse en el SOCE.
+
+    '
+  frecuencia: 0
+- keywords:
   - comunico
   - sercop
   - contacto
