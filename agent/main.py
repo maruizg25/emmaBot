@@ -288,36 +288,32 @@ async def exportar_dataset_finetune(request: Request):
 
 # ─── Admin: Chat de prueba (QA) ──────────────────────────────────────────────
 
-class ChatRequest(BaseModel):
-    # Acepta cualquier nombre de campo común
-    mensaje: str = ""
-    message: str = ""
-    pregunta: str = ""
-    query: str = ""
-    telefono: str = "test-qa"
-    phone: str = ""
-    token: str = ""
-
-    def get_mensaje(self) -> str:
-        return self.mensaje or self.message or self.pregunta or self.query or ""
-
-    def get_telefono(self) -> str:
-        return self.telefono or self.phone or "test-qa"
-
-
 @app.post("/admin/chat")
 @app.post("/admin/chat/")
-async def chat_prueba(body: ChatRequest):
+async def chat_prueba(request: Request):
     """
     Endpoint síncrono para QA — devuelve la respuesta del bot directamente.
     No envía nada a WhatsApp. Útil para pruebas masivas con SoapUI/Postman/JMeter.
+    Acepta cualquier campo: mensaje/message/pregunta/query + telefono/phone + token.
     """
-    if ADMIN_TOKEN and body.token != ADMIN_TOKEN:
+    try:
+        data = await request.json()
+    except Exception:
+        data = {}
+
+    token = data.get("token", "")
+    if ADMIN_TOKEN and token != ADMIN_TOKEN:
         raise HTTPException(status_code=401, detail="Token inválido")
-    mensaje = body.get_mensaje()
-    telefono = body.get_telefono()
+
+    mensaje = (
+        data.get("mensaje") or data.get("message") or
+        data.get("pregunta") or data.get("query") or ""
+    ).strip()
+    telefono = (data.get("telefono") or data.get("phone") or "test-qa").strip()
+
     if not mensaje:
         raise HTTPException(status_code=400, detail="Campo 'mensaje' requerido")
+
     import time
     t0 = time.time()
     historial = await obtener_historial(telefono, limite=HISTORIAL_LIMITE)
