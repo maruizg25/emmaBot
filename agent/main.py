@@ -283,6 +283,34 @@ async def exportar_dataset_finetune(request: Request):
     return {"status": "ok", "pares_qa": total, "archivo": "knowledge/finetune_dataset.jsonl"}
 
 
+# ─── Admin: Chat de prueba (QA) ──────────────────────────────────────────────
+
+class ChatRequest(BaseModel):
+    mensaje: str
+    telefono: str = "test-qa"
+
+
+@app.post("/admin/chat")
+async def chat_prueba(body: ChatRequest, request: Request):
+    """
+    Endpoint síncrono para QA — devuelve la respuesta del bot directamente.
+    No envía nada a WhatsApp. Útil para pruebas masivas con SoapUI/Postman/JMeter.
+    """
+    _verificar_admin(request)
+    import time
+    t0 = time.time()
+    historial = await obtener_historial(body.telefono, limite=HISTORIAL_LIMITE)
+    respuesta = await generar_respuesta(body.mensaje, historial, telefono=body.telefono)
+    await guardar_mensaje(body.telefono, "user", body.mensaje)
+    await guardar_mensaje(body.telefono, "assistant", respuesta)
+    return {
+        "mensaje": body.mensaje,
+        "respuesta": respuesta,
+        "telefono": body.telefono,
+        "tiempo_ms": int((time.time() - t0) * 1000),
+    }
+
+
 # ─── Admin: Búsqueda de prueba ────────────────────────────────────────────────
 
 class BusquedaRequest(BaseModel):
