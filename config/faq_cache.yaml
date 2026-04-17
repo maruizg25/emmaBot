@@ -1,5 +1,51 @@
 faqs:
 - keywords:
+  - comunico
+  - sercop
+  - contacto
+  pregunta: ¿Cómo me comunico con el SERCOP?
+  respuesta: 'Puedes contactar al SERCOP por estos canales:
+
+    📞 *Call center:* 1800-737267 (lunes a viernes, 08h00–17h00)
+    🌐 *Portal:* www.compraspublicas.gob.ec
+    🌐 *Web institucional:* www.sercop.gob.ec
+    📩 *Formulario:* www.compraspublicas.gob.ec → sección "Contáctenos"
+
+    '
+  frecuencia: 0
+- keywords:
+  - ayuda
+  - linea
+  - soporte
+  pregunta: ¿Cómo obtengo ayuda en línea del SERCOP?
+  respuesta: 'El SERCOP ofrece los siguientes canales de ayuda en línea:
+
+    📞 *Call center:* 1800-737267 (lunes a viernes, 08h00–17h00)
+    🌐 *Portal de contratación:* www.compraspublicas.gob.ec
+    💬 *Chat en línea:* disponible en www.sercop.gob.ec
+    📖 *Manuales SOCE:* www.compraspublicas.gob.ec → sección "Manuales"
+
+    '
+  frecuencia: 0
+- keywords:
+  - problema
+  - compra
+  - reclamo
+  - queja
+  pregunta: ¿Qué hago si tengo un problema con una compra pública?
+  respuesta: 'Si tienes un problema con un proceso de contratación pública:
+
+    1️⃣ *Revisa el pliego* del proceso en www.compraspublicas.gob.ec
+    2️⃣ *Contacta a la entidad contratante* directamente
+    3️⃣ *Llama al SERCOP:* 1800-737267 para orientación
+    4️⃣ *Denuncia irregularidades* en www.compraspublicas.gob.ec → "Denuncias y Transparencia"
+    5️⃣ *Contraloría General:* www.contraloria.gob.ec para auditorías
+
+    📌 Si eres proveedor y te adjudicaron pero hay problemas, tienes derecho a impugnar según el Art. 102 LOSNCP.
+
+    '
+  frecuencia: 0
+- keywords:
   - portal
   - compras
   pregunta: ¿Cuál es el portal de compras públicas?

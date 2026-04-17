@@ -370,8 +370,9 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
         return ("saludo", cfg.get("msg_bienvenida", ""))
 
     # Cat 1 — Saludos → menú de bienvenida
+    # es_corto evita que "ayuda en linea" / "help con proceso" disparen el menú
     if (
-        _coincide_exacto_token(texto_norm, _KW_SALUDO)
+        (es_corto and _coincide_exacto_token(texto_norm, _KW_SALUDO))
         or _contiene_kwset(texto_norm, {_normalizar(f) for f in {
             "buenos dias", "buenas tardes", "buenas noches", "buen dia",
             "como estas", "como esta", "como te va", "que tal",
@@ -871,18 +872,31 @@ async def generar_respuesta(
     bloques_contexto: list[str] = []
     num_chunks = 0
 
-    # Pre-tool execution
+    # Pre-tool execution — retorna directo sin LLM si hay resultado
     tools_detectadas = _detectar_tools(mensaje)
     if tools_detectadas:
         from agent.tools import ejecutar_tool
+        bloques_tool: list[str] = []
         for nombre_tool, argumentos in tools_detectadas:
             try:
                 resultado_json = ejecutar_tool(nombre_tool, argumentos)
                 bloque = _formatear_resultado_tool(nombre_tool, resultado_json)
-                bloques_contexto.append(bloque)
+                bloques_tool.append(bloque)
                 logger.info(f"Pre-tool ejecutada: {nombre_tool}")
             except Exception as e:
                 logger.warning(f"Error en pre-tool {nombre_tool}: {e}")
+
+        if bloques_tool:
+            respuesta = "\n\n".join(bloques_tool)
+            elapsed_ms = int((time.time() - t_inicio) * 1000)
+            logger.info(f"[Sercobot] Tool directo: {elapsed_ms}ms, 0 tokens")
+            asyncio.ensure_future(_log_consulta(
+                pregunta=mensaje, respuesta=respuesta,
+                proveedor_llm="tool_directo", tiempo_ms=elapsed_ms,
+                fue_shortcut=True, shortcut_tipo="tool_directo",
+                rag_chunks=0, telefono=telefono,
+            ))
+            return respuesta
 
     # RAG
     if not bloques_contexto:
