@@ -288,15 +288,17 @@ async def exportar_dataset_finetune(request: Request):
 class ChatRequest(BaseModel):
     mensaje: str
     telefono: str = "test-qa"
+    token: str = ""
 
 
 @app.post("/admin/chat")
-async def chat_prueba(body: ChatRequest, request: Request):
+async def chat_prueba(body: ChatRequest):
     """
     Endpoint síncrono para QA — devuelve la respuesta del bot directamente.
     No envía nada a WhatsApp. Útil para pruebas masivas con SoapUI/Postman/JMeter.
     """
-    _verificar_admin(request)
+    if ADMIN_TOKEN and body.token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Token inválido")
     import time
     t0 = time.time()
     historial = await obtener_historial(body.telefono, limite=HISTORIAL_LIMITE)
