@@ -1,5 +1,25 @@
 faqs:
 - keywords:
+  - requerimiento
+  - compra
+  pregunta: ¿Cómo hago un requerimiento de compra pública?
+  respuesta: 'Para hacer un requerimiento de compra pública como entidad contratante:
+
+    1️⃣ *Verifica el PAC* — el bien o servicio debe estar en el Plan Anual de Contratación
+    2️⃣ *Determina el monto* — define el presupuesto referencial
+    3️⃣ *Elige el proceso* según el monto:
+       • Ínfima cuantía: hasta $7,263 USD (compra directa)
+       • Menor cuantía: hasta $72,630 USD
+       • Cotización / Licitación: montos mayores
+    4️⃣ *Ingresa al SOCE* en www.compraspublicas.gob.ec con tu usuario institucional
+    5️⃣ *Crea el proceso* — completa el formulario, sube el pliego y publica
+
+    📞 Soporte: *1800-737267*
+    📌 Base legal: Art. 22 LOSNCP (PAC) y Art. 44 LOSNCP (proceso de contratación)
+
+    '
+  frecuencia: 0
+- keywords:
   - entidad
   - registro
   - nueva
