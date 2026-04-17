@@ -1,5 +1,52 @@
 faqs:
 - keywords:
+  - portal
+  - compras
+  pregunta: ¿Cuál es el portal de compras públicas?
+  respuesta: 'El portal oficial de contratación pública del Ecuador es:
+
+    🌐 *www.compraspublicas.gob.ec*
+    🔗 https://portal.compraspublicas.gob.ec/sercop/
+
+    Ahí puedes:
+    ✅ Buscar procesos activos
+    ✅ Registrarte como proveedor (RUP)
+    ✅ Presentar ofertas
+    ✅ Consultar contratos y normativa
+
+    '
+  frecuencia: 0
+- keywords:
+  - pagina
+  - web
+  - sercop
+  pregunta: ¿Cuál es la página web del SERCOP?
+  respuesta: 'Las páginas oficiales del SERCOP son:
+
+    🌐 *Portal de contratación:* www.compraspublicas.gob.ec
+    🔗 https://portal.compraspublicas.gob.ec/sercop/
+    🌐 *Sitio institucional:* www.sercop.gob.ec
+
+    En el portal encontrarás todos los procesos, el registro de proveedores (RUP), normativa y manuales.
+
+    '
+  frecuencia: 0
+- keywords:
+  - link
+  - enlace
+  - url
+  - portal
+  pregunta: ¿Cuál es el link/enlace del portal de contratación?
+  respuesta: 'El enlace oficial del portal de contratación pública es:
+
+    🔗 https://portal.compraspublicas.gob.ec/sercop/
+    🌐 *www.compraspublicas.gob.ec*
+
+    Es el Sistema Oficial de Contratación del Estado (SOCE) donde se publican todos los procesos públicos del Ecuador.
+
+    '
+  frecuencia: 0
+- keywords:
   - tipos
   - contratacion
   pregunta: ¿Cuáles son los tipos de contratación pública?
