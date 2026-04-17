@@ -63,6 +63,7 @@ app = FastAPI(
     description="SercoBot — Asistente Virtual de Contratación Pública del SERCOP Ecuador",
     version="2.0.0",
     lifespan=lifespan,
+    redirect_slashes=False,
 )
 
 
@@ -288,12 +289,24 @@ async def exportar_dataset_finetune(request: Request):
 # ─── Admin: Chat de prueba (QA) ──────────────────────────────────────────────
 
 class ChatRequest(BaseModel):
-    mensaje: str
+    # Acepta cualquier nombre de campo común
+    mensaje: str = ""
+    message: str = ""
+    pregunta: str = ""
+    query: str = ""
     telefono: str = "test-qa"
+    phone: str = ""
     token: str = ""
+
+    def get_mensaje(self) -> str:
+        return self.mensaje or self.message or self.pregunta or self.query or ""
+
+    def get_telefono(self) -> str:
+        return self.telefono or self.phone or "test-qa"
 
 
 @app.post("/admin/chat")
+@app.post("/admin/chat/")
 async def chat_prueba(body: ChatRequest):
     """
     Endpoint síncrono para QA — devuelve la respuesta del bot directamente.
@@ -301,16 +314,20 @@ async def chat_prueba(body: ChatRequest):
     """
     if ADMIN_TOKEN and body.token != ADMIN_TOKEN:
         raise HTTPException(status_code=401, detail="Token inválido")
+    mensaje = body.get_mensaje()
+    telefono = body.get_telefono()
+    if not mensaje:
+        raise HTTPException(status_code=400, detail="Campo 'mensaje' requerido")
     import time
     t0 = time.time()
-    historial = await obtener_historial(body.telefono, limite=HISTORIAL_LIMITE)
-    respuesta = await generar_respuesta(body.mensaje, historial, telefono=body.telefono)
-    await guardar_mensaje(body.telefono, "user", body.mensaje)
-    await guardar_mensaje(body.telefono, "assistant", respuesta)
+    historial = await obtener_historial(telefono, limite=HISTORIAL_LIMITE)
+    respuesta = await generar_respuesta(mensaje, historial, telefono=telefono)
+    await guardar_mensaje(telefono, "user", mensaje)
+    await guardar_mensaje(telefono, "assistant", respuesta)
     return {
-        "mensaje": body.mensaje,
+        "mensaje": mensaje,
         "respuesta": respuesta,
-        "telefono": body.telefono,
+        "telefono": telefono,
         "tiempo_ms": int((time.time() - t0) * 1000),
     }
 
