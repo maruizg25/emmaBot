@@ -89,7 +89,9 @@ _STOPWORDS = {_normalizar(w) for w in {
     "hacer", "saber", "decir", "ver", "haber", "tener",
     # Términos genéricos del dominio que no distinguen entre FAQs
     "proceso", "procesos", "contrato", "contratos",
-    "informacion", "informaciones", "informacion",
+    "informacion", "informaciones",
+    # Palabras interrogativas y verbos genéricos que no discriminan FAQs
+    "existe", "existen", "cuales",
 }}
 
 
@@ -126,7 +128,7 @@ _KW_DESPEDIDA = {_normalizar(w) for w in {
     "fue todo", "nada mas",
 }}
 _FRASES_DESPEDIDA = {_normalizar(w) for w in {
-    "gracias y adios", "muchas gracias", "thank you", "thanks",
+    "gracias y adios", "thank you", "thanks",
     "eso es todo", "con eso esta bien", "listo gracias", "ok gracias",
     "perfecto gracias", "fue todo", "nada mas",
 }}
@@ -175,6 +177,8 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "limpie", "construcc", "contratant", "adquisici", "compra",
     "convenio", "consorcio", "sancion", "puntaje", "pliego",
     "empate", "extranjero", "auditoria", "mantenimient",
+    # Puja — solo en SIE
+    "puja", "pujar",
     # Transparencia y denuncia (rendición de cuentas)
     "denuncia", "denunci", "corrupcion", "irregularid", "transparenc",
     "queja", "reclamo", "fiscaliz", "control", "veeduria",
@@ -190,17 +194,17 @@ _MENU_QUERIES = {
     "2": "rup registro proveedor",
     "3": "buscar procesos portal",
     "4": "garantias tipos",
-    "5": "losncp normativa",
+    "5": "losncp ley contratacion",
     "uno": "tipos contratacion",
     "dos": "rup registro proveedor",
     "tres": "buscar procesos portal",
     "cuatro": "garantias tipos",
-    "cinco": "losncp normativa",
+    "cinco": "losncp ley contratacion",
     "opcion 1": "tipos contratacion",
     "opcion 2": "rup registro proveedor",
     "opcion 3": "buscar procesos portal",
     "opcion 4": "garantias tipos",
-    "opcion 5": "losncp normativa",
+    "opcion 5": "losncp ley contratacion",
 }
 
 # Patrones de mensajes multimedia de WhatsApp
@@ -413,15 +417,17 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
         return ("negacion", cfg.get("msg_negacion", ""))
 
     # Cat 9 — FAQ cache hit (antes de scope para dar respuesta directa si existe)
-    # Pero primero: si la query es demasiado corta (< 3 tokens significativos),
-    # mostramos el menú en lugar de intentar el single-token fallback del FAQ,
-    # que produciría respuestas incorrectas para palabras genéricas como "proceso".
+    # Para queries cortas (< 3 tokens significativos): verificar scope primero.
+    # Si no tiene ningún stem de contratación → fuera de scope.
+    # Si tiene scope pero es ambigua → intentar FAQ, luego menú.
     _tokens_sig_sc = _tokens_sin_stopwords(texto_norm)
     if len(_tokens_sig_sc) < 3:
+        if _es_fuera_scope(texto_norm):
+            return ("fuera_scope", cfg.get("msg_fuera_scope", ""))
         faq_resp = _check_faq(texto_norm)
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
-        # Query corta sin match específico → mostrar menú
+        # Query corta con scope pero sin match específico → mostrar menú
         return ("consulta_ambigua", cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", "")))
     else:
         faq_resp = _check_faq(texto_norm)
