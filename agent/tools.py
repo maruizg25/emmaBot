@@ -109,7 +109,7 @@ def info_rup() -> dict:
     """Información sobre el Registro Único de Proveedores."""
     return {
         "descripcion": "El RUP es el registro oficial de proveedores habilitados para contratar con el Estado ecuatoriano.",
-        "normativa": "Art. 16-18 LOSNCP",
+        "normativa": "Art. 17-18 LOSNCP",
         "portal": "https://www.compraspublicas.gob.ec",
         "requisitos_persona_natural": [
             "Cédula de ciudadanía o pasaporte",
@@ -147,26 +147,24 @@ PLAZOS_REFERENCIALES = {
         "adjudicacion": "5 días hábiles",
     },
     "impugnacion": {
-        "recurso_de_apelacion": "3 días hábiles desde la notificación de adjudicación (Art. 102 LOSNCP)",
-        "resolucion_recurso": "7 días hábiles desde la interposición",
-        "accion_contencioso_administrativa": "90 días desde que se agoten recursos administrativos",
-        "nota": "El recurso de apelación suspende el proceso hasta su resolución.",
-        "normativa": "Art. 102-103 LOSNCP; Art. 305 RGLOSNCP",
+        "recurso_de_apelacion": "Se rige por el Código Orgánico Administrativo (COA)",
+        "nota": "Art. 116 LOSNCP remite al COA para condiciones y requisitos del recurso de apelación en contratación pública.",
+        "impugnacion_multas": "Las multas al contratista pueden impugnarse en sede administrativa mediante recurso de apelación (Art. 377 RGLOSNCP).",
+        "normativa": "Art. 116 LOSNCP; Art. 377 RGLOSNCP; COA",
     },
     "contrato": {
-        "firma_contrato": "Máximo 15 días hábiles tras la adjudicación",
-        "anticipo": "Hasta 30% del monto contractual, entregado tras garantía de buen uso",
-        "plazo_ejecucion": "Definido en pliegos según el objeto contractual",
-        "acta_entrega_recepcion": "Provisional y definitiva según reglamento",
-        "normativa": "Art. 69-71 LOSNCP; Art. 290-294 RGLOSNCP",
+        "adjudicacion_y_suscripcion": "La entidad contratante adjudica y suscribe el contrato según cronograma del procedimiento (Art. 281 RGLOSNCP).",
+        "requisitos_previos": "Requisitos previos para firma según Art. 79 LOSNCP (Art. 343 RGLOSNCP).",
+        "anticipo": "Garantía por anticipo requerida (Art. 86 LOSNCP).",
+        "plazo_ejecucion": "Definido en pliegos según el objeto contractual.",
+        "normativa": "Art. 74 LOSNCP; Art. 281, 341-345 RGLOSNCP",
     },
     "garantias": {
-        "fiel_cumplimiento": "5% del valor del contrato",
-        "buen_uso_anticipo": "100% del anticipo recibido",
-        "tecnica": "5% del valor ofertado (en licitación)",
-        "vigencia": "Igual al plazo del contrato + 60 días adicionales",
-        "devolucion_fiel_cumplimiento": "Tras acta de entrega-recepción definitiva",
-        "normativa": "Art. 73-77 LOSNCP; Art. 274-284 RGLOSNCP",
+        "fiel_cumplimiento": "Para seguridad del cumplimiento del contrato (Art. 85 LOSNCP; Art. 346 RGLOSNCP).",
+        "buen_uso_anticipo": "Garantía por anticipo de cualquier naturaleza (Art. 86 LOSNCP).",
+        "tecnica": "En contratos de adquisición de equipos, maquinaria o vehículos, u obras que contemplen aquello (Art. 87 LOSNCP).",
+        "devolucion": "Según reglas del Art. 89 LOSNCP.",
+        "normativa": "Art. 85-89 LOSNCP; Art. 346-350 RGLOSNCP",
     },
 }
 
