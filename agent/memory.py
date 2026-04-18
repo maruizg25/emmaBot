@@ -409,8 +409,9 @@ async def buscar_respuesta_cacheada(pregunta_normalizada: str) -> str | None:
                 SELECT respuesta FROM consultas_log
                 WHERE pregunta_normalizada = :pn
                   AND fue_shortcut = FALSE
+                  AND proveedor_llm NOT IN ('none', 'shortcut', 'cache_llm', 'articulo_directo', 'tool_directo')
                   AND respuesta IS NOT NULL
-                  AND length(respuesta) > 50
+                  AND length(respuesta) > 200
                 ORDER BY timestamp DESC
                 LIMIT 1
             """), {"pn": pregunta_normalizada[:500]})
