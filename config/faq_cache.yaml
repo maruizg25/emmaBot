@@ -89,8 +89,8 @@ faqs:
   pregunta: ¿Cuál es el portal de compras públicas?
   respuesta: 'El portal oficial de contratación pública del Ecuador es:
 
-    🌐 *www.www.compraspublicas.gob.ec*
-    🔗 https://portal.www.compraspublicas.gob.ec/sercop/
+    🌐 *www.compraspublicas.gob.ec*
+    🔗 https://portal.compraspublicas.gob.ec/sercop/
 
     Ahí puedes:
     ✅ Buscar procesos activos
@@ -107,8 +107,8 @@ faqs:
   pregunta: ¿Cuál es la página web del SERCOP?
   respuesta: 'Las páginas oficiales del SERCOP son:
 
-    🌐 *Portal de contratación:* www.www.compraspublicas.gob.ec
-    🔗 https://portal.www.compraspublicas.gob.ec/sercop/
+    🌐 *Portal de contratación:* www.compraspublicas.gob.ec
+    🔗 https://portal.compraspublicas.gob.ec/sercop/
     🌐 *Sitio institucional:* www.sercop.gob.ec
 
     En el portal encontrarás todos los procesos, el registro de proveedores (RUP), normativa y manuales.
@@ -123,8 +123,8 @@ faqs:
   pregunta: ¿Cuál es el link/enlace del portal de contratación?
   respuesta: 'El enlace oficial del portal de contratación pública es:
 
-    🔗 https://portal.www.compraspublicas.gob.ec/sercop/
-    🌐 *www.www.compraspublicas.gob.ec*
+    🔗 https://portal.compraspublicas.gob.ec/sercop/
+    🌐 *www.compraspublicas.gob.ec*
 
     Es el Sistema Oficial de Contratación del Estado (SOCE) donde se publican todos los procesos públicos del Ecuador.
 
@@ -413,7 +413,7 @@ faqs:
     🔹 El sistema oculta las identidades (Proveedor 1, Proveedor 2…)
     🔹 Solo el Gestor del proceso ve la puja en tiempo real
     🔹 Gana quien oferte el precio más bajo al cierre
-    🔹 La puja tiene una duración definida (generalmente 15-30 min)
+    🔹 La puja tiene una duración definida de **60 minutos**
 
     💡 La puja *solo existe en SIE* — no en licitación ni feria inclusiva.
 
@@ -847,29 +847,28 @@ faqs:
   respuesta: '# 🤖 ¿Qué es el RUP?
 
 
-    El **RUP (Recurso de Apelación ante el SERCOP)** es el mecanismo de impugnación que permite a los proveedores o participantes
-    cuestionar decisiones tomadas por las entidades contratantes en procesos de compra pública.
+    El **RUP (Registro Único de Proveedores)** es el sistema oficial donde deben inscribirse todas las personas naturales
+    y jurídicas que deseen participar en procesos de contratación pública en Ecuador.
 
 
     ## 📋 ¿Para qué sirve?
 
 
-    ✅ Recurrir decisiones de la entidad contratante que consideres injustas o ilegales
+    ✅ Habilitarte como proveedor del Estado para participar en procesos de contratación pública
 
-    ✅ Solicitar al SERCOP revise y revoque actos administrativos
+    ✅ Registrar tu información legal, financiera y de experiencia como proveedor
 
-    ✅ Defender tus derechos como proveedor o participante en licitaciones
+    ✅ Acceder al catálogo electrónico y ser visible para las entidades contratantes
 
-    ✅ Cuestionar bases, evaluaciones, adjudicaciones o rechazos
-
-
-    ## ⏱️ Plazo importante
-
-    Tienes **5 días hábiles** desde la notificación para presentar el RUP ante el SERCOP, quien es la autoridad competente
-    para resolver.
+    ✅ Cumplir con el requisito obligatorio para contratar con el Estado (Art. 18 LOSNCP)
 
 
-    📌 Base legal: Art. 342 RGLOSNCP'
+    ## 📌 Datos clave
+
+    El registro en el RUP es **gratuito** y tiene vigencia **anual**, por lo que debe renovarse cada año.
+
+
+    📌 Base legal: Art. 17-18 LOSNCP'
   frecuencia: 0
 - keywords:
   - rup
@@ -881,7 +880,7 @@ faqs:
   respuesta: '# Renovación del RUP ⏰
 
 
-    El **RUP (Registro Único de Proveedores) tiene vigencia de 2 años** desde su otorgamiento. Debes renovarlo **antes de
+    El **RUP (Registro Único de Proveedores) tiene vigencia anual** (Art. 17-18 LOSNCP). Debes renovarlo **cada año antes de
     que venza** para continuar participando en procesos de contratación pública.
 
 
@@ -895,7 +894,7 @@ faqs:
 
     🔹 Carga documentos vigentes (RUC, CIF, etc.)
 
-    🔹 Paga la tarifa correspondiente (si aplica)
+    🔹 El trámite es **gratuito** (Art. 18 LOSNCP)
 
 
     ⚠️ **Importante:** Si tu RUP vence, **no podrás participar en licitaciones** hasta renovarlo. Se recomienda iniciar el
@@ -917,7 +916,7 @@ faqs:
     ## 🔧 Pasos principales:
 
 
-    1️⃣ **Ingresa a la plataforma RUP** en www.rup.org.ec con tu cédula/RUC
+    1️⃣ **Ingresa a la plataforma RUP** en www.compraspublicas.gob.ec con tu cédula/RUC
 
 
     2️⃣ **Completa tus datos** como persona natural o jurídica (nacional o extranjera)
@@ -2807,7 +2806,7 @@ faqs:
 
     **1️⃣ Acceso al portal:**
 
-    Ingresa a www.www.compraspublicas.gob.ec y selecciona "Buscar procesos de contratación"
+    Ingresa a www.compraspublicas.gob.ec y selecciona "Buscar procesos de contratación"
 
 
     **2️⃣ Filtros de búsqueda:**
@@ -3466,7 +3465,7 @@ faqs:
     Pública, sin restricción de horarios.
 
 
-    **Lo primero:** Regístrate como proveedor en el **Portal de Contratación Pública (www.www.compraspublicas.gob.ec)** e incluye
+    **Lo primero:** Regístrate como proveedor en el **Portal de Contratación Pública (www.compraspublicas.gob.ec)** e incluye
     tus productos en el catálogo electrónico. Así las entidades te encuentran fácilmente.
 
 
@@ -3847,4 +3846,410 @@ faqs:
     🏗️ Para obras → *siempre Licitación*
 
     📌 Fuente: Art. 74 RGLOSNCP vigente
+  frecuencia: 0
+
+# ─── ARTÍCULOS FALTANTES — BRECHAS CRÍTICAS (texto exacto de la ley) ────────
+
+- keywords:
+  - consorcio
+  - ofertar
+  - asociarse
+  - conjunto
+  pregunta: ¿Puedo presentar una oferta en consorcio?
+  respuesta: |
+    📜 *Art. 25 LOSNCP — Consorcio para ofertar*
+
+    Sí, los proveedores inscritos en el RUP (personas naturales o jurídicas) pueden presentar ofertas *individualmente o con compromiso de consorcio*.
+
+    ⚠️ Los miembros del consorcio serán *responsables solidaria e indivisiblemente* por el cumplimiento de las obligaciones derivadas de la oferta y del contrato, sin importar el plazo del consorcio.
+
+    📌 Base legal: Art. 25 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - vigencia
+  - oferta
+  - cuanto
+  - tiempo
+  - valida
+  pregunta: ¿Cuánto tiempo es válida mi oferta?
+  respuesta: |
+    📜 *Art. 29 LOSNCP — Vigencia de la oferta*
+
+    Las ofertas se entienden vigentes durante el tiempo que prevean los *Pliegos precontractuales*.
+
+    Si los pliegos no prevén un plazo de vigencia, la oferta está vigente *hasta la fecha de celebración del contrato*. La entidad contratante puede prorrogar este plazo.
+
+    📌 Base legal: Art. 29 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - desierto
+  - declaratoria
+  - proceso
+  - nadie
+  - ofertas
+  pregunta: ¿Qué pasa si un proceso queda desierto?
+  respuesta: |
+    📜 *Art. 31 LOSNCP — Declaratoria de procedimiento desierto*
+
+    La máxima autoridad declarará desierto el procedimiento (total o parcial) cuando:
+
+    🔹 No se presentó ninguna oferta
+    🔹 Todas las ofertas fueron inhabilitadas
+    🔹 Todas las ofertas se consideran inconvenientes para los intereses nacionales o institucionales
+    🔹 El procedimiento se considera fallido por problemas técnicos (previa certificación del SERCOP)
+
+    📌 Base legal: Art. 31 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - adjudicatario
+  - fallido
+  - no
+  - firma
+  - contrato
+  - inhabilitado
+  pregunta: ¿Qué pasa si el adjudicatario no firma el contrato?
+  respuesta: |
+    📜 *Art. 33 LOSNCP — Adjudicatarios fallidos*
+
+    Si el adjudicatario no celebra el contrato por causas imputables a él:
+
+    ❌ Será declarado *adjudicatario fallido*
+    ❌ Será *inhabilitado del RUP por 3 años*
+    ❌ No podrá contratar con ninguna entidad del Estado durante ese plazo
+
+    Con la declaratoria de fallido, la entidad podrá adjudicar al siguiente oferente mejor puntuado.
+
+    📌 Base legal: Art. 33 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - formas
+  - garantia
+  - tipos
+  - banco
+  - poliza
+  - seguro
+  pregunta: ¿Qué formas de garantía se aceptan?
+  respuesta: |
+    📜 *Art. 84 LOSNCP — Formas de garantías*
+
+    Los contratistas pueden rendir cualquiera de estas garantías:
+
+    1️⃣ Garantía incondicional, irrevocable y de cobro inmediato otorgada por un *banco o institución financiera* del país
+    2️⃣ *Póliza de seguros* incondicional e irrevocable, de cobro inmediato, emitida por compañía de seguros del país
+    3️⃣ Primera hipoteca de bienes raíces (en casos autorizados)
+
+    📌 Base legal: Art. 84 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - ejecucion
+  - garantia
+  - ejecutar
+  - poliza
+  - cobro
+  pregunta: ¿Cuándo puede la entidad ejecutar una garantía?
+  respuesta: |
+    📜 *Art. 88 LOSNCP — Principios para ejecución de garantías*
+
+    Las garantías se ejecutan bajo estos principios rectores:
+
+    🔹 *Prevalencia del interés público* sobre el particular
+    🔹 Caracteres de *incondicionalidad, irrevocabilidad y cobro inmediato* (Art. 84 LOSNCP)
+    🔹 *Indubio pro consumidor* (Ley General de Seguros)
+
+    La entidad contratante ejecutará la garantía cuando el contratista incumpla sus obligaciones contractuales.
+
+    📌 Base legal: Art. 88 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - devolucion
+  - garantia
+  - devolver
+  - cuando
+  - plazo
+  pregunta: ¿Cuándo me devuelven la garantía?
+  respuesta: |
+    📜 *Art. 89 LOSNCP — Devolución de garantías*
+
+    Las garantías se devuelven según estas reglas:
+
+    1️⃣ *Buen uso del anticipo:* se reduce en la proporción que se vaya amortizando o se reciba el objeto del contrato
+    2️⃣ *Fiel cumplimiento:* se mantiene vigente hasta la *recepción definitiva* del contrato
+
+    📌 Base legal: Art. 89 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - cesion
+  - ceder
+  - contrato
+  - transferir
+  pregunta: ¿Puedo ceder mi contrato a otra empresa?
+  respuesta: |
+    📜 *Art. 90 LOSNCP — Cesión de los contratos*
+
+    ❌ *No.* El contratista está *prohibido* de ceder los derechos y obligaciones emanados del contrato.
+
+    📌 Base legal: Art. 90 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - subcontratar
+  - subcontratacion
+  - subcontrato
+  - tercero
+  pregunta: ¿Puedo subcontratar parte de un contrato?
+  respuesta: |
+    📜 *Art. 91 LOSNCP — Subcontratación*
+
+    ✅ Sí, el contratista puede subcontratar la ejecución *parcial* del contrato con personas registradas en el RUP, bajo *su riesgo y responsabilidad*.
+
+    Restricciones:
+    🔹 En consultoría, solo para actividades expresamente previstas en pliegos y oferta
+    🔹 No se puede subcontratar con personas *inhabilitadas*
+    🔹 Las subcontrataciones no pueden superar el porcentaje que establezca el Reglamento
+
+    📌 Base legal: Art. 91 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - administrador
+  - fiscalizador
+  - contrato
+  - supervisor
+  - responsable
+  pregunta: ¿Quién es el administrador del contrato?
+  respuesta: |
+    📜 *Art. 92 LOSNCP — Administrador y fiscalizador del contrato*
+
+    El administrador y el fiscalizador son responsables de tomar *todas las medidas necesarias* para la adecuada ejecución del contrato, con estricto cumplimiento de cláusulas, cronogramas, plazos y costos.
+
+    ⚠️ Esta responsabilidad es *administrativa, civil y penal* según corresponda.
+
+    En todos los contratos y órdenes de compra, las entidades contratantes designarán un administrador del contrato.
+
+    📌 Base legal: Art. 92 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - liquidacion
+  - contrato
+  - pago
+  - pendiente
+  - valores
+  pregunta: ¿Qué es la liquidación del contrato?
+  respuesta: |
+    📜 *Art. 94 LOSNCP — Liquidación del contrato*
+
+    La liquidación económico-contable del contrato incluye:
+
+    🔹 Constancia de lo ejecutado
+    🔹 Valores recibidos por el contratista
+    🔹 Pagos pendientes o valores a deducir/devolver
+    🔹 Reajustes correspondientes
+    🔹 Compensaciones a que hubiere lugar
+
+    La liquidación final será parte del *acta de recepción definitiva*.
+
+    📌 Base legal: Art. 94 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - terminacion
+  - contrato
+  - causas
+  - terminar
+  - finalizar
+  pregunta: ¿Cómo termina un contrato público?
+  respuesta: |
+    📜 *Art. 106 LOSNCP — Terminación de los contratos*
+
+    Los contratos terminan por:
+
+    1️⃣ Cumplimiento de las obligaciones contractuales
+    2️⃣ *Mutuo acuerdo* de las partes
+    3️⃣ Sentencia o laudo que declare nulidad o resolución
+    4️⃣ *Declaración unilateral* de la entidad por incumplimiento del contratista
+    5️⃣ Participación en colusión durante las fases previas
+
+    📌 Base legal: Art. 106 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - terminacion
+  - mutuo
+  - acuerdo
+  - convenio
+  pregunta: ¿Se puede terminar un contrato por mutuo acuerdo?
+  respuesta: |
+    📜 *Art. 107 LOSNCP — Terminación por mutuo acuerdo*
+
+    Sí, cuando por circunstancias *imprevistas, técnicas, económicas, fuerza mayor o caso fortuito* no sea posible o conveniente ejecutar el contrato total o parcialmente.
+
+    ⚠️ La terminación por mutuo acuerdo *no implica renuncia* a derechos causados o adquiridos.
+
+    📌 Base legal: Art. 107 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - terminacion
+  - unilateral
+  - incumplimiento
+  - contratista
+  pregunta: ¿Cuándo puede la entidad terminar unilateralmente un contrato?
+  respuesta: |
+    📜 *Art. 108 LOSNCP — Terminación unilateral del contrato*
+
+    La entidad puede terminar unilateralmente el contrato cuando:
+
+    1️⃣ *Incumplimiento* del contratista
+    2️⃣ Quiebra o insolvencia del contratista
+    3️⃣ Multas superan el monto de la garantía de fiel cumplimiento
+    4️⃣ Suspensión de trabajos por más de *60 días* sin fuerza mayor
+    5️⃣ Participación en actos de corrupción
+
+    📌 Base legal: Art. 108 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - notificacion
+  - terminacion
+  - unilateral
+  - dias
+  - tramite
+  pregunta: ¿Cómo me notifican la terminación unilateral?
+  respuesta: |
+    📜 *Art. 109 LOSNCP — Notificación y trámite*
+
+    Antes de terminar unilateralmente, la entidad debe:
+
+    1️⃣ Notificar al contratista con *10 días término* de anticipación
+    2️⃣ Remitir los informes técnico y económico sobre el cumplimiento de obligaciones
+    3️⃣ Señalar específicamente el incumplimiento o mora del contratista
+
+    El contratista tiene derecho a presentar sus descargos en ese plazo.
+
+    📌 Base legal: Art. 109 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - terminacion
+  - entidad
+  - incumple
+  - estado
+  - demandar
+  pregunta: ¿Qué pasa si la entidad contratante incumple?
+  respuesta: |
+    📜 *Art. 110 LOSNCP — Terminación por causas de la entidad*
+
+    El contratista puede *demandar la resolución del contrato* cuando:
+
+    1️⃣ Incumplimiento de obligaciones contractuales por más de *60 días*
+    2️⃣ Suspensión de trabajos por más de *60 días* sin fuerza mayor
+    3️⃣ Diseños definitivos técnicamente inejecutables
+
+    📌 Base legal: Art. 110 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - infraccion
+  - sancion
+  - proveedor
+  - castigar
+  - suspension
+  pregunta: ¿Qué infracciones pueden sancionarme como proveedor?
+  respuesta: |
+    📜 *Art. 119 LOSNCP — Infracciones de proveedores*
+
+    Son infracciones de un proveedor:
+
+    ❌ Proporcionar *información o documentación falsa*
+    ❌ Realizar *declaración errónea* dentro de un procedimiento de contratación
+    ❌ Falsificar calidad de *productor nacional*
+
+    📌 Base legal: Art. 119 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - sancion
+  - suspension
+  - rup
+  - inhabilitar
+  - dias
+  - cuanto
+  - tiempo
+  pregunta: ¿Cuánto tiempo me pueden suspender del RUP?
+  respuesta: |
+    📜 *Art. 120 LOSNCP — Sanciones*
+
+    Las sanciones por infracciones son:
+
+    ⏱ *Primera vez:* suspensión del RUP de *60 a 180 días* calendario
+    ⏱ *Reincidencia:* suspensión de *181 a 360 días* calendario
+
+    📌 Base legal: Art. 120 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - procedimiento
+  - sancionatorio
+  - defensa
+  - descargo
+  - dias
+  pregunta: ¿Cómo es el procedimiento sancionatorio?
+  respuesta: |
+    📜 *Art. 121 LOSNCP — Procedimiento sancionatorio*
+
+    Cuando el SERCOP conozca una o más infracciones (de oficio o a petición de parte):
+
+    1️⃣ Notificará al proveedor
+    2️⃣ El proveedor tiene *10 días* para justificar los hechos y adjuntar documentación probatoria
+
+    📌 Base legal: Art. 121 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - inhabilidades
+  - quien
+  - no
+  - puede
+  - contratar
+  - prohibicion
+  pregunta: ¿Quiénes no pueden contratar con el Estado?
+  respuesta: |
+    📜 *Art. 75 LOSNCP — Inhabilidades generales*
+
+    No pueden celebrar contratos:
+
+    ❌ Quienes tengan incapacidades del Código Civil
+    ❌ El Presidente, Vicepresidente, ministros, secretarios de Estado, legisladores
+    ❌ Director Ejecutivo y funcionarios del SERCOP
+    ❌ Cónyuge o parientes hasta 4to grado de consanguinidad de las personas anteriores
+
+    📌 Base legal: Art. 75 LOSNCP vigente. Ver también Art. 76 (inhabilidades especiales)
+  frecuencia: 0
+
+- keywords:
+  - nulidad
+  - contrato
+  - nulo
+  - anular
+  pregunta: ¿Cuándo es nulo un contrato público?
+  respuesta: |
+    📜 *Art. 78 LOSNCP — Nulidad del contrato*
+
+    Los contratos son nulos cuando:
+
+    1️⃣ Por causas generales establecidas en la Ley
+    2️⃣ Por haberse *prescindido de los procedimientos y solemnidades* legalmente establecidas
+    3️⃣ Por haber sido adjudicados o celebrados por un *órgano manifiestamente incompetente*
+
+    Cuando se detecte cualquier indicio de nulidad, se pondrá en conocimiento del *Procurador General del Estado*.
+
+    📌 Base legal: Art. 78 LOSNCP vigente
   frecuencia: 0
