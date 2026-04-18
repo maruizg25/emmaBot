@@ -439,21 +439,19 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
         return ("negacion", cfg.get("msg_negacion", ""))
 
     # Cat 9 — FAQ cache hit
-    # Umbral para menú genérico: < 2 tokens significativos.
-    # Con 0-1 tokens la query es demasiado vaga para RAG.
-    # Con ≥ 2 tokens (ej. "saca rup", "gana sie") hay contexto suficiente → RAG.
-    # Si contiene al menos un stem SERCOP → intentar FAQ siempre, luego RAG.
-    # Si no tiene scope → fuera_scope (tema ajeno al bot).
+    # < 2 tokens: demasiado vago para RAG → FAQ o menú
+    # 2-4 tokens: query simple → FAQ si matchea, si no RAG
+    # ≥ 5 tokens: query compleja → directo al RAG (respuesta más precisa)
     _tokens_sig_sc = _tokens_sin_stopwords(texto_norm)
-    if len(_tokens_sig_sc) < 2:
+    _n_tokens = len(_tokens_sig_sc)
+    if _n_tokens < 2:
         if _es_fuera_scope(texto_norm):
             return ("fuera_scope", cfg.get("msg_fuera_scope", ""))
         faq_resp = _check_faq(texto_norm)
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
-        # 0-1 tokens con scope pero sin FAQ específico → menú
         return ("consulta_ambigua", cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", "")))
-    else:
+    elif _n_tokens <= 4:
         faq_resp = _check_faq(texto_norm)
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
