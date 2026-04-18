@@ -3864,6 +3864,49 @@ faqs:
     📌 Fuente: Art. 74 RGLOSNCP vigente
   frecuencia: 0
 
+# ─── TRÁMITES Y GESTIONES PERSONALIZADAS ─────────────────────────────────────
+
+- keywords:
+  - reclamo
+  - queja
+  - seguimiento
+  - revisar
+  pregunta: ¿Puedo revisar el estado de un reclamo o trámite?
+  respuesta: |
+    No puedo consultar el estado de trámites o reclamos específicos 😔
+
+    Para eso necesitas atención personalizada:
+
+    💬 *Chat en línea:* www.compraspublicas.gob.ec (esquina inferior derecha)
+    📞 *Teléfono:* *1800-737267* (lunes a viernes 08h00-17h00)
+    📧 *Email:* info@sercop.gob.ec
+    🏢 *Presencial:* oficinas del SERCOP
+
+    Ahí pueden verificar el estado de tu trámite, reclamo o proceso específico.
+
+    ¿Puedo ayudarte con alguna consulta sobre normativa mientras tanto? 😊
+  frecuencia: 0
+
+- keywords:
+  - estado
+  - tramite
+  - proceso
+  - especifico
+  pregunta: ¿Puedo ver el estado de mi proceso o trámite?
+  respuesta: |
+    No tengo acceso al sistema para consultar procesos específicos 😔
+
+    Puedes verificarlo directamente:
+
+    🌐 *Portal:* www.compraspublicas.gob.ec → ingresa con tu usuario
+    💬 *Chat en línea:* en el portal (esquina inferior derecha)
+    📞 *Teléfono:* *1800-737267*
+
+    Si tienes el código del proceso, puedes buscarlo directamente en el portal.
+
+    ¿Tienes alguna pregunta sobre normativa o procedimientos? 😊
+  frecuencia: 0
+
 # ─── MODELOS Y FORMATOS ──────────────────────────────────────────────────────
 
 - keywords:
