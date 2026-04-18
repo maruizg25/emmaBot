@@ -3848,6 +3848,150 @@ faqs:
     📌 Fuente: Art. 74 RGLOSNCP vigente
   frecuencia: 0
 
+# ─── FIXES RONDA 2 — PREGUNTAS REALES (200 consultas) ────────────────────────
+
+- keywords:
+  - valor
+  - dinero
+  pregunta: ¿Qué es el valor por dinero en contratación pública?
+  respuesta: |
+    📜 *Art. 74 RGLOSNCP — Mejor Valor por Dinero*
+
+    El principio de mejor valor por dinero se aplica de forma *transversal en todos los procedimientos* de contratación pública: planificación, selección del procedimiento, evaluación de ofertas y ejecución contractual.
+
+    La entidad contratante debe identificar la alternativa que *maximice los resultados del gasto público*, considerando no solo el precio, sino también:
+    🔹 Calidad y sostenibilidad
+    🔹 Innovación
+    🔹 Costos del ciclo de vida
+    🔹 Desempeño y funcionalidad
+
+    Para SIE vs Licitación: si el precio más bajo y mercado competitivo = mejor valor → *SIE*. Si no → *Licitación*. Obras → siempre Licitación.
+
+    📌 Base legal: Art. 74 RGLOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - principios
+  - contratacion
+  pregunta: ¿Cuáles son los principios de la contratación pública?
+  respuesta: |
+    📜 *Art. 3 LOSNCP — Principios*
+
+    Los principios de la contratación pública ecuatoriana incluyen:
+
+    🔹 *Legalidad* — sujeción a la Constitución y la ley
+    🔹 *Transparencia* — publicidad de todos los procedimientos
+    🔹 *Igualdad* — trato justo a todos los oferentes
+    🔹 *Concurrencia* — participación amplia de proveedores
+    🔹 *Mejor valor por dinero* — maximizar resultados del gasto público
+    🔹 *Sostenibilidad* — ambiental, social y económica
+    🔹 *Vigencia tecnológica* — garantizar funcionamiento durante vida útil
+
+    📌 Base legal: Art. 3 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - sostenibilidad
+  - principio
+  - ambiental
+  pregunta: ¿Qué es el principio de sostenibilidad?
+  respuesta: |
+    📜 *Principio de sostenibilidad (Art. 3 LOSNCP)*
+
+    La contratación pública debe considerar criterios de *sostenibilidad ambiental, social y económica* en todos sus procedimientos.
+
+    Esto implica que las entidades contratantes deben evaluar el impacto ambiental y social de las contrataciones, no solo el precio.
+
+    El Art. 74 del Reglamento también establece que en el análisis de mejor valor por dinero se deben considerar atributos como *sostenibilidad e innovación*.
+
+    📌 Base legal: Art. 3 LOSNCP; Art. 74 RGLOSNCP
+  frecuencia: 0
+
+- keywords:
+  - subasta
+  - inversa
+  pregunta: ¿Qué es la subasta inversa?
+  respuesta: |
+    📜 *Art. 47 LOSNCP — Subasta Inversa Electrónica (SIE)*
+
+    Para bienes y servicios que no consten en el Catálogo Electrónico, las entidades contratantes realizan subastas inversas donde los proveedores *pujan hacia la baja* el precio ofertado a través del Portal de Contratación Pública.
+
+    🔹 *Objetivo:* obtener el menor precio
+    🔹 Si hay una sola oferta calificada → sesión de negociación (sin puja)
+    🔹 No tiene límite de monto
+
+    📌 Base legal: Art. 47 LOSNCP; Art. 74 RGLOSNCP
+  frecuencia: 0
+
+- keywords:
+  - asesor
+  - humano
+  - transferir
+  - agente
+  - persona
+  - real
+  pregunta: ¿Puedo hablar con un asesor humano?
+  respuesta: |
+    Soy un asistente virtual y no puedo transferirte a un asesor humano directamente.
+
+    Para atención personalizada puedes:
+
+    📞 Llamar al *1800-737267* (SERCOP) — lunes a viernes 08h00 a 17h00
+    🌐 Escribir en *www.sercop.gob.ec* → sección de Contacto
+    📧 Email: *info@sercop.gob.ec*
+
+    ¿Puedo ayudarte con alguna consulta mientras tanto? 😊
+  frecuencia: 0
+
+- keywords:
+  - pdf
+  - archivo
+  - documento
+  - descargar
+  - enviar
+  - reglamento
+  - completo
+  pregunta: ¿Me puedes enviar el PDF de la normativa?
+  respuesta: |
+    No puedo enviar archivos PDF por este medio 😔
+
+    Puedes descargar toda la normativa vigente directamente desde:
+
+    🌐 *www.compraspublicas.gob.ec* → sección Normativa
+    🔹 LOSNCP vigente (Ley Orgánica del Sistema Nacional de Contratación Pública)
+    🔹 Reglamento General a la LOSNCP
+    🔹 Resoluciones SERCOP vigentes
+
+    ¿Tienes alguna pregunta específica sobre la normativa? Puedo responderte con el texto exacto del artículo que necesites.
+  frecuencia: 0
+
+- keywords:
+  - fases
+  - etapas
+  - contratacion
+  pregunta: ¿Cuáles son las fases de la contratación pública?
+  respuesta: |
+    Las fases de la contratación pública en Ecuador son:
+
+    *1️⃣ Fase Preparatoria:*
+    🔹 Determinación de la necesidad (Art. 65 RGLOSNCP)
+    🔹 Estudios y diseños previos
+    🔹 Elaboración del presupuesto referencial
+    🔹 Certificación presupuestaria
+
+    *2️⃣ Fase Precontractual:*
+    🔹 Publicación del procedimiento en el portal
+    🔹 Recepción y evaluación de ofertas
+    🔹 Adjudicación (Art. 30 LOSNCP)
+
+    *3️⃣ Fase Contractual:*
+    🔹 Suscripción del contrato (máx. 15 días — Art. 80 LOSNCP)
+    🔹 Ejecución y fiscalización (Art. 92 LOSNCP)
+    🔹 Recepción y liquidación (Art. 93-94 LOSNCP)
+
+    📌 Base legal: LOSNCP y RGLOSNCP vigentes
+  frecuencia: 0
+
 # ─── ARTÍCULOS FALTANTES — BRECHAS CRÍTICAS (texto exacto de la ley) ────────
 
 - keywords:

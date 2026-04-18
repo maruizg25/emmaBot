@@ -113,11 +113,15 @@ def _token_matches_keyword(qt: str, kw: str) -> bool:
 
 # Categoría 1 — Saludos
 _KW_SALUDO = {_normalizar(w) for w in {
-    "hola", "hi", "hello", "hey", "buenas", "buenos dias", "buenas tardes",
-    "buenas noches", "buen dia", "que tal", "como estas", "como esta",
-    "como te va", "good morning", "good afternoon", "good evening",
+    "hola", "holaa", "holaaa", "hi", "hello", "hey",
+    "buenas", "buenos dias", "buenas tardes", "buenas noches", "buen dia",
+    "saludos", "saludos cordiales",
+    "que tal", "como estas", "como esta", "como te va",
+    "good morning", "good afternoon", "good evening",
     "inicio", "empezar", "comenzar", "start",
     "menu", "menú", "opciones", "ayuda", "help",
+    "como funcionas", "que puedes hacer", "que haces", "como me ayudas",
+    "informacion",
 }}
 _EMOJIS_SALUDO = {"👋", "🙋", "😊"}
 
@@ -189,6 +193,12 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "pasivo", "activo", "estado",
     # Clasificador y capacitación
     "cpc", "clasificador", "examen", "certificac", "capacitac", "curso",
+    # Conceptos nuevos LOSNCP vigente
+    "valor por dinero", "mejor valor", "sostenibilid", "principio",
+    "experiencia", "calific", "puntaje", "evaluac",
+    "prorroga", "plazo", "extension",
+    # Transferir a humano
+    "asesor", "humano", "transferir", "agente",
     # Términos informales frecuentes
     "vender", "venta", "comprar", "cobrar", "pagar",
 }}
