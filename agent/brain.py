@@ -913,7 +913,9 @@ async def generar_respuesta(
     num_chunks = 0
 
     # Pre-tool execution — retorna directo sin LLM si hay resultado
-    tools_detectadas = _detectar_tools(mensaje)
+    # Si la query es específica (≥4 tokens), saltar tools y dejar que RAG responda
+    _n_tokens_msg = len(_tokens_sin_stopwords(_normalizar(mensaje)))
+    tools_detectadas = _detectar_tools(mensaje) if _n_tokens_msg <= 3 else []
     if tools_detectadas:
         from agent.tools import ejecutar_tool
         bloques_tool: list[str] = []
