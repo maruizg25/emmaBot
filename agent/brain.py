@@ -200,6 +200,8 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "tdr", "terminos de referencia", "especificacion",
     "convalidac", "orden de compra", "presupuestar",
     "pliegos", "convenio marco",
+    "etapa", "preparatori", "precontractu", "contractu",
+    "fase", "planificac",
     "prorroga", "plazo", "extension",
     # Transferir a humano
     "asesor", "humano", "transferir", "agente",
