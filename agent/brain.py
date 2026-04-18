@@ -121,6 +121,8 @@ _KW_SALUDO = {_normalizar(w) for w in {
     "inicio", "empezar", "comenzar", "start",
     "menu", "menú", "opciones", "ayuda", "help",
     "como funcionas", "que puedes hacer", "que haces", "como me ayudas",
+    "puedo preguntar", "puedo consultar", "me puedes ayudar",
+    "que sabes", "de que temas sabes", "sobre que temas",
     "informacion",
 }}
 _EMOJIS_SALUDO = {"👋", "🙋", "😊"}
