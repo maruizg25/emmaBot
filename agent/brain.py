@@ -652,11 +652,16 @@ def _detectar_tools(mensaje: str) -> list[tuple[str, dict]]:
     _kw_montos = [
         "monto", "umbral", "cuánto", "cuanto", "pie",
         "límite", "limite", "ínfima", "infima",
-        "licitaci", "feria inclusiva",
         "cuánto puedo", "cuanto puedo", "hasta cuánto", "hasta cuanto",
         "valor máximo", "valor maximo",
+        "montos de contratacion", "montos de contratación",
     ]
-    if any(kw in texto for kw in _kw_montos):
+    _kw_no_montos = [
+        "experiencia", "tdr", "terminos de referencia", "calific",
+        "puntaje", "metodolog", "adjudic", "evalua", "personal",
+        "equipo", "subcontrat",
+    ]
+    if any(kw in texto for kw in _kw_montos) and not any(kw in texto for kw in _kw_no_montos):
         tools_a_ejecutar.append(("obtener_montos_pie", {}))
 
     _kw_plazos = [
