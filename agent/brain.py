@@ -461,8 +461,8 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
 
     # Cat 9 — FAQ cache hit
     # < 2 tokens: demasiado vago para RAG → FAQ o menú
-    # 2-3 tokens: query simple → FAQ si matchea, si no RAG
-    # ≥ 4 tokens: query específica → directo al RAG (respuesta más precisa)
+    # 2 tokens: query simple → FAQ si matchea, si no RAG
+    # ≥ 3 tokens: query específica → directo al RAG (respuesta más precisa)
     _tokens_sig_sc = _tokens_sin_stopwords(texto_norm)
     _n_tokens = len(_tokens_sig_sc)
     if _n_tokens < 2:
@@ -472,7 +472,7 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
         return ("consulta_ambigua", cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", "")))
-    elif _n_tokens <= 3:
+    elif _n_tokens <= 2:
         faq_resp = _check_faq(texto_norm)
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
@@ -916,7 +916,7 @@ async def generar_respuesta(
     # Pre-tool execution — retorna directo sin LLM si hay resultado
     # Si la query es específica (≥4 tokens), saltar tools y dejar que RAG responda
     _n_tokens_msg = len(_tokens_sin_stopwords(_normalizar(mensaje)))
-    tools_detectadas = _detectar_tools(mensaje) if _n_tokens_msg <= 3 else []
+    tools_detectadas = _detectar_tools(mensaje) if _n_tokens_msg <= 2 else []
     if tools_detectadas:
         from agent.tools import ejecutar_tool
         bloques_tool: list[str] = []

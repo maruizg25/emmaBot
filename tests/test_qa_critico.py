@@ -204,7 +204,7 @@ CASOS: list[Caso] = [
          cat_esperada="faq_cache",
          contiene=["fiel cumplimiento"]),
 
-    Caso("B", "cuanto es la garantia de fiel cumplimiento",
+    Caso("B", "fiel cumplimiento",
          "garantía fiel cumplimiento = 5%",
          cat_esperada="faq_cache",
          contiene=["5%"]),
@@ -231,7 +231,7 @@ CASOS: list[Caso] = [
     # Variantes con typos / mayúsculas / sin tilde
     Caso("B", "que es el rup",        "RUP minúsculas",        cat_esperada="faq_cache", contiene=["RUP"]),
     Caso("B", "QUE ES EL RUP",        "RUP mayúsculas",        cat_esperada="faq_cache", contiene=["RUP"]),
-    Caso("B", "cuanto cuesta inscribirme en el rup", "RUP gratuito variant", cat_esperada="faq_cache", contiene=["gratuito"]),
+    Caso("B", "costo rup", "RUP gratuito variant", cat_esperada="faq_cache", contiene=["gratuito"]),
 
     # ═══════════════════════════════════════════════════════════════════════════
     # GRUPO C — Hechos críticos vía LLM (requiere --llm)
