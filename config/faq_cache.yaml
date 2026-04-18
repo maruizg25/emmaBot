@@ -3864,6 +3864,27 @@ faqs:
     📌 Fuente: Art. 74 RGLOSNCP vigente
   frecuencia: 0
 
+# ─── MODELOS Y FORMATOS ──────────────────────────────────────────────────────
+
+- keywords:
+  - modelo
+  - formato
+  - plantilla
+  - pliego
+  pregunta: ¿Dónde encuentro modelos de pliegos u órdenes de compra?
+  respuesta: |
+    Los modelos obligatorios de pliegos y formatos los emite el SERCOP y están disponibles en el portal:
+
+    🌐 *www.compraspublicas.gob.ec* → sección Normativa → Modelos de Pliegos
+
+    🔹 El SERCOP emite modelos obligatorios para todos los procedimientos excepto ínfima cuantía, catálogo electrónico y emergencia (Art. 26 LOSNCP)
+    🔹 Las órdenes de compra se generan directamente en el portal al contratar por Catálogo Electrónico
+
+    📞 Si necesitas un formato específico: *1800-737267*
+
+    📌 Base legal: Art. 26 LOSNCP; Art. 78 RGLOSNCP
+  frecuencia: 0
+
 # ─── SHORTCUTS DE ARTÍCULOS POR NÚMERO ───────────────────────────────────────
 
 - keywords:
