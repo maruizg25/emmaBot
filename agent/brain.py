@@ -937,6 +937,31 @@ async def generar_respuesta(
             ))
             return respuesta
 
+    # ── Búsqueda directa de artículos (0 tokens) ─────────────────────────────
+    _art_match = re.search(
+        r'(?:art[íi]culo|art\.?)\s*(\d+)\b.*?(?:(?:del?\s+)?(?:r(?:e?g)?l(?:osncp)?|reglamento))?',
+        mensaje, re.IGNORECASE
+    )
+    if _art_match:
+        _art_num = int(_art_match.group(1))
+        _es_reglamento = bool(re.search(r'reglamento|rglosncp|rgl(?:osncp)', mensaje, re.IGNORECASE))
+        _tipo_doc = "reglamento" if _es_reglamento else "ley"
+        try:
+            from agent.memory import buscar_articulo_directo
+            _art_texto = await buscar_articulo_directo(_art_num, _tipo_doc)
+            if _art_texto:
+                elapsed_ms = int((time.time() - t_inicio) * 1000)
+                logger.info(f"[Sercobot] Art. {_art_num} directo de BD ({_tipo_doc}) ({elapsed_ms}ms, 0 tokens)")
+                asyncio.ensure_future(_log_consulta(
+                    pregunta=mensaje, respuesta=_art_texto,
+                    proveedor_llm="articulo_directo", tiempo_ms=elapsed_ms,
+                    fue_shortcut=True, shortcut_tipo="articulo_directo",
+                    rag_chunks=1, telefono=telefono,
+                ))
+                return _art_texto
+        except Exception as e:
+            logger.debug(f"Búsqueda directa artículo falló: {e}")
+
     # ── Cache de respuestas LLM anteriores ────────────────────────────────────
     if not bloques_contexto:
         try:

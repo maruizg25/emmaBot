@@ -347,6 +347,58 @@ async def registrar_consulta(
         await session.commit()
 
 
+async def buscar_articulo_directo(num_articulo: int, tipo_doc: str = "ley") -> str | None:
+    """Busca el texto exacto de un artículo en los chunks de la BD."""
+    if not _is_postgres:
+        return None
+    try:
+        async with async_session() as session:
+            result = await session.execute(text("""
+                SELECT c.texto, c.seccion, d.nombre
+                FROM chunks c
+                JOIN documentos d ON c.documento_id = d.id
+                WHERE d.tipo = :tipo
+                  AND c.texto ILIKE :pattern
+                ORDER BY c.id
+                LIMIT 1
+            """), {"tipo": tipo_doc, "pattern": f"%Art. {num_articulo}.-%"})
+            row = result.fetchone()
+            if not row:
+                result = await session.execute(text("""
+                    SELECT c.texto, c.seccion, d.nombre
+                    FROM chunks c
+                    JOIN documentos d ON c.documento_id = d.id
+                    WHERE d.tipo = :tipo
+                      AND c.texto ILIKE :pattern2
+                    ORDER BY c.id
+                    LIMIT 1
+                """), {"tipo": tipo_doc, "pattern2": f"%Art. {num_articulo}%"})
+                row = result.fetchone()
+            if not row:
+                return None
+            texto = row.texto
+            idx = texto.find(f"Art. {num_articulo}.")
+            if idx < 0:
+                idx = texto.find(f"Art. {num_articulo}")
+            if idx >= 0:
+                texto = texto[idx:]
+            for noise in ["https://edicioneslegales.com.ec/", "Todos los derechos reservados.",
+                          "Prohibida su reproducción parcial o total.",
+                          "Piense en el medio ambiente. Imprima solo de ser necesario."]:
+                texto = texto.replace(noise, "")
+            import re as _re
+            texto = _re.sub(r'Pág\.\s*\d+\s*de\s*\d+', '', texto)
+            texto = _re.sub(r'REGLAMENTO DE LA LEY ORGÁNICA.*?\n', '', texto)
+            texto = _re.sub(r'Página\s*\d+\s*de\s*\d+', '', texto)
+            texto = _re.sub(r'\n\s*\n', '\n', texto).strip()
+            texto = _re.sub(r'  +', ' ', texto)
+            texto = texto[:800]
+            fuente = "LOSNCP" if tipo_doc == "ley" else "RGLOSNCP"
+            return f"📜 *{fuente} — Art. {num_articulo}*\n\n{texto}\n\n📌 Fuente: {fuente} vigente"
+    except Exception:
+        return None
+
+
 async def buscar_respuesta_cacheada(pregunta_normalizada: str) -> str | None:
     """Busca en consultas_log si una pregunta similar ya fue respondida por LLM."""
     if not _is_postgres:
