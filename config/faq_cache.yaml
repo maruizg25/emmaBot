@@ -3864,6 +3864,82 @@ faqs:
     📌 Fuente: Art. 74 RGLOSNCP vigente
   frecuencia: 0
 
+# ─── SHORTCUTS DE ARTÍCULOS POR NÚMERO ───────────────────────────────────────
+
+- keywords:
+  - articulo
+  - '106'
+  pregunta: ¿Qué dice el Artículo 106 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 106 LOSNCP — Terminación de los contratos*
+
+    Los contratos terminan por:
+
+    1️⃣ Cumplimiento de las obligaciones contractuales
+    2️⃣ *Mutuo acuerdo* de las partes
+    3️⃣ Sentencia o laudo que declare nulidad o resolución
+    4️⃣ *Declaración unilateral* de la entidad por incumplimiento del contratista
+    5️⃣ Participación en colusión durante las fases previas
+
+    📌 Base legal: Art. 106 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - articulo
+  - '85'
+  pregunta: ¿Qué dice el Artículo 85 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 85 LOSNCP — Garantía de Fiel Cumplimiento*
+
+    El adjudicatario rendirá garantías por un monto equivalente al *5% del valor del contrato*, antes o al momento de la firma.
+
+    En contratos de obra, garantiza además la debida ejecución y buena calidad de materiales.
+
+    📌 Base legal: Art. 85 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - articulo
+  - '17'
+  pregunta: ¿Qué dice el Artículo 17 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 17 LOSNCP — Registro Único de Proveedores (RUP)*
+
+    El RUP es el registro público de habilitación de personas naturales y jurídicas con capacidad para contratar según la Ley. Administrado por el SERCOP, es dinámico y se actualiza automáticamente por interoperación con instituciones públicas y privadas.
+
+    📌 Base legal: Art. 17 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - articulo
+  - '108'
+  pregunta: ¿Qué dice el Artículo 108 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 108 LOSNCP — Terminación unilateral del contrato*
+
+    La entidad puede terminar unilateralmente cuando:
+
+    1️⃣ Incumplimiento del contratista
+    2️⃣ Quiebra o insolvencia
+    3️⃣ Multas superan la garantía de fiel cumplimiento
+    4️⃣ Suspensión de trabajos por más de 60 días sin fuerza mayor
+    5️⃣ Participación en actos de corrupción
+
+    📌 Base legal: Art. 108 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - articulo
+  - '3'
+  pregunta: ¿Qué dice el Artículo 3 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 3 LOSNCP — Principios*
+
+    Los principios de la contratación pública incluyen: legalidad, transparencia, igualdad, concurrencia, mejor valor por dinero, sostenibilidad y vigencia tecnológica.
+
+    📌 Base legal: Art. 3 LOSNCP vigente
+  frecuencia: 0
+
 # ─── FIXES RONDA 3 — VINCULACIONES Y CONCEPTOS CLAVE ─────────────────────────
 
 - keywords:
