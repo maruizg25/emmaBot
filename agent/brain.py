@@ -184,7 +184,8 @@ _EMOJIS_NEGACION = {"👎"}
 _KW_CONFUSION = {_normalizar(w) for w in {
     "no entiendo", "no me entiendes", "eso no es", "esta mal",
     "incorrecto", "no es correcto", "me confundiste", "repite",
-    "otra vez", "de nuevo", "no es asi", "equivocado", "error",
+    "no es asi", "equivocado", "eso esta mal", "fallaste",
+    "respuesta erronea", "eso no fue lo que pregunte",
 }}
 _EMOJIS_CONFUSION = {"😤", "😕", "🤔"}
 
@@ -221,7 +222,7 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "convalidac", "orden de compra", "presupuestar",
     "pliegos", "convenio marco",
     "etapa", "preparatori", "precontractu", "contractu",
-    "fase", "planificac",
+    "fase", "planificac", "simultaneo", "simultane",
     "prorroga", "plazo", "extension",
     # Transferir a humano
     "asesor", "humano", "transferir", "agente",
@@ -422,10 +423,10 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
     ):
         return ("saludo", cfg.get("msg_bienvenida", ""))
 
-    # Cat 6 — Confusión/Frustración (antes que agradecimiento para "está mal" etc.)
-    if (
+    # Cat 6 — Confusión/Frustración (solo mensajes cortos — evita falsos positivos)
+    if es_corto and (
         _contiene_kwset(texto_norm, _KW_CONFUSION)
-        or (es_corto and _contiene_emoji(mensaje, _EMOJIS_CONFUSION))
+        or _contiene_emoji(mensaje, _EMOJIS_CONFUSION)
     ):
         return ("confusion", cfg.get("msg_confusion", ""))
 
