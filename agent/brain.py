@@ -186,6 +186,8 @@ _KW_CONFUSION = {_normalizar(w) for w in {
     "incorrecto", "no es correcto", "me confundiste", "repite",
     "no es asi", "equivocado", "eso esta mal", "fallaste",
     "respuesta erronea", "eso no fue lo que pregunte",
+    "no respondiste", "no me respondiste", "no contestaste",
+    "no me sirve", "eso no sirve", "para que sirve esto",
 }}
 _EMOJIS_CONFUSION = {"😤", "😕", "🤔"}
 
