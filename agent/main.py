@@ -14,6 +14,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form, BackgroundTasks
 from fastapi.responses import PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -66,6 +67,12 @@ app = FastAPI(
     redirect_slashes=False,
 )
 
+# Servir PDFs de normativa para descarga y envío por WhatsApp
+from pathlib import Path
+_KNOWLEDGE_DIR = Path(__file__).parent.parent / "knowledge"
+if _KNOWLEDGE_DIR.exists():
+    app.mount("/docs", StaticFiles(directory=str(_KNOWLEDGE_DIR)), name="documentos")
+
 
 # ─── Health check ─────────────────────────────────────────────────────────────
 
@@ -106,6 +113,21 @@ async def _responder_multimedia(telefono: str) -> None:
         logger.error(f"Error enviando respuesta multimedia a {telefono}: {e}")
 
 
+def _detectar_solicitud_pdf(texto: str) -> dict | None:
+    """Detecta si el usuario está pidiendo un PDF/documento para descargar."""
+    texto_lower = texto.lower()
+    _kw_descarga = ["descargar", "descarga", "enviar", "enviame", "envíame",
+                     "pdf", "archivo", "documento completo", "dame el",
+                     "necesito el", "pasame", "pásame", "compartir"]
+    if not any(kw in texto_lower for kw in _kw_descarga):
+        return None
+    from agent.brain import DOCUMENTOS_PDF
+    for doc in DOCUMENTOS_PDF.values():
+        if any(kw in texto_lower for kw in doc["keywords"]):
+            return doc
+    return None
+
+
 async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
     """
     Procesa un mensaje en background: RAG → LLM → enviar respuesta.
@@ -124,6 +146,30 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
                 telefono,
                 "🔍 Consultando la normativa SERCOP, un momento..."
             )
+
+        # Detectar solicitud de PDF
+        doc_solicitado = _detectar_solicitud_pdf(texto)
+        if doc_solicitado:
+            from agent.brain import BASE_URL
+            from urllib.parse import quote
+            url_doc = f"{BASE_URL}/docs/{quote(doc_solicitado['archivo'])}"
+            await proveedor.enviar_mensaje(telefono, doc_solicitado["caption"])
+            enviado = await proveedor.enviar_documento(
+                telefono, url_doc, doc_solicitado["nombre"], doc_solicitado["caption"]
+            )
+            if enviado:
+                respuesta = doc_solicitado["caption"] + "\n\n✅ Documento enviado. ¿Tienes alguna pregunta sobre su contenido?"
+            else:
+                respuesta = (
+                    doc_solicitado["caption"] + "\n\n"
+                    "No pude enviar el archivo directamente. Puedes descargarlo desde:\n"
+                    f"🔗 {url_doc}\n\n"
+                    "¿Tienes alguna pregunta sobre su contenido?"
+                )
+            await guardar_mensaje(telefono, "user", texto)
+            await guardar_mensaje(telefono, "assistant", respuesta)
+            logger.info(f"SercoBot envió documento a {telefono}: {doc_solicitado['nombre']}")
+            return
 
         historial = await obtener_historial(telefono, limite=HISTORIAL_LIMITE)
         respuesta = await generar_respuesta(texto, historial, telefono=telefono)

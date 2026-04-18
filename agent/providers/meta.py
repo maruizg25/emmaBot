@@ -73,3 +73,31 @@ class ProveedorMeta(ProveedorWhatsApp):
             if r.status_code != 200:
                 logger.error(f"Error Meta API: {r.status_code} — {r.text}")
             return r.status_code == 200
+
+    async def enviar_documento(self, telefono: str, url_documento: str,
+                                nombre_archivo: str, caption: str = "") -> bool:
+        """Envía un documento PDF via Meta WhatsApp Cloud API."""
+        if not self.access_token or not self.phone_number_id:
+            logger.warning("META_ACCESS_TOKEN o META_PHONE_NUMBER_ID no configurados")
+            return False
+        url = f"https://graph.facebook.com/{self.api_version}/{self.phone_number_id}/messages"
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "messaging_product": "whatsapp",
+            "to": telefono,
+            "type": "document",
+            "document": {
+                "link": url_documento,
+                "filename": nombre_archivo,
+            },
+        }
+        if caption:
+            payload["document"]["caption"] = caption
+        async with httpx.AsyncClient() as client:
+            r = await client.post(url, json=payload, headers=headers)
+            if r.status_code != 200:
+                logger.error(f"Error Meta API documento: {r.status_code} — {r.text}")
+            return r.status_code == 200

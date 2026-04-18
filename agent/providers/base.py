@@ -38,3 +38,8 @@ class ProveedorWhatsApp(ABC):
     async def validar_webhook(self, request: Request) -> dict | int | None:
         """Verificación GET del webhook (solo Meta la requiere). Retorna respuesta o None."""
         return None
+
+    async def enviar_documento(self, telefono: str, url_documento: str,
+                                nombre_archivo: str, caption: str = "") -> bool:
+        """Envía un documento. Implementado solo en Meta por ahora."""
+        return False

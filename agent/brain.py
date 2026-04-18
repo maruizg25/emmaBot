@@ -28,6 +28,23 @@ logger = logging.getLogger("agentkit")
 # ── Configuración de proveedores LLM ─────────────────────────────────────────
 
 GROQ_API_KEY  = os.getenv("GROQ_API_KEY", "")
+BASE_URL      = os.getenv("BASE_URL", "https://sercobot.sercop.gob.ec")
+
+# ── Catálogo de documentos descargables ─────────────────────────────────────
+DOCUMENTOS_PDF = {
+    "losncp": {
+        "archivo": "LEY_ORGÁNICA_DEL_SISTEMA_NACIONAL_DE_CON (1).pdf",
+        "nombre": "LOSNCP_Vigente.pdf",
+        "caption": "📜 Ley Orgánica del Sistema Nacional de Contratación Pública (LOSNCP) — Reforma octubre 2025",
+        "keywords": ["losncp", "ley organica", "ley de contratacion"],
+    },
+    "reglamento": {
+        "archivo": "1. REGLAMENTO VIGENTE.pdf",
+        "nombre": "Reglamento_LOSNCP_Vigente.pdf",
+        "caption": "📜 Reglamento General a la LOSNCP — Vigente",
+        "keywords": ["reglamento", "rglosncp", "reglamento general"],
+    },
+}
 GROQ_MODEL    = os.getenv("GROQ_MODEL_CASCADE", "llama-3.3-70b-versatile")
 GROQ_URL      = "https://api.groq.com/openai/v1/chat/completions"
 
