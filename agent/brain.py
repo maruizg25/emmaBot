@@ -216,6 +216,7 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "valor por dinero", "mejor valor", "sostenibilid", "principio",
     "experiencia", "calific", "puntaje", "evaluac",
     "vae", "valor agregado", "ecuatorian",
+    "infmica", "infma", "cuanti",
     "tdr", "terminos de referencia", "especificacion",
     "convalidac", "orden de compra", "presupuestar",
     "pliegos", "convenio marco",
