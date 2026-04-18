@@ -4254,6 +4254,221 @@ faqs:
     📌 Base legal: Art. 78 LOSNCP vigente
   frecuencia: 0
 
+# ─── BRECHAS RESTANTES — ARTÍCULOS PRIORITARIOS LOSNCP ───────────────────────
+
+- keywords:
+  - suspension
+  - rup
+  - causales
+  - suspender
+  - suspendido
+  pregunta: ¿Por qué pueden suspenderme del RUP?
+  respuesta: |
+    📜 *Art. 20 LOSNCP — Causales de suspensión del RUP*
+
+    Te pueden suspender del RUP por:
+
+    1️⃣ Ser declarado *contratista incumplido* (5 años) o *adjudicatario fallido* (3 años)
+    2️⃣ *No actualizar* la información requerida para el registro
+    3️⃣ Haber proporcionado *información falsa* o documentación fraudulenta
+
+    ⚠️ Durante la suspensión no puedes participar en ningún proceso de contratación pública.
+
+    📌 Base legal: Art. 20 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - regimen
+  - especial
+  - casos
+  - medicamentos
+  - seguridad
+  pregunta: ¿Qué contrataciones se hacen por régimen especial?
+  respuesta: |
+    📜 *Art. 38 LOSNCP — Régimen especial*
+
+    Se someten a régimen especial (normativa específica del Reglamento):
+
+    1️⃣ Adquisición de *medicamentos y bienes estratégicos en salud*
+    2️⃣ Contrataciones de *seguridad interna y externa, defensa nacional*
+    3️⃣ *Comunicación social* institucional
+    4️⃣ *Asesoría y patrocinio jurídico*
+    5️⃣ Contrataciones con *empresas públicas* y subsidiarias
+    6️⃣ Contrataciones entre *entidades del Estado*
+
+    📌 Base legal: Art. 38 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - consultoria
+  - requisitos
+  - persona
+  - natural
+  - ejercer
+  pregunta: ¿Quién puede ejercer la consultoría?
+  respuesta: |
+    📜 *Art. 39-41 LOSNCP — Ejercicio de la consultoría*
+
+    *Personas naturales (Art. 40):*
+    🔹 Título profesional de *tercer nivel* (universidad ecuatoriana o extranjera reconocida)
+    🔹 Inscripción en el *RUP*
+
+    *Personas jurídicas (Art. 41):*
+    🔹 Constituida conforme la *Ley de Compañías*
+    🔹 Objeto social debe incluir *actividades de consultoría*
+    🔹 Inscripción en el *RUP*
+
+    *Consultores extranjeros (Art. 39):*
+    🔹 Solo cuando en Ecuador no existan servicios equivalentes parcial o totalmente
+
+    📌 Base legal: Art. 39-41 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - obligaciones
+  - proveedor
+  - adjudicado
+  - catalogo
+  - cumplir
+  pregunta: ¿Qué obligaciones tiene un proveedor adjudicado en catálogo?
+  respuesta: |
+    📜 *Art. 45 LOSNCP — Obligaciones de los proveedores*
+
+    Los proveedores adjudicados en Catálogo Electrónico deben:
+
+    ✅ Proveer bienes y servicios conforme a *plazo, precio, calidad, lugar de entrega y garantía* del Convenio Marco
+    ✅ Pueden *mejorar* las condiciones establecidas (nunca empeorarlas)
+
+    ⚠️ Son aplicables a la orden de compra las disposiciones de contratos administrativos de esta Ley.
+
+    📌 Base legal: Art. 45 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - obligaciones
+  - entidad
+  - contratante
+  - catalogo
+  - consultar
+  pregunta: ¿Qué obligaciones tiene la entidad contratante con el catálogo?
+  respuesta: |
+    📜 *Art. 46 LOSNCP — Obligaciones de las entidades contratantes*
+
+    Las entidades *deben consultar el Catálogo Electrónico* antes de iniciar cualquier procedimiento de adquisición.
+
+    Solo si el bien o servicio *no está catalogado* pueden usar otros procedimientos (SIE, Licitación, Feria Inclusiva, Ínfima cuantía).
+
+    📌 Base legal: Art. 46 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - declaratoria
+  - emergencia
+  - como
+  - requisitos
+  pregunta: ¿Cómo se declara una emergencia en contratación pública?
+  respuesta: |
+    📜 *Art. 58 LOSNCP — Declaratoria de emergencia*
+
+    La máxima autoridad de la entidad debe:
+
+    1️⃣ Emitir una *resolución motivada* que declare la emergencia
+    2️⃣ Publicarla de forma *inmediata* en el Portal de Contratación Pública
+    3️⃣ La facultad de emitir esta resolución *no puede ser delegada*
+
+    Una vez superada la emergencia (Art. 60), debe publicar un *informe* detallando contrataciones, presupuesto y resultados.
+
+    📌 Base legal: Art. 58 y 60 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - suscripcion
+  - contrato
+  - firma
+  - plazo
+  - dias
+  - escritura
+  pregunta: ¿En cuántos días se debe firmar el contrato?
+  respuesta: |
+    📜 *Art. 80 LOSNCP — Suscripción de contratos*
+
+    Una vez que cause estado la resolución de adjudicación, los contratos se suscribirán en un *término máximo de 15 días*.
+
+    Los contratos que lo requieran por su naturaleza se formalizarán en *escritura pública*.
+
+    📌 Base legal: Art. 80 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - extincion
+  - obligaciones
+  - contrato
+  - pago
+  - liquidacion
+  pregunta: ¿Cuándo se extinguen las obligaciones del contrato?
+  respuesta: |
+    📜 *Art. 95 LOSNCP — Extinción de obligaciones contractuales*
+
+    Solo con la *liquidación del contrato* se pone fin al negocio jurídico.
+
+    Solo con el *pago efectivo* de los valores liquidados se extinguen absolutamente las obligaciones derivadas del contrato, sin perjuicio de responsabilidades posteriores.
+
+    📌 Base legal: Art. 95 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - reajuste
+  - precios
+  - formula
+  - indices
+  pregunta: ¿Los contratos tienen reajuste de precios?
+  respuesta: |
+    📜 *Art. 96 LOSNCP — Sistema de reajuste*
+
+    Sí. Los contratos de ejecución de obras, bienes o servicios con pago por *precios unitarios* se sujetan al sistema de reajuste de precios del Reglamento.
+
+    También son reajustables los contratos de *consultoría* bajo cualquier modalidad.
+
+    📌 Base legal: Art. 96-97 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - incumplimiento
+  - registro
+  - contratista
+  - incumplido
+  pregunta: ¿Qué pasa si un contratista incumple?
+  respuesta: |
+    📜 *Art. 111 LOSNCP — Registro de incumplimientos*
+
+    Las entidades remitirán obligatoriamente al SERCOP la nómina de contratistas que:
+
+    ❌ Hayan *incumplido* obligaciones contractuales → suspensión *5 años*
+    ❌ Se hayan *negado a suscribir* contratos adjudicados → suspensión *3 años*
+
+    Se deben acompañar los documentos probatorios correspondientes.
+
+    📌 Base legal: Art. 111 LOSNCP vigente
+  frecuencia: 0
+
+- keywords:
+  - retencion
+  - pago
+  - indebida
+  - mora
+  - plazo
+  - meses
+  pregunta: ¿Cuánto tiempo tiene la entidad para pagarme?
+  respuesta: |
+    📜 *Art. 114 LOSNCP — Retención indebida de pagos*
+
+    Los pagos derivados de obligaciones contractuales se realizarán en un *plazo máximo de 2 meses*, una vez cumplida la condición de pago del contrato.
+
+    Si no se efectúa el pago en ese plazo, o no hay pronunciamiento de la entidad, el contratista tiene derecho a reclamar.
+
+    📌 Base legal: Art. 114 LOSNCP vigente
+  frecuencia: 0
+
 - keywords:
   - vigencia
   - tecnologica
