@@ -184,6 +184,11 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "queja", "reclamo", "fiscaliz", "control", "veeduria",
     # Presupuesto y finanzas
     "presupuest", "referencial", "pie", "adjudicac",
+    # Portal y acceso
+    "usuario", "contraseña", "clave", "acceso", "portal",
+    "pasivo", "activo", "estado",
+    # Clasificador y capacitación
+    "cpc", "clasificador", "examen", "certificac", "capacitac", "curso",
     # Términos informales frecuentes
     "vender", "venta", "comprar", "cobrar", "pagar",
 }}

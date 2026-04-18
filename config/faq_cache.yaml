@@ -4254,6 +4254,126 @@ faqs:
     📌 Base legal: Art. 78 LOSNCP vigente
   frecuencia: 0
 
+# ─── FIXES DE PREGUNTAS REALES DE USUARIOS ───────────────────────────────────
+
+- keywords:
+  - usuario
+  - contraseña
+  - clave
+  - recuperar
+  - acceso
+  pregunta: ¿Cómo recupero mi usuario y contraseña del portal?
+  respuesta: |
+    Para recuperar tu usuario o contraseña del portal ComprasPúblicas:
+
+    1️⃣ Ingresa a *www.compraspublicas.gob.ec*
+    2️⃣ Haz clic en *"¿Olvidó su contraseña?"*
+    3️⃣ Ingresa tu número de RUC o cédula
+    4️⃣ Recibirás un correo con las instrucciones de recuperación
+
+    ⚠️ Si no recibes el correo, verifica que tu cuenta de email registrada en el RUP esté actualizada.
+
+    📞 Si tienes problemas, contacta al SERCOP: *1800-737267* (lunes a viernes 08h00-17h00)
+  frecuencia: 0
+
+- keywords:
+  - pasivo
+  - activo
+  - estado
+  - rup
+  - cambiar
+  pregunta: ¿Cómo cambio mi estado de pasivo a activo en el RUP?
+  respuesta: |
+    Para cambiar de estado *Pasivo a Activo* en el RUP:
+
+    1️⃣ Ingresa al portal *www.compraspublicas.gob.ec* con tu usuario y contraseña
+    2️⃣ Actualiza toda la información y documentación requerida (RUC, IESS, SRI)
+    3️⃣ El sistema validará automáticamente tu información por interoperabilidad
+
+    ⚠️ El estado pasivo se genera cuando no actualizas tu información o tienes obligaciones pendientes con SRI/IESS.
+
+    📞 Si persiste el problema: *1800-737267*
+    📌 Base legal: Art. 17-18 LOSNCP; Art. 20 LOSNCP (causales de suspensión)
+  frecuencia: 0
+
+- keywords:
+  - cpc
+  - clasificador
+  - producto
+  - codigo
+  pregunta: ¿Qué es el CPC en contratación pública?
+  respuesta: |
+    El *CPC (Clasificador Central de Productos)* es el sistema de codificación que usa el SERCOP para categorizar todos los bienes, servicios y obras en contratación pública.
+
+    🔹 Cada producto tiene un código CPC único
+    🔹 Se usa para publicar procesos en el portal ComprasPúblicas
+    🔹 Los proveedores se registran en el RUP según los CPC de su actividad
+
+    🔍 Puedes consultar los códigos CPC en *www.compraspublicas.gob.ec* → sección de Catálogo de Productos.
+
+    📞 Para ayuda con tu CPC: *1800-737267*
+  frecuencia: 0
+
+- keywords:
+  - articulo
+  - '50'
+  pregunta: ¿Qué dice el Artículo 50 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 50 LOSNCP — Contrataciones de Ínfima Cuantía*
+
+    Se podrá contratar bajo esta modalidad las contrataciones para la adquisición de bienes o prestación de servicios, incluidos los de consultoría, o contrataciones de obra cuya cuantía sea *igual o inferior a diez mil dólares (USD $10.000)*; siempre que no consten en el Catálogo Electrónico.
+
+    ⚠️ *No puede usarse* para evadir otros procedimientos, ni como contratación constante y recurrente, ni para subdividir contratos.
+
+    📌 Procedimiento: Art. 269 RGLOSNCP
+  frecuencia: 0
+
+- keywords:
+  - articulo
+  - '47'
+  pregunta: ¿Qué dice el Artículo 47 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 47 LOSNCP — Subasta Inversa Electrónica*
+
+    Para bienes y servicios que no consten en el Catálogo Electrónico, las entidades contratantes podrán realizar subastas inversas electrónicas donde los proveedores *pujan hacia la baja* el precio ofertado a través del Portal de Contratación Pública.
+
+    El objetivo es obtener el *menor precio*. Si hay una sola oferta calificada, se hace *sesión de negociación*.
+
+    📌 Selección SIE vs Licitación: Art. 74 RGLOSNCP
+  frecuencia: 0
+
+- keywords:
+  - articulo
+  - '48'
+  pregunta: ¿Qué dice el Artículo 48 de la LOSNCP?
+  respuesta: |
+    📜 *Art. 48 LOSNCP — Licitación*
+
+    Se utiliza para bienes, obras y servicios (excepto consultoría) cuando la SIE no sea el procedimiento idóneo y el bien/servicio no esté catalogado.
+
+    🏗️ *Para obras: siempre se usa Licitación* (Art. 74 RGLOSNCP).
+
+    📌 La selección entre SIE y Licitación se basa en el análisis de *mejor valor por dinero*.
+  frecuencia: 0
+
+- keywords:
+  - examen
+  - certificacion
+  - capacitacion
+  - curso
+  pregunta: ¿Cómo me capacito o certifico con el SERCOP?
+  respuesta: |
+    El SERCOP ofrece capacitaciones y certificaciones a través de su plataforma virtual:
+
+    🔹 Ingresa a *www.sercop.gob.ec* → sección de Capacitación
+    🔹 Revisa los cursos disponibles y regístrate
+    🔹 Al completar el curso recibirás tu certificado al correo registrado
+
+    ⚠️ Si te registraste y no recibes aviso, verifica tu correo electrónico (incluyendo spam).
+
+    📞 Consultas: *1800-737267*
+  frecuencia: 0
+
 # ─── BRECHAS RESTANTES — ARTÍCULOS PRIORITARIOS LOSNCP ───────────────────────
 
 - keywords:
