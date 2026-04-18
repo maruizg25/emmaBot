@@ -223,6 +223,7 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "pliegos", "convenio marco",
     "etapa", "preparatori", "precontractu", "contractu",
     "fase", "planificac", "simultaneo", "simultane",
+    "documento", "proforma", "relevante",
     "prorroga", "plazo", "extension",
     # Transferir a humano
     "asesor", "humano", "transferir", "agente",
