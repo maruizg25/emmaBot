@@ -18,52 +18,52 @@ logger = logging.getLogger("agentkit")
 TIPOS_CONTRATACION = {
     "catalogo_electronico": {
         "nombre": "Catálogo Electrónico",
-        "descripcion": "Adquisición de bienes y servicios normalizados disponibles en el catálogo del SERCOP.",
-        "montos": "Sin límite de monto para bienes y servicios normalizados.",
+        "descripcion": "Compra directa de bienes y servicios normalizados registrados en convenios marco del SERCOP.",
+        "montos": "Sin límite de monto.",
         "normativa": "Art. 43 LOSNCP",
-        "ventaja": "Proceso más ágil — no requiere concurso, precio ya negociado.",
+        "ventaja": "Proceso más ágil — orden de compra directa, sin concurso.",
+    },
+    "subasta_inversa": {
+        "nombre": "Subasta Inversa Electrónica (SIE)",
+        "descripcion": "Para bienes y servicios NO catalogados, cuando el precio más bajo y el mercado competitivo representen el mejor valor por dinero. Los proveedores pujan a la baja en tiempo real.",
+        "montos": "Sin umbral en USD — se aplica cuando bienes/servicios son estandarizados, hay mercado competitivo y el precio refleja por sí solo el mejor valor por dinero (Art. 74 RGLOSNCP).",
+        "normativa": "Art. 47 LOSNCP; Art. 74 RGLOSNCP",
+        "ventaja": "Precios más bajos por competencia en tiempo real. Si hay una sola oferta calificada, se hace sesión de negociación.",
     },
     "licitacion": {
         "nombre": "Licitación",
-        "descripcion": "Para contratos de gran monto. Proceso público y competitivo.",
-        "montos": "Superior al 0.000015 del PIE para bienes/servicios; superior al 0.00003 del PIE para obras.",
-        "normativa": "Art. 48 LOSNCP",
-        "ventaja": "Máxima transparencia y competencia.",
-    },
-    "subasta_inversa": {
-        "nombre": "Subasta Inversa Electrónica",
-        "descripcion": "Para bienes y servicios normalizados. Los proveedores compiten bajando precios en tiempo real.",
-        "montos": "Sin límite de monto (cuando no está en catálogo electrónico).",
-        "normativa": "Art. 47 LOSNCP",
-        "ventaja": "Precios más bajos para el Estado por competencia en tiempo real.",
+        "descripcion": "Para bienes, obras y servicios (excepto consultoría) cuando la SIE no sea el procedimiento idóneo. Para obras siempre se usa Licitación.",
+        "montos": "Sin umbral fijo en USD — se aplica cuando deben priorizarse atributos distintos al precio (calidad, sostenibilidad, innovación, costos del ciclo de vida). Obras: siempre Licitación (Art. 74 RGLOSNCP).",
+        "normativa": "Art. 48 LOSNCP; Art. 74 RGLOSNCP",
+        "ventaja": "Máxima transparencia y evaluación integral (no solo precio).",
     },
     "infima_cuantia": {
         "nombre": "Ínfima Cuantía",
-        "descripcion": "Para adquisición de bienes, servicios (incluida consultoría) y obras de monto reducido que no consten en el Catálogo Electrónico.",
-        "montos": "Igual o inferior a USD $10,000 (monto fijo — Art. 50 LOSNCP).",
+        "descripcion": "Para bienes, servicios (incluida consultoría) y obras cuya cuantía sea igual o inferior a USD $10,000, que no consten en el Catálogo Electrónico.",
+        "montos": "Igual o inferior a USD $10,000 (monto fijo).",
         "normativa": "Art. 50 LOSNCP",
-        "ventaja": "Máxima agilidad — sin proceso precontractual formal. No puede usarse para subdividir contratos.",
-    },
-    "contratacion_directa": {
-        "nombre": "Contratación Directa",
-        "descripcion": "Contratación de consultoría de monto reducido con un solo proveedor.",
-        "montos": "Hasta el 0.000002 del PIE para consultoría.",
-        "normativa": "Art. 40 LOSNCP",
-        "ventaja": "Simplicidad para consultorías pequeñas.",
-    },
-    "regimen_especial": {
-        "nombre": "Régimen Especial",
-        "descripcion": "Para situaciones específicas: seguridad, defensa, comunicación social, asesoría legal, etc.",
-        "montos": "Variable según el caso.",
-        "normativa": "Art. 2 LOSNCP y Reglamento correspondiente",
-        "ventaja": "Flexibilidad para necesidades especiales del Estado.",
+        "ventaja": "Máxima agilidad. No puede usarse para subdividir contratos ni como contratación constante y recurrente.",
     },
     "feria_inclusiva": {
         "nombre": "Feria Inclusiva",
-        "descripcion": "Para adquisición de bienes y servicios a actores de la Economía Popular y Solidaria (EPS), artesanos y MIPYMES.",
-        "montos": "Montos reducidos definidos en la normativa vigente.",
+        "descripcion": "Para bienes y servicios de producción nacional y origen local, no catalogados. Solo participan organizaciones de la EPS, artesanos, emprendedores, negocios populares, agricultura familiar campesina, micro y pequeñas empresas.",
+        "montos": "Sin umbral fijo en USD — definido por normativa del SERCOP.",
         "normativa": "Art. 51 LOSNCP",
-        "ventaja": "Inclusión económica y social de pequeños productores y MIPYMES.",
+        "ventaja": "Inclusión económica y social de productores nacionales y locales.",
+    },
+    "concurso_publico_consultoria": {
+        "nombre": "Concurso Público de Consultoría",
+        "descripcion": "Para contratar servicios de consultoría. Los criterios de selección se definen en el Reglamento.",
+        "montos": "Según plazos y términos del Reglamento conforme el presupuesto referencial.",
+        "normativa": "Art. 42 LOSNCP",
+        "ventaja": "Selección basada en calidad técnica, experiencia y propuesta metodológica.",
+    },
+    "regimen_especial": {
+        "nombre": "Régimen Especial",
+        "descripcion": "Para situaciones específicas: seguridad, defensa, comunicación social, emergencia, etc. Puede gestionarse también por ínfima cuantía si no supera USD $10,000.",
+        "montos": "Variable según el caso.",
+        "normativa": "Art. 2 LOSNCP y Reglamento correspondiente",
+        "ventaja": "Flexibilidad para necesidades especiales del Estado.",
     },
 }
 
@@ -81,26 +81,26 @@ def listar_tipos_contratacion() -> list[dict]:
     ]
 
 
-def recomendar_tipo_contratacion(descripcion: str) -> str:
+def recomendar_tipo_contratacion(descripcion: str, monto: float | None = None) -> str:
     """
-    Orientación básica sobre qué tipo de contratación aplica
-    basándose en palabras clave de la descripción.
+    Orientación básica sobre qué tipo de contratación aplica.
+    Basado en Art. 17 RGLOSNCP (procedimientos) y Art. 74 RGLOSNCP (mejor valor por dinero).
     """
     desc = descripcion.lower()
 
-    if any(k in desc for k in ["urgente", "emergencia", "inmediato"]):
+    if monto is not None and monto <= 10_000:
         return "infima_cuantia"
-    if any(k in desc for k in ["catálogo", "normalizado", "estandarizado"]):
+    if any(k in desc for k in ["catálogo", "catalogado", "convenio marco"]):
         return "catalogo_electronico"
-    if any(k in desc for k in ["obra", "construcción", "infraestructura"]):
-        return "licitacion"
-    if any(k in desc for k in ["consultoría", "asesoría", "estudio"]):
-        return "contratacion_directa"
-    if any(k in desc for k in ["economía popular", "eps", "artesanos", "pequeños"]):
+    if any(k in desc for k in ["obra", "construcción", "infraestructura", "edificio"]):
+        return "licitacion"  # Obras: siempre licitación (Art. 74 RGLOSNCP)
+    if any(k in desc for k in ["consultoría", "asesoría", "estudio técnico"]):
+        return "concurso_publico_consultoria"
+    if any(k in desc for k in ["economía popular", "eps", "artesanos", "pequeños", "mipymes", "inclusiv"]):
         return "feria_inclusiva"
-    if any(k in desc for k in ["seguridad", "defensa", "comunicación social"]):
+    if any(k in desc for k in ["seguridad", "defensa", "comunicación social", "emergencia"]):
         return "regimen_especial"
-    return "subasta_inversa"  # Default para bienes/servicios no normalizados
+    return "subasta_inversa"  # Default: bienes/servicios estandarizados (Art. 74 RGLOSNCP)
 
 
 # ─── RUP (Registro Único de Proveedores) ────────────────────────────────────
@@ -161,9 +161,9 @@ PLAZOS_REFERENCIALES = {
         "normativa": "Art. 69-71 LOSNCP; Art. 290-294 RGLOSNCP",
     },
     "garantias": {
-        "fiel_cumplimiento": "5% del valor del contrato (contratos > 0.000002 PIE)",
+        "fiel_cumplimiento": "5% del valor del contrato",
         "buen_uso_anticipo": "100% del anticipo recibido",
-        "tecnica": "5% del valor ofertado (en licitación y cotización)",
+        "tecnica": "5% del valor ofertado (en licitación)",
         "vigencia": "Igual al plazo del contrato + 60 días adicionales",
         "devolucion_fiel_cumplimiento": "Tras acta de entrega-recepción definitiva",
         "normativa": "Art. 73-77 LOSNCP; Art. 274-284 RGLOSNCP",
@@ -176,46 +176,62 @@ def obtener_plazos(tipo: str) -> dict:
     return PLAZOS_REFERENCIALES.get(tipo.lower().replace(" ", "_"), {})
 
 
-# ─── Montos PIE por año ───────────────────────────────────────────────────────
+# ─── Umbrales de contratación (LOSNCP vigente — reforma octubre 2025) ────────
+#
+# CAMBIO FUNDAMENTAL: la LOSNCP vigente ya NO usa coeficientes del PIE para
+# determinar SIE vs Licitación. La selección se basa en el principio de
+# "mejor valor por dinero" (Art. 74 RGLOSNCP).
+#
+# Solo ínfima cuantía tiene un monto fijo en la ley: USD $10,000 (Art. 50).
+# Los procedimientos de régimen común (Art. 17 RGLOSNCP) son:
+#   1. Catálogo Electrónico
+#   2. Subasta Inversa Electrónica (SIE)
+#   3. Licitación
+#   4. Concurso Público de Consultoría
+#   5. Feria Inclusiva
+#   6. Ínfima Cuantía
 
-# Fuente: Presupuesto General del Estado aprobado por la Asamblea Nacional.
-# Los montos en USD son fijos para cada año y se publican en el Registro Oficial.
-# Si el año no está en el diccionario, retornar el más reciente.
-
-MONTOS_PIE: dict[int, dict] = {
-    2025: {
-        "infima_cuantia":       {"usd": 10_000,  "normativa": "Art. 50 LOSNCP", "descripcion": "Monto fijo — igual o inferior a USD $10,000"},
-        "licitacion_bienes":    {"porcentaje": ">0.000015", "usd": ">$544,725", "normativa": "Art. 48 LOSNCP"},
-        "licitacion_obras":     {"porcentaje": ">0.00003",  "usd": ">$1,089,450", "normativa": "Art. 48 LOSNCP"},
-        "contratacion_directa": {"porcentaje": "0.000002",  "usd": 72_630,   "normativa": "Art. 40 LOSNCP"},
-        "nota": "Menor cuantía y cotización eliminados por reforma LOSNCP octubre 2025. Ver Art. 47 (SIE), Art. 48 (Licitación), Art. 50 (Ínfima cuantía), Art. 51 (Feria Inclusiva).",
+UMBRALES_CONTRATACION = {
+    "infima_cuantia": {
+        "usd": 10_000,
+        "normativa": "Art. 50 LOSNCP",
+        "descripcion": "Igual o inferior a USD $10,000 — monto fijo en la ley.",
     },
-    2026: {
-        "infima_cuantia":       {"usd": 10_000,  "normativa": "Art. 50 LOSNCP", "descripcion": "Monto fijo — igual o inferior a USD $10,000"},
-        "licitacion_bienes":    {"porcentaje": ">0.000015", "usd": ">$555,000", "normativa": "Art. 48 LOSNCP"},
-        "licitacion_obras":     {"porcentaje": ">0.00003",  "usd": ">$1,110,000", "normativa": "Art. 48 LOSNCP"},
-        "contratacion_directa": {"porcentaje": "0.000002",  "usd": 74_000,   "normativa": "Art. 40 LOSNCP"},
-        "nota": "Menor cuantía y cotización eliminados por reforma LOSNCP octubre 2025. Ver Art. 47 (SIE), Art. 48 (Licitación), Art. 50 (Ínfima cuantía), Art. 51 (Feria Inclusiva).",
+    "seleccion_sie_vs_licitacion": {
+        "normativa": "Art. 74 RGLOSNCP",
+        "descripcion": (
+            "No hay umbral en USD. La selección entre SIE y Licitación se basa en el "
+            "análisis de mejor valor por dinero: si bienes/servicios son estandarizados, "
+            "existe mercado competitivo y el precio refleja el mejor valor → SIE. "
+            "En caso contrario → Licitación. Obras → siempre Licitación."
+        ),
     },
+    "feria_inclusiva": {
+        "normativa": "Art. 51 LOSNCP",
+        "descripcion": "Sin umbral fijo — bienes y servicios de producción nacional y origen local, no catalogados. Solo proveedores EPS, artesanos, MIPYMES.",
+    },
+    "catalogo_electronico": {
+        "normativa": "Art. 43 LOSNCP",
+        "descripcion": "Sin límite de monto — bienes y servicios normalizados de convenios marco.",
+    },
+    "nota": (
+        "La LOSNCP vigente (reforma octubre 2025) eliminó menor cuantía y cotización. "
+        "Ya NO se usan coeficientes del PIE para determinar el procedimiento. "
+        "Procedimientos vigentes: Catálogo Electrónico, SIE, Licitación, "
+        "Concurso Público de Consultoría, Feria Inclusiva, Ínfima Cuantía (Art. 17 RGLOSNCP)."
+    ),
 }
 
 
 def obtener_montos_pie(anio: int | None = None) -> dict:
     """
-    Retorna los umbrales de contratación en USD para el año solicitado.
-    Si no se especifica el año, retorna los del año en curso.
+    Retorna los umbrales de contratación vigentes.
+    Nota: la LOSNCP vigente ya no usa coeficientes del PIE para SIE/Licitación.
     """
-    from datetime import datetime
-    if anio is None:
-        anio = datetime.now().year
-    # Si no tenemos el año exacto, usar el más reciente disponible
-    if anio not in MONTOS_PIE:
-        anio = max(MONTOS_PIE.keys())
-    data = MONTOS_PIE[anio].copy()
-    data["anio"] = anio
+    data = UMBRALES_CONTRATACION.copy()
     data["advertencia"] = (
-        "Montos referenciales basados en el PIE aprobado. "
-        "Verificar el valor oficial vigente en www.compraspublicas.gob.ec"
+        "La LOSNCP vigente (octubre 2025) cambió la lógica de selección de procedimientos. "
+        "Ya no se usan porcentajes del PIE. Verificar en www.compraspublicas.gob.ec"
     )
     return data
 
@@ -333,20 +349,15 @@ TOOLS_SCHEMA: list[dict] = [
         "function": {
             "name": "obtener_montos_pie",
             "description": (
-                "Retorna los umbrales de contratación en dólares USD para el año vigente "
-                "según el Presupuesto Inicial del Estado (PIE). "
-                "Usar cuando el usuario pregunte cuánto es el monto para ínfima cuantía, "
-                "licitación, feria inclusiva, o cuánto dinero corresponde a cada proceso. "
-                "Nota: menor cuantía y cotización fueron eliminados por la reforma LOSNCP octubre 2025."
+                "Retorna los umbrales de contratación vigentes según la LOSNCP (reforma octubre 2025). "
+                "IMPORTANTE: la ley ya NO usa coeficientes del PIE para SIE/Licitación. "
+                "Solo ínfima cuantía tiene monto fijo: USD $10,000 (Art. 50). "
+                "La selección entre SIE y Licitación se basa en mejor valor por dinero (Art. 74 RGLOSNCP). "
+                "Menor cuantía y cotización fueron eliminados."
             ),
             "parameters": {
                 "type": "object",
-                "properties": {
-                    "anio": {
-                        "type": "integer",
-                        "description": "Año fiscal. Si no se especifica, se usa el año actual. Ejemplo: 2025, 2026",
-                    },
-                },
+                "properties": {},
                 "required": [],
             },
         },
@@ -367,7 +378,7 @@ def ejecutar_tool(nombre: str, argumentos: dict) -> str:
         if nombre == "recomendar_tipo_contratacion":
             descripcion = argumentos.get("descripcion", "")
             monto = argumentos.get("monto")
-            tipo_key = recomendar_tipo_contratacion(descripcion)
+            tipo_key = recomendar_tipo_contratacion(descripcion, monto)
             info = obtener_tipo_contratacion(tipo_key) or {}
             resultado = {
                 "tipo_recomendado": info.get("nombre", tipo_key),

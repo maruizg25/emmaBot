@@ -9,7 +9,7 @@ faqs:
     2️⃣ *Determina el monto* — define el presupuesto referencial
     3️⃣ *Elige el proceso* según el monto:
        • Ínfima cuantía: hasta USD $10,000 (compra directa, Art. 50 LOSNCP)
-       • Menor cuantía: hasta $72,630 USD
+       • Ínfima cuantía: hasta USD $10,000 (Art. 50 LOSNCP)
        • Cotización / Licitación: montos mayores
     4️⃣ *Ingresa al SOCE* en www.compraspublicas.gob.ec con tu usuario institucional
     5️⃣ *Crea el proceso* — completa el formulario, sube el pliego y publica
@@ -241,7 +241,7 @@ faqs:
   respuesta: |
     El *presupuesto referencial* es el valor estimado que la entidad pública calcula antes de iniciar un proceso de contratación.
 
-    🔹 Define qué *tipo de proceso* aplica (según los umbrales del PIE)
+    🔹 Define qué *tipo de proceso* aplica (según la LOSNCP vigente)
     🔹 Se publica en el Portal ComprasPúblicas junto con los pliegos
     🔹 Los oferentes no pueden superar este monto en su oferta económica
     🔹 Debe basarse en estudios de mercado, cotizaciones previas o costos históricos
@@ -589,9 +589,9 @@ faqs:
 
     🔹 SIE — Subasta Inversa Electrónica: bienes/servicios normalizados (Art. 47)
 
-    🔹 Licitación bienes/servicios: más de $544,725 (Art. 48)
+    🔹 SIE: bienes/servicios estandarizados, mercado competitivo (Art. 47)
 
-    🔹 Licitación obras: más de $1,089,450 (Art. 48)
+    🔹 Licitación: cuando SIE no sea idóneo, y siempre para obras (Art. 48)
 
     🔹 Feria Inclusiva: proveedores EPS y MIPYMES (Art. 51)
 
@@ -601,7 +601,7 @@ faqs:
     ⚠️ *Menor cuantía y cotización fueron eliminados* por la reforma LOSNCP octubre 2025.
 
 
-    📌 Fuente: LOSNCP vigente y PIE 2025 ($36,315,000,000)
+    📌 Fuente: LOSNCP vigente (reforma octubre 2025); Art. 74 RGLOSNCP
 
     '
   frecuencia: 0
@@ -1400,7 +1400,7 @@ faqs:
 
     🔹 **SIE:** bienes/servicios normalizados sin límite superior (Art. 47)
 
-    🔹 **Licitación:** más de $544,725 bienes/servicios (Art. 48)
+    🔹 **Licitación:** cuando SIE no sea idóneo, y siempre para obras (Art. 48)
 
 
     📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
