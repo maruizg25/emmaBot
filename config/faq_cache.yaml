@@ -136,19 +136,20 @@ faqs:
   - procesos
   pregunta: ¿Cuáles son los tipos de contratación pública?
   respuesta: |
-    Los principales *tipos de contratación pública* en Ecuador son:
+    Los *tipos de contratación pública* vigentes en Ecuador (LOSNCP reforma octubre 2025):
 
-    🔹 *Ínfima Cuantía* — hasta USD $7,974 (bienes/servicios sin procesos formales)
-    🔹 *Menor Cuantía* — bienes/servicios hasta USD $79,742; obras hasta USD $399,200
-    🔹 *Cotización* — entre menor cuantía y licitación
-    🔹 *Licitación* — montos mayores a los umbrales de cotización
-    🔹 *Subasta Inversa Electrónica (SIE)* — bienes y servicios normalizados
-    🔹 *Catálogo Electrónico* — compra directa desde convenios marco
-    🔹 *Contratación Directa* — consultoría o situaciones especiales
-    🔹 *Emergencia* — para situaciones urgentes declaradas
+    🔹 *Ínfima Cuantía* — compras urgentes de bajo monto (Art. 50)
+    🔹 *Subasta Inversa Electrónica (SIE)* — bienes y servicios normalizados (Art. 47)
+    🔹 *Licitación* — contratos de gran monto (Art. 48)
+    🔹 *Feria Inclusiva* — proveedores EPS y MIPYMES (Art. 51)
+    🔹 *Catálogo Electrónico* — compra directa desde convenios marco (Art. 43)
+    🔹 *Contratación Directa* — consultoría de monto reducido (Art. 40)
+    🔹 *Régimen Especial* — seguridad, defensa, emergencia y casos especiales
+
+    ⚠️ *Menor cuantía y cotización fueron eliminados* por la reforma LOSNCP octubre 2025.
 
     📌 El proceso adecuado depende del *monto, objeto y naturaleza* de la contratación.
-    Base legal: LOSNCP y Reglamento General.
+    Base legal: LOSNCP vigente.
   frecuencia: 0
 - keywords:
   - denunci
@@ -398,8 +399,7 @@ faqs:
 
     ❌ Los demás procesos *NO tienen puja*:
     🔹 Licitación — evaluación de ofertas técnicas y económicas
-    🔹 Cotización — comparación de propuestas
-    🔹 Menor cuantía — invitación directa
+    🔹 Feria Inclusiva — selección de proveedores EPS/MIPYMES
     🔹 Ínfima cuantía — compra directa con factura
 
     📌 Base legal: Art. 47 LOSNCP
@@ -415,7 +415,7 @@ faqs:
     🔹 Gana quien oferte el precio más bajo al cierre
     🔹 La puja tiene una duración definida (generalmente 15-30 min)
 
-    💡 La puja *solo existe en SIE* — no en licitación, cotización ni menor cuantía.
+    💡 La puja *solo existe en SIE* — no en licitación ni feria inclusiva.
 
     📌 Base legal: Art. 47 LOSNCP
     📌 Manual SOCE — Subasta Inversa Electrónica p.72
@@ -476,20 +476,25 @@ faqs:
   - bienes
   - servicios
   pregunta: ¿Qué es la menor cuantía?
-  respuesta: 'La *menor cuantía* es el proceso simplificado para bienes, servicios y obras de monto reducido.
+  respuesta: '⚠️ *La menor cuantía ya no existe* como procedimiento de contratación pública.
+
+    Fue eliminada por la reforma a la LOSNCP (octubre 2025).
 
 
-    💰 *Bienes/servicios 2025:* hasta $72,630 USD
+    Los procesos vigentes según la LOSNCP actual son:
 
-    💰 *Obras 2025:* hasta $254,205 USD
+    🔹 *Ínfima cuantía* — compras urgentes de bajo monto (Art. 50)
+
+    🔹 *SIE* — bienes/servicios normalizados (Art. 47)
+
+    🔹 *Licitación* — contratos de gran monto (Art. 48)
+
+    🔹 *Feria Inclusiva* — proveedores EPS y MIPYMES (Art. 51)
+
+    🔹 *Catálogo Electrónico* — bienes normalizados (Art. 43)
 
 
-    ✅ Invitación directa a proveedores MIPYMES
-
-    ⏱ Plazo: 1 día invitación + 3 días para ofertas
-
-
-    📌 Base legal: Art. 51 LOSNCP
+    📌 Para consultar el proceso que aplica a tu caso, te recomiendo revisar la LOSNCP vigente o contactar al SERCOP.
 
     '
   frecuencia: 0
@@ -501,20 +506,25 @@ faqs:
   - limite
   - proceso
   pregunta: ¿Qué es la cotización?
-  respuesta: 'La *cotización* es el proceso para bienes, servicios y obras de monto intermedio.
+  respuesta: '⚠️ *La cotización como procedimiento de contratación ya no existe.*
+
+    Fue eliminada por la reforma a la LOSNCP (octubre 2025).
+
+    El término "cotización" ahora se refiere únicamente a la obtención de presupuestos referenciales de proveedores, no a un procedimiento de selección.
 
 
-    💰 *Bienes/servicios 2025:* entre $72,630 y $544,725 USD
+    Los procesos de contratación vigentes son:
 
-    💰 *Obras 2025:* entre $254,205 y $1,089,450 USD
+    🔹 *SIE* — bienes/servicios normalizados (Art. 47)
+
+    🔹 *Licitación* — contratos de gran monto (Art. 48)
+
+    🔹 *Ínfima cuantía* — compras urgentes de bajo monto (Art. 50)
+
+    🔹 *Feria Inclusiva* — proveedores EPS y MIPYMES (Art. 51)
 
 
-    ✅ Convocatoria pública, mayor competencia
-
-    ⏱ Plazo: 5 días publicación + 5 días para ofertas
-
-
-    📌 Base legal: Art. 50 LOSNCP
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)
 
     '
   frecuencia: 0
@@ -560,7 +570,7 @@ faqs:
     ✅ Solo proveedores EPS habilitados pueden participar
 
 
-    📌 Base legal: Art. 60.1 LOSNCP
+    📌 Base legal: Art. 51 LOSNCP
 
     '
   frecuencia: 0
@@ -574,25 +584,26 @@ faqs:
   - procesos
   - todos
   pregunta: ¿Cuáles son los montos de contratación para 2025?
-  respuesta: '*Umbrales de contratación 2025* (PIE: $36,315,000,000):
+  respuesta: '*Procesos de contratación vigentes 2025* (LOSNCP reforma octubre 2025):
 
 
-    💰 Ínfima cuantía: hasta $7,263
+    💰 Ínfima cuantía: hasta $7,263 (Art. 50 LOSNCP)
 
-    💰 Menor cuantía bienes/servicios: hasta $72,630
+    🔹 SIE — Subasta Inversa Electrónica: bienes/servicios normalizados (Art. 47)
 
-    💰 Menor cuantía obras: hasta $254,205
+    🔹 Licitación bienes/servicios: más de $544,725 (Art. 48)
 
-    💰 Cotización bienes/servicios: hasta $544,725
+    🔹 Licitación obras: más de $1,089,450 (Art. 48)
 
-    💰 Cotización obras: hasta $1,089,450
+    🔹 Feria Inclusiva: proveedores EPS y MIPYMES (Art. 51)
 
-    💰 Licitación bienes/servicios: más de $544,725
-
-    💰 Licitación obras: más de $1,089,450
+    🔹 Catálogo Electrónico: sin límite, bienes normalizados (Art. 43)
 
 
-    📌 Fuente: Presupuesto General del Estado 2025
+    ⚠️ *Menor cuantía y cotización fueron eliminados* por la reforma LOSNCP octubre 2025.
+
+
+    📌 Fuente: LOSNCP vigente y PIE 2025 ($36,315,000,000)
 
     '
   frecuencia: 0
@@ -675,11 +686,11 @@ faqs:
   respuesta: 'Los tipos de garantías son:
 
 
-    🔐 *Fiel cumplimiento:* 5% del valor del contrato (contratos > $72,630)
+    🔐 *Fiel cumplimiento:* 5% del valor del contrato
 
     🔐 *Buen uso del anticipo:* 100% del anticipo recibido
 
-    🔐 *Técnica:* 5% del valor ofertado (en licitación y cotización)
+    🔐 *Técnica:* 5% del valor ofertado (en licitación)
 
     🔐 *Vigencia:* igual al plazo del contrato + 60 días adicionales
 
@@ -1361,7 +1372,7 @@ faqs:
 
     - Aplicar el procedimiento según el monto total
 
-    - Si el total supera ínfima cuantía, usar convocatoria pública o cotización
+    - Si el total supera ínfima cuantía, usar el proceso que corresponda (SIE, Licitación o Feria Inclusiva)
 
 
     ⚠️ **Riesgo:**
@@ -1379,24 +1390,22 @@ faqs:
   - servicios
   - '2025'
   pregunta: ¿Cuál es el monto máximo de menor cuantía para bienes y servicios en 2025?
-  respuesta: '# Monto Máximo de Menor Cuantía 2025
+  respuesta: '# La Menor Cuantía fue eliminada ⚠️
 
 
-    📊 **Para Bienes y Servicios:**
-
-    💰 **USD $74,000** (0.000002% del PIE)
+    La menor cuantía **ya no existe** como procedimiento de contratación desde la reforma LOSNCP (octubre 2025).
 
 
-    📊 **Para Obras:**
+    Los procesos vigentes para compras de bienes y servicios son:
 
-    💰 **USD $259,000** (0.000007% del PIE)
+    💰 **Ínfima cuantía:** hasta ~$7,263 (Art. 50 LOSNCP)
+
+    🔹 **SIE:** bienes/servicios normalizados sin límite superior (Art. 47)
+
+    🔹 **Licitación:** más de $544,725 bienes/servicios (Art. 48)
 
 
-    En menor cuantía se pueden realizar compras directas sin cumplir los requisitos de licitación pública, siempre que se
-    justifique la necesidad y se realice de forma transparente.
-
-
-    📌 Base legal: Art. 51 LOSNCP'
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - infima
@@ -1455,33 +1464,26 @@ faqs:
   - es
   - proceso
   pregunta: ¿Qué es la menor cuantía en contratación pública?
-  respuesta: '# ¿Qué es la Menor Cuantía? 📋
+  respuesta: '# La Menor Cuantía ya no existe ⚠️
 
 
-    **Menor Cuantía** es un procedimiento simplificado de contratación pública para adquisiciones de **menor monto económico**.
-    Se aplica a bienes, servicios y obras que no alcanzan los montos de procedimientos más complejos como licitación o subasta
-    inversa.
+    **La menor cuantía fue eliminada** como procedimiento de contratación pública por la reforma a la LOSNCP (octubre 2025).
 
 
-    ✅ **Características principales:**
+    Los procedimientos vigentes en la LOSNCP actual son:
 
-    • Procedimiento ágil y de menor trámite
+    🔹 **Ínfima cuantía** — compras urgentes/menores (Art. 50)
 
-    • Aplicable para contrataciones por debajo de ciertos umbrales
+    🔹 **SIE** — bienes y servicios normalizados (Art. 47)
 
-    • Requiere cumplir requisitos legales de transparencia y publicidad
+    🔹 **Licitación** — contratos de gran monto (Art. 48)
 
-    • Se tramita a través del SOCE (Sistema Oficial de Contratación Pública)
+    🔹 **Feria Inclusiva** — proveedores EPS y MIPYMES (Art. 51)
 
-
-    ⚠️ **Cambios vigentes desde el 1 de agosto de 2025:**
-
-    La opción de publicar procedimientos de Menor Cuantía se **deshabilita del SOCE y MFC**, siendo reemplazados por nuevas
-    herramientas (Licitación, Subasta Inversa Electrónica y Concurso Público de Consultoría) con nuevos montos según la Ley
-    Orgánica de Integridad Pública.
+    🔹 **Catálogo Electrónico** — bienes normalizados (Art. 43)
 
 
-    📌 **Base legal:** Art. 2 R.E SERCOP 2025-0152 | Ley Orgánica de Integridad Pública'
+    📌 **Base legal:** LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - menor
@@ -1490,25 +1492,22 @@ faqs:
   - notificacion
   - enterarme
   pregunta: ¿Cómo me entero si me invitan a participar en menor cuantía?
-  respuesta: '# 📢 Invitación a Participar en Menor Cuantía
+  respuesta: '# ⚠️ La Menor Cuantía fue eliminada
 
 
-    Las invitaciones a procedimientos de **menor cuantía** se publican a través de:
+    La menor cuantía **ya no existe** como procedimiento de contratación (reforma LOSNCP octubre 2025).
 
 
-    ✅ **Portal de Contratación Pública** (www.www.compraspublicas.gob.ec) - es el canal oficial donde aparecen todas las convocatorias
+    Para participar como proveedor en compras públicas:
 
-    ✅ **Correo electrónico directo** - si estás registrado como proveedor y la entidad contratante te contacta
+    ✅ Mantén tu **RUP activo** en compraspublicas.gob.ec
 
-    ✅ **Notificaciones en el portal** - revisa tu cuenta de usuario regularmente
+    ✅ Revisa periódicamente el portal para convocatorias de **SIE, Licitación y Feria Inclusiva**
 
-
-    ⚠️ Lo importante: **El Estado no te "invita" en menor cuantía de manera privada**. Los procedimientos son públicos, así
-    que debes estar atento al Portal y tener actualizado tu registro de proveedor en el SERCOP.
+    ✅ Activa **notificaciones** en tu cuenta del portal
 
 
-    📌 **Base legal:** Art. 221 RGLOSNCP (determina que cualquier cambio en precios se comunica de forma inmediata a través
-    de canales oficiales)'
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - menor
@@ -1517,15 +1516,20 @@ faqs:
   - monto
   - '2025'
   pregunta: ¿Cuál es el monto máximo de menor cuantía para obras en 2025?
-  respuesta: "# \U0001F4CA Monto Máximo de Menor Cuantía para Obras 2025\n\nBasándome en la normativa vigente, **a partir\
-    \ del 1 de agosto de 2025**, los montos de menor cuantía para obras serán actualizados según la nueva Ley Orgánica de\
-    \ Integridad Pública. \n\n⚠️ **Situación actual (hasta 31 de julio 2025):** Se aplican los montos anteriores mientras\
-    \ se implementan los nuevos sistemas.\n\n\U0001F504 **Transición:** El SERCOP actualizará los montos en las herramientas\
-    \ (SOCE y MFC) hasta el 31 de julio de 2025. Después de esa fecha, se deshabilitará la opción de publicar Menor Cuantía\
-    \ con montos antiguos.\n\n⚠️ **Recomendación:** Consulta directamente el SOCE o comunícate con el SERCOP para conocer\
-    \ el monto exacto de menor cuantía para obras vigente a partir del 1 de agosto 2025, ya que la norma indica que estos\
-    \ serán definidos en la Ley Orgánica de Integridad Pública.\n\n\U0001F4CC **Base legal:** Art. 2, R.E SERCOP 2025-0152\
-    \ y Ley Orgánica de Integridad Pública."
+  respuesta: '# La Menor Cuantía para Obras fue eliminada ⚠️
+
+
+    La menor cuantía para obras **ya no existe** como procedimiento de contratación desde la reforma LOSNCP (octubre 2025).
+
+
+    Para obras, los procesos vigentes son:
+
+    🔹 **Licitación:** obras que superen los umbrales establecidos (Art. 48)
+
+    🔹 **Ínfima cuantía:** obras de muy bajo monto y urgentes (Art. 50)
+
+
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - menor
@@ -1534,28 +1538,20 @@ faqs:
   - plazo
   - oferta
   pregunta: ¿Cuántos días tengo para presentar oferta en menor cuantía?
-  respuesta: '# ⏰ Plazo para Presentar Ofertas en Menor Cuantía
+  respuesta: '# ⚠️ La Menor Cuantía fue eliminada
 
 
-    El plazo para presentar tu oferta es **entre 5 y 30 días** contados desde la fecha de publicación de la convocatoria.
+    La menor cuantía **ya no existe** como procedimiento de contratación desde la reforma LOSNCP (octubre 2025).
 
 
-    📋 **Puntos clave:**
+    Si quieres participar como proveedor en compras públicas, los plazos vigentes son:
 
-    🔹 Mínimo: 5 días
+    🔹 **SIE:** mínimo 5 días hábiles de publicación antes del evento (Art. 47)
 
-    🔹 Máximo: 30 días
-
-    🔹 Se cuenta desde la publicación de la convocatoria
-
-    🔹 La fecha y hora límite está en el pliego del procedimiento
+    🔹 **Licitación:** hasta 30 días para presentar ofertas (Art. 48)
 
 
-    ⚠️ **Importante:** Debes registrar obligatoriamente tu oferta en el portal COMPRASPÚBLICAS con las especificaciones técnicas
-    y condiciones comerciales antes del cierre.
-
-
-    📌 Base legal: Art. 130 y 187 RGLOSNCP'
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - cotizacion
@@ -1563,31 +1559,20 @@ faqs:
   - es
   - proceso
   pregunta: ¿Qué es la cotización en contratación pública?
-  respuesta: '# ¿Qué es la Cotización en Contratación Pública?
+  respuesta: '# ⚠️ La Cotización como proceso ya no existe
 
 
-    La **cotización** es un procedimiento de contratación pública para adquirir bienes, servicios u obras de **menor cuantía**
-    📋. Es un proceso simplificado donde la entidad contratante solicita presupuestos directamente a proveedores sin necesidad
-    de licitación.
+    La **cotización como procedimiento de contratación** fue eliminada por la reforma LOSNCP (octubre 2025).
 
 
-    **Características principales:**
-
-    ✅ Procedimiento ágil e inmediato
-
-    ✅ Aplica para montos reducidos
-
-    ✅ Requiere transparencia y trato justo
-
-    ✅ Se realiza a través del SOCE (Sistema Oficial de Contratación Pública)
+    El término **cotización** ahora se refiere exclusivamente a la solicitud de presupuestos referenciales
+    de mercado — una herramienta de la fase precontractual, no un proceso de selección.
 
 
-    **⚠️ Importante:** A partir del **01 de agosto de 2025**, la modalidad de "Cotización de Bienes, Servicios y Obras" se
-    deshabilitará del SOCE, siendo reemplazada por nuevas herramientas de contratación según los montos actualizados en la
-    Ley Orgánica de Integridad Pública.
+    Los procesos vigentes son: SIE (Art. 47), Licitación (Art. 48), Ínfima cuantía (Art. 50), Feria Inclusiva (Art. 51).
 
 
-    📌 **Base legal:** Art. 59 RGLOSNCP; R.E SERCOP 2025-0152'
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - cotizacion
@@ -1596,25 +1581,24 @@ faqs:
   - plazo
   - proceso
   pregunta: ¿Cuántos días dura un proceso de cotización?
-  respuesta: '# Duración del Proceso de Cotización
+  respuesta: '# ⚠️ La cotización como proceso fue eliminada
 
 
-    Hola 👋 La cotización en compras públicas **no tiene una duración fija establecida en la LOSNCP**, ya que depende del tipo
-    de procedimiento:
+    La cotización como **procedimiento de contratación** ya no existe (reforma LOSNCP octubre 2025).
 
 
-    🔹 **Cotización Simple** (Art. 59 RGLOSNCP): Debe ser **eficiente e inmediata** - típicamente 3 a 5 días hábiles
-
-    🔹 **Cotización Comparativa**: Entre 5 a 10 días hábiles según la complejidad
-
-    🔹 **En Emergencia**: Plazo mínimo según la urgencia del caso
+    Si preguntas por la cotización de precios (presupuesto referencial), no tiene plazo fijo — depende
+    del proceso de contratación al que sirve de soporte.
 
 
-    ⚠️ La LOSNCP prioriza que sea "eficiente e inmediata" pero el tiempo exacto dependerá de cuántos proveedores convoquen
-    y cuán rápido respondan.
+    Los procesos vigentes con sus plazos principales:
+
+    🔹 **SIE:** publicación mínima 5 días hábiles antes del evento (Art. 47)
+
+    🔹 **Licitación:** hasta 30 días para presentar ofertas (Art. 48)
 
 
-    📌 **Base legal**: Art. 59 RGLOSNCP - Procedimiento de selección único eficiente e inmediato'
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - cotizacion
@@ -1622,11 +1606,11 @@ faqs:
   - oferta
   - presentar
   pregunta: ¿Qué documentos debo presentar en una cotización?
-  respuesta: '# 📋 Documentos para una Cotización
+  respuesta: '# 📋 Documentos para solicitar presupuesto (cotización de precios)
 
 
-    En Ecuador, los documentos dependen del **tipo de procedimiento**. Para cotizaciones en procesos de emergencia o adquisiciones
-    internacionales, debes presentar:
+    La cotización como **procedimiento de contratación** fue eliminada (reforma LOSNCP octubre 2025).
+    Si preguntas por la cotización de precios (presupuesto referencial), los documentos típicos son:
 
 
     ✅ **Documentos básicos:**
@@ -1662,33 +1646,26 @@ faqs:
   - diferencia
   - cuando
   pregunta: ¿Cuál es la diferencia entre cotización y menor cuantía?
-  respuesta: '# 🤔 Diferencia entre Cotización y Menor Cuantía
+  respuesta: '# ⚠️ Cotización y Menor Cuantía — ambos eliminados
 
 
-    **Cotización:**
-
-    📌 Es una solicitud de presupuesto que hace la entidad contratante a proveedores para conocer precios del mercado. Se usa
-    durante la fase de diseño de los procesos de contratación para establecer el **presupuesto referencial**.
+    Ambos términos generan confusión porque tenían dos significados:
 
 
-    **Menor Cuantía:**
-
-    📌 Es un **procedimiento de contratación** (tipo de proceso) aplicable cuando el monto estimado está por debajo de ciertos
-    umbrales. Se rige por reglas simplificadas respecto a los procedimientos de mayor cuantía.
+    **Cotización (como proceso):** fue eliminada como procedimiento de contratación (reforma LOSNCP octubre 2025).
 
 
-    **La diferencia clave:**
-
-    ✅ **Cotización** = herramienta para fijar precios antes de licitar
-
-    ✅ **Menor cuantía** = modalidad de procedimiento para contratar montos bajos
+    **Cotización (como herramienta):** sigue vigente. Es la solicitud de presupuestos referenciales a proveedores
+    para establecer el precio antes de iniciar cualquier proceso de contratación.
 
 
-    La cotización te ayuda a determinar si usarás menor cuantía u otro procedimiento según el presupuesto referencial que
-    resulte.
+    **Menor cuantía:** fue eliminada como procedimiento de contratación (reforma LOSNCP octubre 2025).
 
 
-    📌 Base legal: Art. 51 RGLOSNCP (cotizaciones en fase precontractual)'
+    Los procesos vigentes son: SIE (Art. 47), Licitación (Art. 48), Ínfima cuantía (Art. 50), Feria Inclusiva (Art. 51).
+
+
+    📌 Base legal: LOSNCP vigente (reforma octubre 2025)'
   frecuencia: 0
 - keywords:
   - licitacion
@@ -1734,14 +1711,18 @@ faqs:
     valor.
 
 
-    Sin embargo, sí existen **umbrales que definen cuándo es OBLIGATORIO licitar**:
+    Los procesos vigentes (reforma LOSNCP octubre 2025):
 
 
-    🔹 **Ínfima cuantía** = hasta USD $1,350 (puede contratarse directamente)
+    🔹 **Ínfima cuantía** = hasta ~$7,263 — compras directas de urgencia (Art. 50)
 
-    🔹 **Menor cuantía** = USD $1,350 a USD $10,000 (procedimientos simplificados)
+    🔹 **SIE** = bienes/servicios normalizados, sin límite (Art. 47)
 
-    🔹 **Cuantía superior** = arriba de USD $10,000 (licitación estándar u otras modalidades)
+    🔹 **Licitación** = contratos de gran monto (Art. 48)
+
+    🔹 **Feria Inclusiva** = proveedores EPS/MIPYMES (Art. 51)
+
+    ⚠️ Menor cuantía y cotización eliminados por reforma octubre 2025.
 
 
     ⚠️ **Nota especial**: Existen excepciones en casos especiales (alimentos en zonas rurales/fronterizas, combustibles) donde
@@ -2046,7 +2027,7 @@ faqs:
     • Consultoría general fuera de proyectos de investigación
 
 
-    Para otros casos de consultoría, debes usar **procedimientos competitivos** (licitación, cotización, catálogo electrónico)
+    Para otros casos de consultoría, debes usar **procedimientos competitivos** (licitación, catálogo electrónico)
     según el monto que corresponda.
 
 
@@ -2915,7 +2896,7 @@ faqs:
 
 
     **Plazo:** Generalmente tienes **5 días hábiles** desde la notificación de la exclusión. Revisa las bases específicas
-    del proceso, pues pueden variar según el tipo de procedimiento (Subasta Inversa, Cotización, Licitación, etc.).
+    del proceso, pues pueden variar según el tipo de procedimiento (SIE, Licitación, Feria Inclusiva, etc.).
 
 
     📌 **Base legal:** Art. 75 LOSNCP - Derecho a impugnar; Art. 416 RGLOSNCP - Procedimiento administrativo de recursos.
@@ -3518,8 +3499,7 @@ faqs:
     📤 Presenta tu oferta antes del plazo límite
 
 
-    ⚠️ **Importante:** El tipo de proceso depende del monto y características de la contratación (puede ser por Menor Cuantía,
-    Subasta Inversa, Cotización o Licitación). La entidad pública es quien define el procedimiento según sus necesidades.
+    ⚠️ **Importante:** El tipo de proceso depende del monto y características de la contratación (SIE, Licitación, Ínfima cuantía o Feria Inclusiva). La entidad pública es quien define el procedimiento según sus necesidades. Menor cuantía y cotización fueron eliminados (reforma LOSNCP octubre 2025).
 
 
     📌 **Base legal:** Art. 297 RGLOSNCP - Los procedimientos se rigen por la reglamentación establecida por cada entidad contratante.

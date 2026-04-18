@@ -23,27 +23,6 @@ TIPOS_CONTRATACION = {
         "normativa": "Art. 43 LOSNCP",
         "ventaja": "Proceso más ágil — no requiere concurso, precio ya negociado.",
     },
-    "menor_cuantia_bienes": {
-        "nombre": "Menor Cuantía — Bienes y Servicios",
-        "descripcion": "Para adquisición de bienes y servicios no normalizados de monto reducido.",
-        "montos": "Hasta el 0.000002 del Presupuesto Inicial del Estado (PIE).",
-        "normativa": "Art. 51 LOSNCP",
-        "ventaja": "Proceso simplificado con participación directa de proveedores MIPYMES.",
-    },
-    "menor_cuantia_obra": {
-        "nombre": "Menor Cuantía — Obra",
-        "descripcion": "Para contratación de obras de pequeña escala.",
-        "montos": "Hasta el 0.000007 del PIE.",
-        "normativa": "Art. 51 LOSNCP",
-        "ventaja": "Proceso ágil para obras menores.",
-    },
-    "cotizacion": {
-        "nombre": "Cotización",
-        "descripcion": "Para adquisición de bienes, servicios y obras de monto medio.",
-        "montos": "Bienes/servicios: entre Menor Cuantía y Licitación. Obras: entre Menor Cuantía y Licitación.",
-        "normativa": "Art. 50 LOSNCP",
-        "ventaja": "Participación amplia de proveedores con proceso intermedio.",
-    },
     "licitacion": {
         "nombre": "Licitación",
         "descripcion": "Para contratos de gran monto. Proceso público y competitivo.",
@@ -62,7 +41,7 @@ TIPOS_CONTRATACION = {
         "nombre": "Ínfima Cuantía",
         "descripcion": "Para compras urgentes o de muy bajo monto sin proceso formal.",
         "montos": "Hasta el 0.0000002 del PIE.",
-        "normativa": "Art. 52.1 LOSNCP",
+        "normativa": "Art. 50 LOSNCP",
         "ventaja": "Máxima agilidad para compras menores de emergencia.",
     },
     "contratacion_directa": {
@@ -79,12 +58,12 @@ TIPOS_CONTRATACION = {
         "normativa": "Art. 2 LOSNCP y Reglamento correspondiente",
         "ventaja": "Flexibilidad para necesidades especiales del Estado.",
     },
-    "ferias_inclusivas": {
-        "nombre": "Ferias Inclusivas",
-        "descripcion": "Para adquisición de bienes y servicios a actores de la Economía Popular y Solidaria.",
-        "montos": "Montos reducidos definidos en la normativa.",
-        "normativa": "Art. 60.1 LOSNCP",
-        "ventaja": "Inclusión económica y social de pequeños productores.",
+    "feria_inclusiva": {
+        "nombre": "Feria Inclusiva",
+        "descripcion": "Para adquisición de bienes y servicios a actores de la Economía Popular y Solidaria (EPS), artesanos y MIPYMES.",
+        "montos": "Montos reducidos definidos en la normativa vigente.",
+        "normativa": "Art. 51 LOSNCP",
+        "ventaja": "Inclusión económica y social de pequeños productores y MIPYMES.",
     },
 }
 
@@ -114,14 +93,14 @@ def recomendar_tipo_contratacion(descripcion: str) -> str:
     if any(k in desc for k in ["catálogo", "normalizado", "estandarizado"]):
         return "catalogo_electronico"
     if any(k in desc for k in ["obra", "construcción", "infraestructura"]):
-        return "menor_cuantia_obra"
+        return "licitacion"
     if any(k in desc for k in ["consultoría", "asesoría", "estudio"]):
         return "contratacion_directa"
     if any(k in desc for k in ["economía popular", "eps", "artesanos", "pequeños"]):
-        return "ferias_inclusivas"
+        return "feria_inclusiva"
     if any(k in desc for k in ["seguridad", "defensa", "comunicación social"]):
         return "regimen_especial"
-    return "menor_cuantia_bienes"  # Default más común
+    return "subasta_inversa"  # Default para bienes/servicios no normalizados
 
 
 # ─── RUP (Registro Único de Proveedores) ────────────────────────────────────
@@ -159,17 +138,6 @@ PLAZOS_REFERENCIALES = {
         "preguntas_y_aclaraciones": "Hasta 2 días antes del evento",
         "puja": "60 minutos",
         "adjudicacion": "3 días hábiles tras la puja",
-    },
-    "menor_cuantia": {
-        "invitacion": "1 día hábil",
-        "ofertas": "3 días hábiles",
-        "adjudicacion": "3 días hábiles",
-    },
-    "cotizacion": {
-        "publicacion": "5 días hábiles",
-        "ofertas": "5 días hábiles",
-        "calificacion": "3 días hábiles",
-        "adjudicacion": "3 días hábiles",
     },
     "licitacion": {
         "publicacion": "30 días hábiles",
@@ -217,25 +185,19 @@ def obtener_plazos(tipo: str) -> dict:
 MONTOS_PIE: dict[int, dict] = {
     2025: {
         "pie": 36_315_000_000,
-        "infima_cuantia":       {"porcentaje": "0.0000002", "usd": 7_263,    "normativa": "Art. 52.1 LOSNCP"},
-        "menor_cuantia_bienes": {"porcentaje": "0.000002",  "usd": 72_630,   "normativa": "Art. 51 LOSNCP"},
-        "menor_cuantia_obras":  {"porcentaje": "0.000007",  "usd": 254_205,  "normativa": "Art. 51 LOSNCP"},
-        "cotizacion_bienes":    {"porcentaje": "hasta 0.000015", "usd": 544_725, "normativa": "Art. 50 LOSNCP"},
-        "cotizacion_obras":     {"porcentaje": "hasta 0.00003", "usd": 1_089_450, "normativa": "Art. 50 LOSNCP"},
+        "infima_cuantia":       {"porcentaje": "0.0000002", "usd": 7_263,    "normativa": "Art. 50 LOSNCP"},
         "licitacion_bienes":    {"porcentaje": ">0.000015", "usd": ">$544,725", "normativa": "Art. 48 LOSNCP"},
         "licitacion_obras":     {"porcentaje": ">0.00003",  "usd": ">$1,089,450", "normativa": "Art. 48 LOSNCP"},
         "contratacion_directa": {"porcentaje": "0.000002",  "usd": 72_630,   "normativa": "Art. 40 LOSNCP"},
+        "nota": "Menor cuantía y cotización eliminados por reforma LOSNCP octubre 2025. Ver Art. 47 (SIE), Art. 48 (Licitación), Art. 50 (Ínfima cuantía), Art. 51 (Feria Inclusiva).",
     },
     2026: {
         "pie": 37_000_000_000,  # Estimado — confirmar en Registro Oficial 2026
-        "infima_cuantia":       {"porcentaje": "0.0000002", "usd": 7_400,    "normativa": "Art. 52.1 LOSNCP"},
-        "menor_cuantia_bienes": {"porcentaje": "0.000002",  "usd": 74_000,   "normativa": "Art. 51 LOSNCP"},
-        "menor_cuantia_obras":  {"porcentaje": "0.000007",  "usd": 259_000,  "normativa": "Art. 51 LOSNCP"},
-        "cotizacion_bienes":    {"porcentaje": "hasta 0.000015", "usd": 555_000, "normativa": "Art. 50 LOSNCP"},
-        "cotizacion_obras":     {"porcentaje": "hasta 0.00003", "usd": 1_110_000, "normativa": "Art. 50 LOSNCP"},
+        "infima_cuantia":       {"porcentaje": "0.0000002", "usd": 7_400,    "normativa": "Art. 50 LOSNCP"},
         "licitacion_bienes":    {"porcentaje": ">0.000015", "usd": ">$555,000", "normativa": "Art. 48 LOSNCP"},
         "licitacion_obras":     {"porcentaje": ">0.00003",  "usd": ">$1,110,000", "normativa": "Art. 48 LOSNCP"},
         "contratacion_directa": {"porcentaje": "0.000002",  "usd": 74_000,   "normativa": "Art. 40 LOSNCP"},
+        "nota": "Menor cuantía y cotización eliminados por reforma LOSNCP octubre 2025. Ver Art. 47 (SIE), Art. 48 (Licitación), Art. 50 (Ínfima cuantía), Art. 51 (Feria Inclusiva).",
     },
 }
 
@@ -329,8 +291,8 @@ TOOLS_SCHEMA: list[dict] = [
                 "properties": {
                     "tipo": {
                         "type": "string",
-                        "description": "Tipo de proceso. Valores: subasta_inversa, menor_cuantia, cotizacion, licitacion",
-                        "enum": ["subasta_inversa", "menor_cuantia", "cotizacion", "licitacion", "impugnacion", "contrato", "garantias"],
+                        "description": "Tipo de proceso. Valores: subasta_inversa, licitacion, feria_inclusiva, impugnacion, contrato, garantias",
+                        "enum": ["subasta_inversa", "licitacion", "feria_inclusiva", "impugnacion", "contrato", "garantias"],
                     },
                 },
                 "required": ["tipo"],
@@ -376,7 +338,8 @@ TOOLS_SCHEMA: list[dict] = [
                 "Retorna los umbrales de contratación en dólares USD para el año vigente "
                 "según el Presupuesto Inicial del Estado (PIE). "
                 "Usar cuando el usuario pregunte cuánto es el monto para ínfima cuantía, "
-                "menor cuantía, cotización, licitación, o cuánto dinero corresponde a cada proceso."
+                "licitación, feria inclusiva, o cuánto dinero corresponde a cada proceso. "
+                "Nota: menor cuantía y cotización fueron eliminados por la reforma LOSNCP octubre 2025."
             ),
             "parameters": {
                 "type": "object",
