@@ -347,6 +347,27 @@ async def registrar_consulta(
         await session.commit()
 
 
+async def buscar_respuesta_cacheada(pregunta_normalizada: str) -> str | None:
+    """Busca en consultas_log si una pregunta similar ya fue respondida por LLM."""
+    if not _is_postgres:
+        return None
+    try:
+        async with async_session() as session:
+            result = await session.execute(text("""
+                SELECT respuesta FROM consultas_log
+                WHERE pregunta_normalizada = :pn
+                  AND fue_shortcut = FALSE
+                  AND respuesta IS NOT NULL
+                  AND length(respuesta) > 50
+                ORDER BY timestamp DESC
+                LIMIT 1
+            """), {"pn": pregunta_normalizada[:500]})
+            row = result.fetchone()
+            return row.respuesta if row else None
+    except Exception:
+        return None
+
+
 async def obtener_estadisticas() -> dict:
     """Estadísticas para el endpoint GET /admin/stats."""
     if not _is_postgres:

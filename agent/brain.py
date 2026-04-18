@@ -915,6 +915,25 @@ async def generar_respuesta(
             ))
             return respuesta
 
+    # ── Cache de respuestas LLM anteriores ────────────────────────────────────
+    if not bloques_contexto:
+        try:
+            from agent.memory import buscar_respuesta_cacheada
+            pregunta_norm = _normalizar(mensaje)
+            resp_cache = await buscar_respuesta_cacheada(pregunta_norm)
+            if resp_cache:
+                elapsed_ms = int((time.time() - t_inicio) * 1000)
+                logger.info(f"[Sercobot] Cache LLM hit ({elapsed_ms}ms, 0 tokens)")
+                asyncio.ensure_future(_log_consulta(
+                    pregunta=mensaje, respuesta=resp_cache,
+                    proveedor_llm="cache_llm", tiempo_ms=elapsed_ms,
+                    fue_shortcut=True, shortcut_tipo="cache_llm",
+                    rag_chunks=0, telefono=telefono,
+                ))
+                return resp_cache
+        except Exception as e:
+            logger.debug(f"Cache LLM no disponible: {e}")
+
     # RAG
     if not bloques_contexto:
         try:
