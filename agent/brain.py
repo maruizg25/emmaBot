@@ -460,8 +460,8 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
 
     # Cat 9 — FAQ cache hit
     # < 2 tokens: demasiado vago para RAG → FAQ o menú
-    # 2-4 tokens: query simple → FAQ si matchea, si no RAG
-    # ≥ 5 tokens: query compleja → directo al RAG (respuesta más precisa)
+    # 2-3 tokens: query simple → FAQ si matchea, si no RAG
+    # ≥ 4 tokens: query específica → directo al RAG (respuesta más precisa)
     _tokens_sig_sc = _tokens_sin_stopwords(texto_norm)
     _n_tokens = len(_tokens_sig_sc)
     if _n_tokens < 2:
@@ -471,7 +471,7 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
         return ("consulta_ambigua", cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", "")))
-    elif _n_tokens <= 4:
+    elif _n_tokens <= 3:
         faq_resp = _check_faq(texto_norm)
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
