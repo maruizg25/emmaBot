@@ -631,7 +631,7 @@ def _detectar_tools(mensaje: str) -> list[tuple[str, dict]]:
     _kw_montos = [
         "monto", "umbral", "cuánto", "cuanto", "pie",
         "límite", "limite", "ínfima", "infima",
-        "menor cuantía", "menor cuantia", "cotizaci", "licitaci",
+        "licitaci", "feria inclusiva",
         "cuánto puedo", "cuanto puedo", "hasta cuánto", "hasta cuanto",
         "valor máximo", "valor maximo",
     ]
@@ -653,14 +653,10 @@ def _detectar_tools(mensaje: str) -> list[tuple[str, dict]]:
             tipo_plazo = "contrato"
         elif any(kw in texto for kw in ["sie", "subasta inversa", "puja"]):
             tipo_plazo = "subasta_inversa"
-        elif any(kw in texto for kw in ["menor cuantía", "menor cuantia"]):
-            tipo_plazo = "menor_cuantia"
-        elif any(kw in texto for kw in ["cotizaci"]):
-            tipo_plazo = "cotizacion"
         elif any(kw in texto for kw in ["licitaci"]):
             tipo_plazo = "licitacion"
         else:
-            tipo_plazo = "menor_cuantia"
+            tipo_plazo = "contrato"
         tools_a_ejecutar.append(("obtener_plazos", {"tipo": tipo_plazo}))
 
     _kw_rup = [
