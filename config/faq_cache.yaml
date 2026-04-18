@@ -3865,6 +3865,32 @@ faqs:
     📌 Fuente: Art. 74 RGLOSNCP vigente
   frecuencia: 0
 
+# ─── FIXES RONDA 3 — VINCULACIONES Y CONCEPTOS CLAVE ─────────────────────────
+
+- keywords:
+  - vinculacion
+  - vinculado
+  - nexo
+  - parentesco
+  - familiar
+  pregunta: ¿Qué es la vinculación en contratación pública?
+  respuesta: |
+    📜 *Art. 3, numeral 37 RGLOSNCP — Vinculación*
+
+    Se produce vinculación cuando existe un *nexo* entre los actores de la contratación pública que cause perjuicio o conducta ilegítima. Los tipos de nexo son:
+
+    🔹 *Económico o tecnológico*
+    🔹 *Societario o de negocios*
+    🔹 *Parentesco* (4to grado de consanguinidad o 2do de afinidad)
+    🔹 *Asociativo, laboral, personal o social*
+
+    ⚠️ Si se detecta vinculación, las *ofertas vinculadas quedarán inhabilitadas* para participar en ese proceso.
+
+    Los proveedores deben presentar ofertas de manera *independiente y sin vinculación* (Art. 35 num. 7 RGLOSNCP).
+
+    📌 Base legal: Art. 3 num. 37 RGLOSNCP; Art. 35 RGLOSNCP
+  frecuencia: 0
+
 # ─── FIXES RONDA 2 — PREGUNTAS REALES (200 consultas) ────────────────────────
 
 - keywords:
