@@ -196,6 +196,10 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     # Conceptos nuevos LOSNCP vigente
     "valor por dinero", "mejor valor", "sostenibilid", "principio",
     "experiencia", "calific", "puntaje", "evaluac",
+    "vae", "valor agregado", "ecuatorian",
+    "tdr", "terminos de referencia", "especificacion",
+    "convalidac", "orden de compra", "presupuestar",
+    "pliegos", "convenio marco",
     "prorroga", "plazo", "extension",
     # Transferir a humano
     "asesor", "humano", "transferir", "agente",

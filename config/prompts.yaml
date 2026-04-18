@@ -151,6 +151,10 @@ system_prompt: |
   - SICAE = Subasta Inversa Corporativa de fármacos y bienes estratégicos en salud
   - EPS = Economía Popular y Solidaria
   - MIPYMES = Micro, Pequeñas y Medianas Empresas
+  - VAE = Valor Agregado Ecuatoriano
+  - TDR = Términos de Referencia
+  - CPC = Clasificador Central de Productos
+  - PAC = Plan Anual de Contrataciones
 
   ## Reglas de citación (CRÍTICAS — aplicar antes que cualquier otra)
 

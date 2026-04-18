@@ -3851,6 +3851,114 @@ faqs:
 # ─── FIXES RONDA 2 — PREGUNTAS REALES (200 consultas) ────────────────────────
 
 - keywords:
+  - pac
+  - plan
+  - anual
+  pregunta: ¿Qué es el PAC?
+  respuesta: |
+    El *PAC (Plan Anual de Contrataciones)* es el documento obligatorio donde cada entidad contratante planifica *todas las compras* de bienes, obras o servicios que realizará durante el año fiscal.
+
+    🔹 Se publica en el Portal de Contratación Pública
+    🔹 Puede reformularse durante el año según necesidades
+    🔹 No es obligatorio incluir: ínfima cuantía, emergencia, arrendamiento de inmuebles
+
+    📌 Base legal: Art. 22 LOSNCP; Art. 64 RGLOSNCP
+  frecuencia: 0
+
+- keywords:
+  - tdr
+  - terminos
+  - referencia
+  pregunta: ¿Qué son los TDR (Términos de Referencia)?
+  respuesta: |
+    Los *TDR (Términos de Referencia)* son el documento técnico que define el *alcance, objetivos y metodología* para la contratación de servicios y consultoría.
+
+    🔹 Elaborados por la unidad requirente
+    🔹 Forman parte de los pliegos
+    🔹 Describen qué se necesita, cómo y cuándo
+
+    Para bienes se usan *Especificaciones Técnicas* en lugar de TDR.
+  frecuencia: 0
+
+- keywords:
+  - especificaciones
+  - tecnicas
+  pregunta: ¿Qué son las especificaciones técnicas?
+  respuesta: |
+    Las *Especificaciones Técnicas* son el documento que describe las *características físicas y funcionales* requeridas para la adquisición de bienes.
+
+    🔹 Incluyen: dimensiones, materiales, rendimiento, normas de calidad
+    🔹 Forman parte de los pliegos del procedimiento
+    🔹 Para servicios/consultoría se usan *TDR (Términos de Referencia)* en su lugar
+  frecuencia: 0
+
+- keywords:
+  - certificacion
+  - presupuestaria
+  - fondos
+  pregunta: ¿Qué es la certificación presupuestaria?
+  respuesta: |
+    La *certificación presupuestaria* es el acto administrativo que garantiza la *existencia de fondos* suficientes para cubrir la contratación.
+
+    🔹 Es un *requisito previo* obligatorio antes de iniciar cualquier procedimiento
+    🔹 La emite el área financiera de la entidad contratante
+
+    📌 Base legal: Art. 104 LOSNCP (certificación de recursos)
+  frecuencia: 0
+
+- keywords:
+  - convalidacion
+  - errores
+  - corregir
+  - oferta
+  pregunta: ¿Qué es la convalidación de errores?
+  respuesta: |
+    La *convalidación de errores* es el procedimiento que permite al proveedor *corregir errores de forma* (no de fondo) en su oferta técnica, previa solicitud de la entidad contratante.
+
+    ✅ Se pueden corregir: errores tipográficos, documentos faltantes de forma
+    ❌ NO se puede corregir: el contenido sustancial de la oferta, precios, plazos
+
+    📌 Base legal: Art. 100 RGLOSNCP
+  frecuencia: 0
+
+- keywords:
+  - orden
+  - compra
+  - catalogo
+  pregunta: ¿Qué es una orden de compra?
+  respuesta: |
+    La *orden de compra* es el instrumento que formaliza la adquisición de bienes o servicios a través del *Catálogo Electrónico*.
+
+    🔹 Funciona como un contrato entre la entidad contratante y el proveedor
+    🔹 Incluye todas las condiciones del convenio marco
+    🔹 Se genera directamente en el portal ComprasPúblicas
+
+    📌 Base legal: Art. 45-46 LOSNCP
+  frecuencia: 0
+
+- keywords:
+  - vae
+  - valor
+  - agregado
+  - ecuatoriano
+  pregunta: ¿Qué es el VAE (Valor Agregado Ecuatoriano)?
+  respuesta: |
+    El *VAE (Valor Agregado Ecuatoriano)* tiene dos dimensiones en contratación pública:
+
+    *1️⃣ Umbral VAE del procedimiento:*
+    Es el porcentaje *mínimo* de valor agregado ecuatoriano que debe cumplir una oferta para ser considerada ecuatoriana y acceder a las *preferencias* de la normativa vigente. Lo determina el SERCOP.
+
+    *2️⃣ VAE de una oferta:*
+    Es el porcentaje de valor agregado ecuatoriano *declarado por el oferente*.
+
+    🔹 El SERCOP realiza la *verificación* del VAE de cada oferta
+    🔹 Si la oferta cumple el umbral → accede a márgenes de preferencia
+
+    📌 Base legal: Resoluciones SERCOP sobre metodología VAE
+  frecuencia: 0
+
+
+- keywords:
   - valor
   - dinero
   pregunta: ¿Qué es el valor por dinero en contratación pública?
