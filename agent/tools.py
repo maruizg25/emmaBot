@@ -39,10 +39,10 @@ TIPOS_CONTRATACION = {
     },
     "infima_cuantia": {
         "nombre": "Ínfima Cuantía",
-        "descripcion": "Para compras urgentes o de muy bajo monto sin proceso formal.",
-        "montos": "Hasta el 0.0000002 del PIE.",
+        "descripcion": "Para adquisición de bienes, servicios (incluida consultoría) y obras de monto reducido que no consten en el Catálogo Electrónico.",
+        "montos": "Igual o inferior a USD $10,000 (monto fijo — Art. 50 LOSNCP).",
         "normativa": "Art. 50 LOSNCP",
-        "ventaja": "Máxima agilidad para compras menores de emergencia.",
+        "ventaja": "Máxima agilidad — sin proceso precontractual formal. No puede usarse para subdividir contratos.",
     },
     "contratacion_directa": {
         "nombre": "Contratación Directa",
@@ -184,16 +184,14 @@ def obtener_plazos(tipo: str) -> dict:
 
 MONTOS_PIE: dict[int, dict] = {
     2025: {
-        "pie": 36_315_000_000,
-        "infima_cuantia":       {"porcentaje": "0.0000002", "usd": 7_263,    "normativa": "Art. 50 LOSNCP"},
+        "infima_cuantia":       {"usd": 10_000,  "normativa": "Art. 50 LOSNCP", "descripcion": "Monto fijo — igual o inferior a USD $10,000"},
         "licitacion_bienes":    {"porcentaje": ">0.000015", "usd": ">$544,725", "normativa": "Art. 48 LOSNCP"},
         "licitacion_obras":     {"porcentaje": ">0.00003",  "usd": ">$1,089,450", "normativa": "Art. 48 LOSNCP"},
         "contratacion_directa": {"porcentaje": "0.000002",  "usd": 72_630,   "normativa": "Art. 40 LOSNCP"},
         "nota": "Menor cuantía y cotización eliminados por reforma LOSNCP octubre 2025. Ver Art. 47 (SIE), Art. 48 (Licitación), Art. 50 (Ínfima cuantía), Art. 51 (Feria Inclusiva).",
     },
     2026: {
-        "pie": 37_000_000_000,  # Estimado — confirmar en Registro Oficial 2026
-        "infima_cuantia":       {"porcentaje": "0.0000002", "usd": 7_400,    "normativa": "Art. 50 LOSNCP"},
+        "infima_cuantia":       {"usd": 10_000,  "normativa": "Art. 50 LOSNCP", "descripcion": "Monto fijo — igual o inferior a USD $10,000"},
         "licitacion_bienes":    {"porcentaje": ">0.000015", "usd": ">$555,000", "normativa": "Art. 48 LOSNCP"},
         "licitacion_obras":     {"porcentaje": ">0.00003",  "usd": ">$1,110,000", "normativa": "Art. 48 LOSNCP"},
         "contratacion_directa": {"porcentaje": "0.000002",  "usd": 74_000,   "normativa": "Art. 40 LOSNCP"},
