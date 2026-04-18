@@ -22,6 +22,8 @@ faqs:
 - keywords:
   - entidad
   - registro
+  - registrar
+  - registrarseo
   - nueva
   pregunta: ¿Cómo se registra una entidad contratante nueva en el SOCE?
   respuesta: 'Para registrar una *entidad contratante nueva* en el portal de compras públicas:
@@ -152,8 +154,11 @@ faqs:
     Base legal: LOSNCP vigente.
   frecuencia: 0
 - keywords:
-  - denunci
-  - irregularid
+  - denuncia
+  - denuncio
+  - denunciar
+  - irregularidad
+  - corrupcion
   pregunta: ¿Cómo denuncio una irregularidad en contratación pública?
   respuesta: |
     Si detectas una irregularidad o acto de corrupción en un proceso de contratación pública, puedes denunciarlo por estos canales:
@@ -255,6 +260,8 @@ faqs:
   - que
   - es
   - registro
+  - registrar
+  - registrarseo
   pregunta: ¿Qué es el RUP?
   respuesta: 'El *RUP (Registro Único de Proveedores)* es el registro oficial de proveedores habilitados para contratar con
     el Estado ecuatoriano. Es obligatorio para participar en cualquier proceso de contratación pública.
@@ -267,7 +274,9 @@ faqs:
     '
   frecuencia: 0
 - keywords:
-  - registr
+  - registro
+  - registrar
+  - registrarse
   - proveedor
   - como
   pregunta: ¿Cómo registrarse en el RUP?
@@ -301,7 +310,9 @@ faqs:
   frecuencia: 0
 - keywords:
   - rup
-  - renuev
+  - renueva
+  - renovar
+  - renovacion
   - cuando
   pregunta: ¿Cuándo se renueva el RUP?
   respuesta: 'El RUP se renueva *anualmente*, en el mes de enero de cada año. Si no renuevas tu RUP en enero, quedas inhabilitado
@@ -841,6 +852,8 @@ faqs:
 - keywords:
   - rup
   - registro
+  - registrar
+  - registrarseo
   - proveedores
   - sirve
   pregunta: ¿Qué es el RUP y para qué sirve?
@@ -906,6 +919,8 @@ faqs:
 - keywords:
   - rup
   - registro
+  - registrar
+  - registrarseo
   - como
   - pasos
   - inscripcion
@@ -3339,7 +3354,9 @@ faqs:
   - portal
   - perfil
   - informacion
+  - registro
   - registrar
+  - registrarsear
   pregunta: ¿Qué información debo registrar en mi perfil del portal SOCE?
   respuesta: '# 📋 Información para registrar en tu perfil SOCE
 
@@ -3772,6 +3789,8 @@ faqs:
   - '17'
   - rup
   - registro
+  - registrar
+  - registrarseo
   - proveedores
   pregunta: ¿Qué dice el Art. 17 de la LOSNCP sobre el RUP?
   respuesta: |
@@ -4807,6 +4826,8 @@ faqs:
 - keywords:
   - incumplimiento
   - registro
+  - registrar
+  - registrarseo
   - contratista
   - incumplido
   pregunta: ¿Qué pasa si un contratista incumple?
