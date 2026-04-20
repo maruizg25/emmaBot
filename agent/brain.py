@@ -417,13 +417,13 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
         return ("saludo", cfg.get("msg_bienvenida", ""))
 
     # Cat 1 — Saludos → menú de bienvenida
-    # es_corto evita que "ayuda en linea" / "help con proceso" disparen el menú
+    # es_corto en TODOS los checks: "Buenos días, en qué tiempo..." no debe ser saludo
     if (
         (es_corto and _coincide_exacto_token(texto_norm, _KW_SALUDO))
-        or _contiene_kwset(texto_norm, {_normalizar(f) for f in {
+        or (es_corto and _contiene_kwset(texto_norm, {_normalizar(f) for f in {
             "buenos dias", "buenas tardes", "buenas noches", "buen dia",
             "como estas", "como esta", "como te va", "que tal",
-        }})
+        }}))
         or (es_corto and _contiene_emoji(mensaje, _EMOJIS_SALUDO))
     ):
         return ("saludo", cfg.get("msg_bienvenida", ""))
@@ -919,9 +919,10 @@ async def generar_respuesta(
     num_chunks = 0
 
     # Pre-tool execution — retorna directo sin LLM si hay resultado
-    # Si la query es específica (≥4 tokens), saltar tools y dejar que RAG responda
-    _n_tokens_msg = len(_tokens_sin_stopwords(_normalizar(mensaje)))
-    tools_detectadas = _detectar_tools(mensaje) if _n_tokens_msg <= 2 else []
+    # Las tools usan datos estructurados siempre exactos (montos, plazos, RUP).
+    # Se ejecutan sin importar la longitud del query: "cuáles son los umbrales 2026"
+    # tiene 4 tokens pero debe ir a obtener_montos_pie, no al RAG.
+    tools_detectadas = _detectar_tools(mensaje)
     if tools_detectadas:
         from agent.tools import ejecutar_tool
         bloques_tool: list[str] = []
