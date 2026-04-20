@@ -221,17 +221,9 @@ UMBRALES_CONTRATACION = {
 }
 
 
-def obtener_montos_pie(anio: int | None = None) -> dict:
-    """
-    Retorna los umbrales de contratación vigentes.
-    Nota: la LOSNCP vigente ya no usa coeficientes del PIE para SIE/Licitación.
-    """
-    data = UMBRALES_CONTRATACION.copy()
-    data["advertencia"] = (
-        "La LOSNCP vigente (octubre 2025) cambió la lógica de selección de procedimientos. "
-        "Ya no se usan porcentajes del PIE. Verificar en www.compraspublicas.gob.ec"
-    )
-    return data
+def obtener_umbrales_contratacion() -> dict:
+    """Retorna los umbrales de contratación vigentes (LOSNCP reforma octubre 2025)."""
+    return UMBRALES_CONTRATACION.copy()
 
 
 # ─── Utilidades generales ─────────────────────────────────────────────────────
@@ -345,13 +337,12 @@ TOOLS_SCHEMA: list[dict] = [
     {
         "type": "function",
         "function": {
-            "name": "obtener_montos_pie",
+            "name": "obtener_umbrales_contratacion",
             "description": (
-                "Retorna los umbrales de contratación vigentes según la LOSNCP (reforma octubre 2025). "
-                "IMPORTANTE: la ley ya NO usa coeficientes del PIE para SIE/Licitación. "
+                "Retorna los umbrales y procedimientos de contratación vigentes según la LOSNCP (reforma octubre 2025). "
                 "Solo ínfima cuantía tiene monto fijo: USD $10,000 (Art. 50). "
-                "La selección entre SIE y Licitación se basa en mejor valor por dinero (Art. 74 RGLOSNCP). "
-                "Menor cuantía y cotización fueron eliminados."
+                "SIE vs Licitación se define por mejor valor por dinero (Art. 74 RGLOSNCP), no por montos. "
+                "Menor cuantía y cotización fueron eliminados. NO usa PIE."
             ),
             "parameters": {
                 "type": "object",
@@ -402,9 +393,8 @@ def ejecutar_tool(nombre: str, argumentos: dict) -> str:
         elif nombre == "obtener_fecha_hora_ecuador":
             return json.dumps(obtener_fecha_hora_ecuador(), ensure_ascii=False)
 
-        elif nombre == "obtener_montos_pie":
-            anio = argumentos.get("anio")
-            return json.dumps(obtener_montos_pie(anio), ensure_ascii=False)
+        elif nombre == "obtener_umbrales_contratacion":
+            return json.dumps(obtener_umbrales_contratacion(), ensure_ascii=False)
 
         else:
             return json.dumps({"error": f"Tool desconocida: {nombre}"})

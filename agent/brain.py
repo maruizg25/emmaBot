@@ -673,20 +673,21 @@ def _detectar_tools(mensaje: str) -> list[tuple[str, dict]]:
     texto = mensaje.lower()
     tools_a_ejecutar: list[tuple[str, dict]] = []
 
-    _kw_montos = [
-        "monto", "umbral", "cuánto", "cuanto", "pie",
-        "límite", "limite", "ínfima", "infima",
+    _kw_umbrales = [
+        "umbral", "limite", "límite",
         "cuánto puedo", "cuanto puedo", "hasta cuánto", "hasta cuanto",
         "valor máximo", "valor maximo",
         "montos de contratacion", "montos de contratación",
+        "umbrales de contratacion", "umbrales de contratación",
+        "cuanto es la infima", "cuánto es la ínfima",
     ]
-    _kw_no_montos = [
+    _kw_no_umbrales = [
         "experiencia", "tdr", "terminos de referencia", "calific",
         "puntaje", "metodolog", "adjudic", "evalua", "personal",
         "equipo", "subcontrat",
     ]
-    if any(kw in texto for kw in _kw_montos) and not any(kw in texto for kw in _kw_no_montos):
-        tools_a_ejecutar.append(("obtener_montos_pie", {}))
+    if any(kw in texto for kw in _kw_umbrales) and not any(kw in texto for kw in _kw_no_umbrales):
+        tools_a_ejecutar.append(("obtener_umbrales_contratacion", {}))
 
     _kw_plazos = [
         "plazo", "días", "dias", "cuántos días", "cuantos dias",
@@ -743,19 +744,20 @@ def _formatear_resultado_tool(nombre: str, resultado_json: str) -> str:
     except Exception:
         return resultado_json
 
-    if nombre == "obtener_montos_pie":
-        anio = data.get("anio", "")
-        pie = data.get("pie", 0)
-        lineas = [f"## Umbrales de contratación {anio} (PIE: ${pie:,.0f})"]
+    if nombre == "obtener_umbrales_contratacion":
+        lineas = ["## Umbrales y procedimientos de contratación vigentes (LOSNCP octubre 2025)"]
         for k, v in data.items():
-            if isinstance(v, dict) and "usd" in v:
-                usd = v["usd"]
+            if k in ("nota", "advertencia"):
+                continue
+            if isinstance(v, dict):
                 norma = v.get("normativa", "")
+                desc = v.get("descripcion", "")
+                usd = v.get("usd")
                 nombre_tipo = k.replace("_", " ").title()
-                usd_str = f"${usd:,.0f}" if isinstance(usd, int) else str(usd)
-                lineas.append(f"- {nombre_tipo}: {usd_str} USD ({norma})")
-        if "advertencia" in data:
-            lineas.append(f"\nNota: {data['advertencia']}")
+                monto_str = f" — ${usd:,.0f} USD" if isinstance(usd, int) else ""
+                lineas.append(f"- {nombre_tipo}{monto_str}: {desc} ({norma})")
+        if "nota" in data:
+            lineas.append(f"\nNota: {data['nota']}")
         return "\n".join(lineas)
 
     elif nombre == "obtener_plazos":
@@ -919,9 +921,8 @@ async def generar_respuesta(
     num_chunks = 0
 
     # Pre-tool execution — retorna directo sin LLM si hay resultado
-    # Las tools usan datos estructurados siempre exactos (montos, plazos, RUP).
-    # Se ejecutan sin importar la longitud del query: "cuáles son los umbrales 2026"
-    # tiene 4 tokens pero debe ir a obtener_montos_pie, no al RAG.
+    # Las tools usan datos estructurados siempre exactos (plazos, RUP, umbrales).
+    # Se ejecutan sin importar la longitud del query.
     tools_detectadas = _detectar_tools(mensaje)
     if tools_detectadas:
         from agent.tools import ejecutar_tool
