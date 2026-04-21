@@ -259,6 +259,10 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "base legal", "normativa vigente",
     "vigencia tecnolog", "operador",
     "negocia", "sesion negociacion",
+    # Cuarta ronda — análisis queries en tiempo real
+    "correo", "apu", "apus", "proforma", "adjudic",
+    "rubro", "feria inclusiva", "examen sercop",
+    "transitori", "subrogacion",
 }}
 
 # Mapa de respuestas al menú numerado
