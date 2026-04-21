@@ -239,6 +239,13 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "acuerdo comercial", "transferencia tecnolog", "complement",
     "clausula", "adjudicatar", "descalific", "parient",
     "convenio pago", "pago complement",
+    # Segunda ronda — análisis 21 abril
+    "recepcion", "acta", "anexo", "catalogac", "administrador",
+    "paralizac", "interadministrativ", "transferencia",
+    "junta direct", "resolucion inicio", "proforma",
+    "desbloqu", "actualizac", "razon social", "firma digital",
+    "contrato complement", "terminacion", "mutuo acuerdo",
+    "certificado fundamento", "capacitacion", "certificacion",
 }}
 
 # Mapa de respuestas al menú numerado

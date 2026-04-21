@@ -5360,3 +5360,152 @@ faqs:
 
     📌 Base legal: Art. 17-18 LOSNCP
   frecuencia: 0
+- keywords:
+  - fiel
+  - cumplimiento
+  - monto
+  pregunta: ¿Cuánto es el monto de la garantía de fiel cumplimiento?
+  respuesta: |
+    La *garantía de fiel cumplimiento* equivale al *5% del valor total del contrato*.
+
+    📋 *Datos clave:*
+    💰 Monto: 5% del valor del contrato
+    📅 Vigencia: hasta la terminación del contrato + 60 días adicionales
+    🏦 Emisor: aseguradora o institución financiera autorizada
+    ⏱ Entrega: antes de la suscripción del contrato
+
+    💡 Para *ínfima cuantía* NO se exige garantía de fiel cumplimiento.
+
+    📌 Base legal: Art. 73-74 LOSNCP; Art. 274-276 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - pago
+  - contrato
+  pregunta: ¿Cómo se realiza el pago en un contrato público?
+  respuesta: |
+    El pago en contratos públicos sigue las condiciones del contrato y la normativa:
+
+    🔹 *Anticipo:* hasta el 50% del valor del contrato (requiere póliza de buen uso del anticipo)
+    🔹 *Pagos parciales:* contra planillas de avance de obra o entrega de bienes/servicios
+    🔹 *Pago final:* contra acta de entrega-recepción definitiva
+
+    ⏱ *Plazo:* la entidad tiene máximo *30 días* desde la factura. Si no paga, genera intereses por mora.
+
+    💡 El anticipo en *ínfima cuantía NO está permitido*.
+
+    📌 Base legal: Art. 74 LOSNCP; Art. 341-345 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - administrador
+  - contrato
+  pregunta: ¿Cuáles son las funciones del administrador de contrato?
+  respuesta: |
+    El *administrador de contrato* es el funcionario designado para supervisar la ejecución del contrato.
+
+    ⚙️ *Funciones principales (Art. 70 LOSNCP):*
+    ✅ Velar por el cumplimiento técnico, legal y económico del contrato
+    ✅ Emitir informes de avance y aprobar planillas de pago
+    ✅ Aplicar multas por incumplimiento o mora
+    ✅ Gestionar prórrogas, contratos complementarios o terminaciones
+    ✅ Custodiar el expediente (*documentos de información relevante*)
+
+    ⚠️ Es *personalmente responsable* por omisiones que afecten al Estado.
+
+    📌 Base legal: Art. 70 LOSNCP; Art. 121-124 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - paralizacion
+  - obra
+  pregunta: ¿Cómo se paraliza una obra en contratación pública?
+  respuesta: |
+    La *paralización de obra* debe seguir un proceso formal:
+
+    📋 *Causas válidas:*
+    🔹 Caso fortuito o fuerza mayor
+    🔹 Causas imputables a la entidad (falta de pago, cambios de diseño)
+    🔹 Causas imputables al contratista
+
+    ⚙️ *Procedimiento:*
+    1️⃣ El administrador documenta las causas en un *acta de paralización*
+    2️⃣ Notificación formal al contratista y registro en el SOCE
+    3️⃣ Si la causa es de la entidad: se suspende el plazo sin multa
+    4️⃣ Si la causa es del contratista: corre el plazo y se aplican multas
+
+    ⚠️ Sin justificación válida puede llevar a *terminación unilateral*.
+
+    📌 Base legal: Art. 94 LOSNCP; Art. 292-295 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - prorroga
+  - contrato
+  pregunta: ¿Cómo se otorga una prórroga de contrato?
+  respuesta: |
+    La *prórroga* es la extensión del plazo de ejecución del contrato:
+
+    ⚙️ *Pasos:*
+    1️⃣ El contratista solicita la prórroga *antes del vencimiento del plazo*
+    2️⃣ Justifica las causas (caso fortuito, fuerza mayor o causas de la entidad)
+    3️⃣ El administrador emite informe técnico
+    4️⃣ La máxima autoridad aprueba mediante *resolución motivada*
+    5️⃣ Se suscribe una *addenda al contrato* con el nuevo plazo
+    6️⃣ Se actualizan las pólizas de garantía
+
+    ⚠️ Si el retraso es culpa del contratista: *no procede prórroga* — se aplican multas.
+
+    📌 Base legal: Art. 88 LOSNCP; Art. 269-271 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - contrato
+  - complementario
+  pregunta: ¿Cuándo se aplica un contrato complementario?
+  respuesta: |
+    El *contrato complementario* cubre obras, bienes o servicios adicionales no previstos en el contrato original.
+
+    📋 *Condiciones:*
+    🔹 Solo para contratos de obra, bienes o servicios (no consultoría)
+    🔹 El valor *no puede superar el 35%* del contrato original
+    🔹 Debe existir disponibilidad presupuestaria
+    🔹 Debe ser necesario para la correcta terminación del objeto contractual
+    🔹 Se aprueba mediante resolución de la máxima autoridad
+
+    ⚠️ No es para corregir errores de diseño — es para trabajos adicionales imprescindibles.
+
+    📌 Base legal: Art. 87 LOSNCP; Art. 269 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - interadministrativa
+  - contratacion
+  pregunta: ¿Qué es la contratación interadministrativa?
+  respuesta: |
+    La *contratación interadministrativa* permite que una entidad pública contrate directamente con otra entidad del Estado, sin proceso de selección.
+
+    ✅ *Cuándo aplica:*
+    🔹 La entidad contratada es del sector público
+    🔹 La prestación es parte de sus competencias
+    🔹 Ejemplo: contratar con CNT para servicios tecnológicos
+
+    ⚙️ *Requisitos:*
+    🔹 Resolución motivada de la máxima autoridad
+    🔹 Informe de capacidad de la entidad pública contratada
+    🔹 Precio de mercado justo
+
+    📌 Base legal: Art. 2 núm. 8 LOSNCP; Art. 94 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - infima
+  - cuantia
+  - resolucion
+  pregunta: ¿Se requiere resolución de inicio para ínfima cuantía?
+  respuesta: |
+    *Sí*, la ínfima cuantía requiere *resolución de inicio* emitida por la máxima autoridad antes de realizar la compra.
+
+    📋 *Documentos habilitantes:*
+    1️⃣ *Resolución de inicio* — autoriza la compra
+    2️⃣ *Certificación presupuestaria* — confirma disponibilidad de fondos
+    3️⃣ *Factura o nota de venta* del proveedor
+    4️⃣ *Acta de recepción* — constata la entrega
+
+    ⚠️ No requiere: pliego, publicación en portal, ni RUP del proveedor.
+
+    📌 Base legal: Art. 50 LOSNCP; Art. 269 RGLOSNCP
+  frecuencia: 0
