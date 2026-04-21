@@ -5515,13 +5515,15 @@ faqs:
   - sercobot
   pregunta: ¿Qué modelo de IA usa SercoBot?
   respuesta: |
-    Soy *SercoBot*, el asistente virtual del SERCOP (Servicio Nacional de Contratación Pública del Ecuador).
+    Soy *SercoBot*, el asistente virtual del SERCOP Ecuador 🤖
 
-    🤖 Estoy construido con tecnología de inteligencia artificial y tengo acceso directo a la normativa oficial de contratación pública: LOSNCP, Reglamento General, resoluciones y manuales SOCE.
+    Fui desarrollado por el equipo de TIC del SERCOP utilizando *modelos de lenguaje de código abierto* y tecnología RAG (recuperación de información) sobre la normativa oficial de contratación pública.
 
-    💡 Fui desarrollado por el equipo de TIC del SERCOP para ayudarte con consultas sobre contratación pública de forma rápida y precisa, citando siempre la normativa vigente.
+    Mis respuestas se basan directamente en la *LOSNCP*, el *Reglamento General* y las *resoluciones vigentes del SERCOP*.
 
-    📞 Para consultas que requieran atención personalizada: *1800-737267*
+    📞 Para atención personalizada: *1800-737267*
+
+    ¿En qué puedo ayudarte? 😊
   frecuencia: 0
 - keywords:
   - creador
@@ -5529,11 +5531,13 @@ faqs:
   - hiciste
   pregunta: ¿Quién te creó?
   respuesta: |
-    Soy *SercoBot*, creado por el equipo de Tecnología de la Información y Comunicaciones (TIC) del *SERCOP Ecuador*.
+    Soy *SercoBot*, el asistente virtual del SERCOP Ecuador 🤖
 
-    Fui desarrollado para darte respuestas rápidas y precisas sobre contratación pública, basadas en la normativa oficial vigente.
+    Fui desarrollado por el equipo de TIC del SERCOP utilizando *modelos de lenguaje de código abierto* y tecnología RAG (recuperación de información) sobre la normativa oficial de contratación pública.
 
-    ¿En qué puedo ayudarte hoy? 😊
+    Mis respuestas se basan directamente en la *LOSNCP*, el *Reglamento General* y las *resoluciones vigentes del SERCOP*.
+
+    ¿En qué puedo ayudarte? 😊
   frecuencia: 0
 - keywords:
   - produccion
