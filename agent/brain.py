@@ -246,6 +246,19 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "desbloqu", "actualizac", "razon social", "firma digital",
     "contrato complement", "terminacion", "mutuo acuerdo",
     "certificado fundamento", "capacitacion", "certificacion",
+    # Tercera ronda — análisis 21 abril (fuera_scope injusto)
+    "vae", "valor agregado ecuatorian", "produccion nacional",
+    "adenda", "nulidad", "vicios",
+    "empresa extranjera", "extranjera", "sucursal",
+    "beneficiario final", "beneficiario",
+    "reprogramac", "convalidac",
+    "vinculacion", "vinculado", "formulario",
+    "comunicacion social", "infraestructura estrateg",
+    "levantamiento", "suspension",
+    "regimen especial", "urgencia",
+    "base legal", "normativa vigente",
+    "vigencia tecnolog", "operador",
+    "negocia", "sesion negociacion",
 }}
 
 # Mapa de respuestas al menú numerado
@@ -633,9 +646,9 @@ async def _llamar_ollama(mensajes: list[dict]) -> str:
 
 # Mapa proveedor → función + timeout
 _PROVEEDORES: dict[str, tuple] = {
-    "groq":   (_llamar_groq,         6.0),
-    "claude": (_llamar_claude_haiku, 8.0),
-    "gemini": (_llamar_gemini,       8.0),
+    "groq":   (_llamar_groq,         10.0),
+    "claude": (_llamar_claude_haiku, 12.0),
+    "gemini": (_llamar_gemini,       12.0),
     "local":  (_llamar_ollama,       45.0),
 }
 

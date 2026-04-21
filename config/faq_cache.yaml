@@ -5509,3 +5509,93 @@ faqs:
 
     📌 Base legal: Art. 50 LOSNCP; Art. 269 RGLOSNCP
   frecuencia: 0
+- keywords:
+  - modelo
+  - ia
+  - sercobot
+  pregunta: ¿Qué modelo de IA usa SercoBot?
+  respuesta: |
+    Soy *SercoBot*, el asistente virtual del SERCOP (Servicio Nacional de Contratación Pública del Ecuador).
+
+    🤖 Estoy construido con tecnología de inteligencia artificial y tengo acceso directo a la normativa oficial de contratación pública: LOSNCP, Reglamento General, resoluciones y manuales SOCE.
+
+    💡 Fui desarrollado por el equipo de TIC del SERCOP para ayudarte con consultas sobre contratación pública de forma rápida y precisa, citando siempre la normativa vigente.
+
+    📞 Para consultas que requieran atención personalizada: *1800-737267*
+  frecuencia: 0
+- keywords:
+  - creador
+  - quien
+  - hiciste
+  pregunta: ¿Quién te creó?
+  respuesta: |
+    Soy *SercoBot*, creado por el equipo de Tecnología de la Información y Comunicaciones (TIC) del *SERCOP Ecuador*.
+
+    Fui desarrollado para darte respuestas rápidas y precisas sobre contratación pública, basadas en la normativa oficial vigente.
+
+    ¿En qué puedo ayudarte hoy? 😊
+  frecuencia: 0
+- keywords:
+  - produccion
+  - nacional
+  - vae
+  pregunta: ¿Qué es la producción nacional y el VAE en contratación pública?
+  respuesta: |
+    El *VAE (Valor Agregado Ecuatoriano)* es el porcentaje de componente nacional que tiene un bien o servicio ofertado.
+
+    📋 *Por qué importa en contratación pública:*
+    🔹 Los pliegos pueden exigir un *VAE mínimo* para bienes de producción nacional
+    🔹 Las entidades deben *preferir* productos de producción nacional cuando el precio sea competitivo
+    🔹 El SERCOP verifica el VAE en los procesos de catalogación y SIE
+
+    ✅ *Quién certifica el VAE:*
+    El *MIPRO (Ministerio de Producción)* emite la certificación de producción nacional.
+
+    📋 *Verificación en el SOCE:*
+    El sistema verifica automáticamente si el bien ofertado tiene registro de producción nacional en la base del MIPRO.
+
+    📌 Base legal: Art. 25.1 LOSNCP; Art. 110-114 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - reajuste
+  - precios
+  - obra
+  pregunta: ¿Cómo se calcula el reajuste de precios en una obra?
+  respuesta: |
+    El *reajuste de precios* compensa al contratista por variaciones en los costos de materiales, mano de obra y equipos durante la ejecución de la obra.
+
+    📋 *Fórmula general (Art. 209 RGLOSNCP):*
+    El reajuste se calcula con la fórmula polinómica definida en los pliegos, usando índices del *INEC* (Instituto Nacional de Estadística y Censos).
+
+    ⚙️ *Condiciones:*
+    🔹 Solo aplica para contratos de *obra* con plazo mayor a 6 meses
+    🔹 La fórmula y coeficientes se definen en el contrato
+    🔹 Se aplica sobre las planillas aprobadas
+    🔹 *Porcentaje máximo:* según lo establezca el pliego — no hay un tope fijo universal en la ley
+
+    ⏱ *Cuándo se paga:*
+    El reajuste se liquida con cada planilla, usando los índices del mes de ejecución vs. el mes base.
+
+    📌 Base legal: Art. 82 LOSNCP; Art. 209-211 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - empresa
+  - extranjera
+  - sucursal
+  pregunta: ¿Puede una empresa extranjera participar en contratación pública?
+  respuesta: |
+    *Sí*, una empresa extranjera puede participar en contratación pública ecuatoriana, pero con requisitos específicos.
+
+    📋 *Requisitos para empresa extranjera:*
+    🔹 Debe estar *legalmente constituida* en su país de origen
+    🔹 Para contratos en Ecuador, debe tener o comprometerse a establecer *domicilio o sucursal en Ecuador*
+    🔹 Debe inscribirse en el *RUP* como proveedor extranjero
+    🔹 Debe cumplir con las obligaciones tributarias en Ecuador (RUC)
+
+    ⚙️ *Para contratos de obra u otros que exijan presencia local:*
+    El representante legal de la sucursal ecuatoriana puede suscribir el contrato.
+
+    ⚠️ *Preferencia nacional:* si existe oferta nacional equivalente en calidad y precio, la entidad debe preferir al proveedor ecuatoriano (Art. 25.1 LOSNCP).
+
+    📌 Base legal: Art. 17 LOSNCP; Art. 28-31 RGLOSNCP
+  frecuencia: 0
