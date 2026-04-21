@@ -22,9 +22,6 @@ faqs:
 - keywords:
   - entidad
   - registro
-  - registrar
-  - registrarseo
-  - nueva
   pregunta: ¿Cómo se registra una entidad contratante nueva en el SOCE?
   respuesta: 'Para registrar una *entidad contratante nueva* en el portal de compras públicas:
 
@@ -156,7 +153,6 @@ faqs:
 - keywords:
   - denuncia
   - denuncio
-  - irregularidad
   pregunta: ¿Cómo denuncio una irregularidad en contratación pública?
   respuesta: |
     Si detectas una irregularidad o acto de corrupción en un proceso de contratación pública, puedes denunciarlo por estos canales:
@@ -5227,4 +5223,140 @@ faqs:
     ⚠️ No pueden integrar la comisión quienes tengan conflicto de intereses con los oferentes.
 
     📌 Base legal: Art. 18 RGLOSNCP; Art. 22 LOSNCP
+  frecuencia: 0
+- keywords:
+  - pagina
+  - soce
+  pregunta: ¿Cuál es la página del SOCE?
+  respuesta: |
+    El *SOCE (Sistema Oficial de Contratación del Estado)* es el portal web oficial:
+
+    🌐 *www.compraspublicas.gob.ec*
+    🔗 https://portal.compraspublicas.gob.ec/sercop/
+
+    Ahí puedes:
+    ✅ Buscar procesos activos
+    ✅ Registrarte como proveedor (RUP)
+    ✅ Presentar ofertas
+    ✅ Consultar contratos y normativa
+
+    📌 Base legal: Art. 21 LOSNCP
+  frecuencia: 0
+- keywords:
+  - pie
+  - que
+  - es
+  pregunta: ¿Qué es el PIE?
+  respuesta: |
+    El *PIE (Presupuesto Inicial del Estado)* es el presupuesto total aprobado por la Asamblea Nacional para el gobierno central cada año.
+
+    ⚠️ *Importante:* La LOSNCP vigente (reforma octubre 2025) *ya no usa porcentajes del PIE* para definir los umbrales de contratación.
+
+    Antes se usaba el PIE para calcular los montos de cada proceso (ej. "hasta el 0,0000002 del PIE"). Eso fue eliminado.
+
+    🔹 Ahora solo *ínfima cuantía* tiene monto fijo: *USD $10,000* (Art. 50 LOSNCP)
+    🔹 SIE vs Licitación: se decide por análisis de *mejor valor por dinero* (Art. 74 RGLOSNCP)
+
+    📌 Base legal: Art. 50 LOSNCP; Art. 74 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - pliegos
+  - que
+  - es
+  pregunta: ¿Qué son los pliegos?
+  respuesta: |
+    Los *pliegos* son el documento oficial que contiene todas las condiciones, requisitos y reglas de un proceso de contratación pública.
+
+    📋 *Qué incluyen los pliegos:*
+    🔹 Objeto y alcance del contrato
+    🔹 Presupuesto referencial
+    🔹 Requisitos técnicos y legales para participar
+    🔹 Criterios de evaluación y adjudicación
+    🔹 Modelo de contrato
+    🔹 Cronograma del proceso
+
+    📥 *Dónde encontrarlos:*
+    Los pliegos se publican en www.compraspublicas.gob.ec al inicio de cada proceso. Son de acceso público y gratuito.
+
+    💡 Antes de presentar una oferta, *lee los pliegos completos* — contienen todo lo que necesitas cumplir.
+
+    📌 Base legal: Art. 27-28 LOSNCP; Art. 34-37 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - subcontratacion
+  - subcontratar
+  pregunta: ¿Qué es la subcontratación en contratación pública?
+  respuesta: |
+    La *subcontratación* ocurre cuando el contratista principal delega parte de la ejecución del contrato a un tercero (subcontratista).
+
+    ⚙️ *Reglas principales:*
+    🔹 El contratista principal sigue siendo el *único responsable* ante la entidad contratante
+    🔹 La subcontratación debe estar *autorizada en el contrato* o aprobada por la entidad
+    🔹 El subcontratista debe cumplir los mismos requisitos de idoneidad técnica
+    🔹 *No se puede subcontratar* el 100% del objeto del contrato
+
+    ⚠️ El contratista no puede eximirse de responsabilidad alegando fallas del subcontratista.
+
+    📌 Base legal: Art. 79 LOSNCP; Art. 256-261 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - pliego
+  - concurso
+  - consultor
+  pregunta: ¿Cómo genero un pliego para concurso público de consultoría?
+  respuesta: |
+    Para generar el pliego de un *Concurso Público de Consultoría*:
+
+    1️⃣ Ingresa al SOCE en *www.compraspublicas.gob.ec* con tu usuario institucional
+    2️⃣ Ve a *"Procesos"* → *"Crear proceso"* → selecciona *"Concurso Público de Consultoría"*
+    3️⃣ El sistema genera el pliego automáticamente con los campos requeridos
+    4️⃣ Completa: objeto del contrato, TDR (Términos de Referencia), presupuesto referencial y cronograma
+    5️⃣ Publica el proceso — queda visible para los consultores
+
+    📄 *El SERCOP tiene modelos de pliegos oficiales en:*
+    🌐 www.compraspublicas.gob.ec → *"Normativa"* → *"Modelos de Pliegos"*
+
+    📞 Soporte técnico: *1800-737267*
+    📌 Base legal: Art. 40-42 LOSNCP; Art. 153-170 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - poliza
+  - fiel
+  - cumplimiento
+  pregunta: ¿Cuándo se entrega la póliza de fiel cumplimiento?
+  respuesta: |
+    La *póliza de fiel cumplimiento* debe entregarse *antes de la suscripción del contrato*.
+
+    📋 *Datos clave:*
+    💰 *Monto:* 5% del valor total del contrato
+    📅 *Vigencia:* hasta la terminación del contrato + 60 días adicionales
+    🏦 *Emisor:* aseguradora o institución financiera autorizada por la Superintendencia de Bancos
+
+    ⚠️ Si no entregas la póliza en el plazo establecido, la entidad puede declarar *contratista incumplido* y adjudicar al siguiente oferente.
+
+    💡 Para contratos de ínfima cuantía *no se exige* póliza de fiel cumplimiento.
+
+    📌 Base legal: Art. 73-74 LOSNCP; Art. 274-276 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - invitacion
+  - invitaciones
+  - recibir
+  pregunta: ¿Por qué no recibo invitaciones del SOCE?
+  respuesta: |
+    Si no recibes invitaciones del portal ComprasPúblicas, puede deberse a:
+
+    ❌ *RUP vencido o en estado Pasivo* — sin RUP activo no recibes invitaciones
+    ❌ *Correo desactualizado* en tu perfil del SOCE
+    ❌ *Códigos CPC incorrectos* — no tienes seleccionadas las categorías de bienes/servicios que te corresponden
+    ❌ *Correo en spam* — revisa la bandeja de correo no deseado
+    ❌ *RUP suspendido* por incumplimiento o documentos desactualizados
+
+    ✅ *Qué hacer:*
+    1️⃣ Verifica que tu RUP esté *Activo* en www.compraspublicas.gob.ec
+    2️⃣ Actualiza tu correo electrónico en tu perfil
+    3️⃣ Revisa y actualiza tus *códigos CPC* en el RUP
+    4️⃣ Llama al SERCOP: *1800-737267*
+
+    📌 Base legal: Art. 17-18 LOSNCP
   frecuencia: 0

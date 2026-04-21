@@ -233,6 +233,12 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "asesor", "humano", "transferir", "agente",
     # Términos informales frecuentes
     "vender", "venta", "comprar", "cobrar", "pagar",
+    # Stems faltantes detectados en análisis de queries reales
+    "poliza", "reajust", "produccion", "verificacion",
+    "invitacion", "negociacion", "subcontrat", "fiscaliz",
+    "acuerdo comercial", "transferencia tecnolog", "complement",
+    "clausula", "adjudicatar", "descalific", "parient",
+    "convenio pago", "pago complement",
 }}
 
 # Mapa de respuestas al menú numerado
