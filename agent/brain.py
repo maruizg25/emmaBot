@@ -376,6 +376,16 @@ def _hay_contexto_previo(historial: list[dict]) -> bool:
     return False
 
 
+def _query_enriquecido(mensaje: str, historial: list[dict]) -> str:
+    """Para continuaciones, combina el mensaje actual con el último mensaje del usuario
+    para que el RAG encuentre chunks relevantes al tema de la conversación."""
+    ultimos_user = [m["content"] for m in historial if m["role"] == "user"]
+    if ultimos_user:
+        prev = ultimos_user[-1][:200]  # últimas 200 chars del mensaje anterior
+        return f"{prev} {mensaje}"
+    return mensaje
+
+
 def _check_faq(texto_norm: str) -> Optional[str]:
     """
     Busca coincidencia en el FAQ cache.
@@ -1001,6 +1011,11 @@ async def generar_respuesta(
     elif len(_tokens_sig) < 2:
         logger.info(f"[Sercobot] Multi-turno: query corta con contexto previo → RAG")
 
+    # Flag de continuación: mensaje ambiguo/corto con historial sustancial
+    _es_continuacion = _hay_contexto_previo(historial) and (
+        len(_tokens_sig) < 2 or _es_fuera_scope(_normalizar(mensaje))
+    )
+
     # ── 2. Construir contexto ────────────────────────────────────────────────
     system = _system_prompt()
     mensajes_base: list[dict] = [{"role": "system", "content": system}]
@@ -1064,7 +1079,8 @@ async def generar_respuesta(
             logger.debug(f"Búsqueda directa artículo falló: {e}")
 
     # ── Cache de respuestas LLM anteriores ────────────────────────────────────
-    if not bloques_contexto:
+    # Se omite en continuaciones: "si" / "más info" no deben reutilizar cache ajeno
+    if not bloques_contexto and not _es_continuacion:
         try:
             from agent.memory import buscar_respuesta_cacheada
             pregunta_norm = _normalizar(mensaje)
@@ -1082,11 +1098,14 @@ async def generar_respuesta(
         except Exception as e:
             logger.debug(f"Cache LLM no disponible: {e}")
 
-    # RAG
+    # RAG — en continuaciones usa query enriquecido con el contexto previo
     if not bloques_contexto:
         try:
             from agent.retriever import recuperar_contexto_formateado
-            contexto_rag, num_chunks = await recuperar_contexto_formateado(mensaje)
+            _rag_query = _query_enriquecido(mensaje, historial) if _es_continuacion else mensaje
+            if _es_continuacion and _rag_query != mensaje:
+                logger.info(f"[Sercobot] Multi-turno: RAG query enriquecido con contexto previo")
+            contexto_rag, num_chunks = await recuperar_contexto_formateado(_rag_query)
             if num_chunks > 0:
                 bloques_contexto.append(
                     f"## Normativa relevante (fuentes SERCOP)\n{contexto_rag}"
