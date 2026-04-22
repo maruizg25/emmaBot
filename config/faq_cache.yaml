@@ -5512,7 +5512,6 @@ faqs:
 - keywords:
   - modelo
   - ia
-  - sercobot
   pregunta: ¿Qué modelo de IA usa SercoBot?
   respuesta: |
     Soy *SercoBot*, el asistente virtual del SERCOP Ecuador 🤖
@@ -5526,8 +5525,7 @@ faqs:
     ¿En qué puedo ayudarte? 😊
   frecuencia: 0
 - keywords:
-  - creador
-  - quien
+  - creo
   - hiciste
   pregunta: ¿Quién te creó?
   respuesta: |
