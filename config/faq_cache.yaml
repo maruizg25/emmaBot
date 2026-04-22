@@ -5788,3 +5788,54 @@ faqs:
 
     📌 Base legal: Art. 50 LOSNCP; Art. 269 RGLOSNCP; Art. 74 RGLOSNCP (mejor valor por dinero)
   frecuencia: 0
+- keywords:
+  - descalifican
+  - ofertas
+  - proceso
+  pregunta: ¿Si se descalifican todas las ofertas cómo queda el proceso?
+  respuesta: |
+    Si se descalifican todas las ofertas (o queda solo una y no es suficiente), el proceso puede quedar *desierto*.
+
+    📋 *Escenarios posibles:*
+
+    🔹 *Se descalifican todas* → la entidad declara el proceso *desierto* mediante resolución motivada
+
+    🔹 *Queda un solo oferente habilitado* → depende del proceso:
+    • SIE: puede adjudicarse al único oferente si el precio es razonable
+    • Licitación: la comisión técnica evalúa y recomienda adjudicación o desierto
+
+    🔹 *Proceso desierto* → la entidad puede:
+    1️⃣ Reiniciar el mismo proceso con ajustes en el pliego
+    2️⃣ Cambiar de modalidad si el objeto lo permite
+    3️⃣ Fraccionar si técnicamente es justificable
+
+    ⚠️ La declaratoria de desierto *no implica responsabilidad* para la entidad, pero debe estar debidamente motivada.
+
+    📌 Base legal: Art. 33 LOSNCP; Art. 34 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - modificacion
+  - pac
+  - plan
+  - anual
+  pregunta: ¿Cuáles son los requisitos para modificar el PAC?
+  respuesta: |
+    La *modificación del PAC (Plan Anual de Contratación)* es posible durante el año, siguiendo estos requisitos:
+
+    📋 *Documentos y pasos:*
+    1️⃣ *Resolución motivada* de la máxima autoridad — justificando la necesidad del cambio
+    2️⃣ *Certificación presupuestaria* actualizada — si el cambio implica nuevos fondos
+    3️⃣ Actualización en el *SOCE* — ingresar la modificación en www.compraspublicas.gob.ec
+
+    ✅ *Causas válidas para modificar el PAC:*
+    🔹 Necesidades institucionales no previstas al inicio del año
+    🔹 Asignaciones presupuestarias adicionales
+    🔹 Cambio en las prioridades institucionales
+    🔹 Eliminación de procesos que ya no son necesarios
+
+    ⏱ *Plazo:* la modificación debe publicarse *antes de iniciar* el proceso de contratación correspondiente.
+
+    💡 No existe un número máximo de modificaciones al PAC — se puede modificar cuantas veces sea necesario.
+
+    📌 Base legal: Art. 22 LOSNCP; Art. 25-26 RGLOSNCP
+  frecuencia: 0
