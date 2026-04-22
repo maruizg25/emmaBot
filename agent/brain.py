@@ -606,33 +606,39 @@ async def _llamar_claude_haiku(mensajes: list[dict]) -> str:
 
 
 async def _llamar_gemini_con_modelo(mensajes: list[dict], model_name: str) -> str:
-    """Gemini vía google-generativeai. Lanza excepción en fallo."""
+    """Gemini vía google-genai (SDK v1+). Lanza excepción en fallo."""
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY no configurado")
 
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 
     def _sync_gemini() -> str:
-        genai.configure(api_key=GEMINI_API_KEY)
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
         system_instruction = None
         msgs_to_process = mensajes
         if mensajes and mensajes[0]["role"] == "system":
             system_instruction = mensajes[0]["content"]
             msgs_to_process = mensajes[1:]
 
-        model = genai.GenerativeModel(
-            model_name=model_name,
+        # Convertir historial al formato de google-genai
+        contents = []
+        for msg in msgs_to_process:
+            role = "user" if msg["role"] == "user" else "model"
+            contents.append(types.Content(role=role, parts=[types.Part(text=msg["content"])]))
+
+        config = types.GenerateContentConfig(
+            temperature=0.2,
+            max_output_tokens=600,
             system_instruction=system_instruction,
         )
 
-        history = []
-        for msg in msgs_to_process[:-1]:
-            role = "user" if msg["role"] == "user" else "model"
-            history.append({"role": role, "parts": [msg["content"]]})
-
-        last_content = msgs_to_process[-1]["content"] if msgs_to_process else ""
-        chat = model.start_chat(history=history)
-        resp = chat.send_message(last_content)
+        resp = client.models.generate_content(
+            model=model_name,
+            contents=contents,
+            config=config,
+        )
         return resp.text
 
     return await asyncio.to_thread(_sync_gemini)
