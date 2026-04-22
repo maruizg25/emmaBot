@@ -18,6 +18,7 @@ from __future__ import annotations
 import os
 import httpx
 import logging
+from collections import OrderedDict
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,6 +31,11 @@ EMBED_DIM   = int(os.getenv("EMBED_DIM", "768"))
 # Cliente compartido — evita overhead de crear TCP connection por cada embedding
 _http_client: httpx.AsyncClient | None = None
 
+# Cache LRU de embeddings — evita recalcular para queries repetidas
+# Máximo 300 entradas (cada una ~3KB → ~900KB RAM total)
+_EMBED_CACHE_MAX = 300
+_embed_cache: OrderedDict[str, list[float]] = OrderedDict()
+
 
 def _get_client() -> httpx.AsyncClient:
     global _http_client
@@ -41,17 +47,32 @@ def _get_client() -> httpx.AsyncClient:
 async def generar_embedding(texto: str) -> list[float] | None:
     """
     Genera embedding vectorial para un texto.
+    Usa cache LRU en memoria para evitar recalcular queries repetidas.
 
     Returns:
         Lista de floats (EMBED_DIM dimensiones) o None si hay error.
     """
+    # Cache hit
+    cache_key = texto[:500]  # truncar para evitar claves enormes
+    if cache_key in _embed_cache:
+        _embed_cache.move_to_end(cache_key)
+        return _embed_cache[cache_key]
+
     try:
         response = await _get_client().post(
             f"{OLLAMA_URL}/api/embeddings",
             json={"model": EMBED_MODEL, "prompt": texto},
         )
         response.raise_for_status()
-        return response.json()["embedding"]
+        embedding = response.json()["embedding"]
+
+        # Guardar en cache LRU
+        _embed_cache[cache_key] = embedding
+        _embed_cache.move_to_end(cache_key)
+        if len(_embed_cache) > _EMBED_CACHE_MAX:
+            _embed_cache.popitem(last=False)  # elimina el más antiguo
+
+        return embedding
     except httpx.ConnectError:
         logger.error("Ollama no disponible. ¿Está corriendo? → ollama serve")
         return None

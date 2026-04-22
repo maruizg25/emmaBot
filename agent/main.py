@@ -440,4 +440,14 @@ async def estadisticas(request: Request):
     """
     _verificar_admin(request)
     from agent.memory import obtener_estadisticas
-    return await obtener_estadisticas()
+    from agent.brain import _cargar_faq_cache
+    stats = await obtener_estadisticas()
+    # Top FAQs usados en esta sesión (frecuencia en memoria)
+    faqs = _cargar_faq_cache()
+    top_faqs = sorted(
+        [{"pregunta": f.get("pregunta", ""), "frecuencia": f.get("frecuencia", 0)}
+         for f in faqs if f.get("frecuencia", 0) > 0],
+        key=lambda x: x["frecuencia"], reverse=True
+    )[:10]
+    stats["top_faqs_sesion"] = top_faqs
+    return stats

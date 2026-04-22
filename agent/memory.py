@@ -16,7 +16,7 @@ from __future__ import annotations
 import os
 import json
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -163,6 +163,9 @@ async def inicializar_db():
                 ON consultas_log (fue_shortcut, timestamp DESC)
             """))
 
+    # Purga automática de historial antiguo al arrancar
+    await purgar_historial_antiguo(dias=30)
+
 
 # ─── Mensajes ────────────────────────────────────────────────────────────────
 
@@ -184,6 +187,23 @@ async def obtener_historial(telefono: str, limite: int = 20) -> list[dict]:
         )
         mensajes = list(reversed(result.scalars().all()))
         return [{"role": m.role, "content": m.content} for m in mensajes]
+
+
+async def purgar_historial_antiguo(dias: int = 30) -> int:
+    """Elimina mensajes con más de `dias` días. Retorna cantidad eliminada."""
+    corte = datetime.utcnow() - timedelta(days=dias)
+    async with async_session() as session:
+        result = await session.execute(
+            delete(Mensaje).where(Mensaje.timestamp < corte)
+        )
+        await session.commit()
+        eliminados = result.rowcount
+        if eliminados:
+            import logging
+            logging.getLogger("agentkit").info(
+                f"[Memory] Purga historial: {eliminados} mensajes > {dias} días eliminados"
+            )
+        return eliminados
 
 
 async def limpiar_historial(telefono: str):
@@ -491,6 +511,24 @@ async def obtener_estadisticas() -> dict:
         """))
         proveedores = {r.proveedor_llm: r.total for r in prov.fetchall()}
 
+        # Tasa fuera_scope (hoy) — alerta si supera 30%
+        fs = await conn.execute(text("""
+            SELECT COUNT(*) AS total
+            FROM consultas_log
+            WHERE timestamp >= CURRENT_DATE
+              AND shortcut_tipo = 'fuera_scope'
+        """))
+        fuera_scope_hoy = int((fs.fetchone()).total or 0)
+
+        # Desglose por tipo de shortcut (hoy)
+        sc_tipos = await conn.execute(text("""
+            SELECT shortcut_tipo, COUNT(*) AS total
+            FROM consultas_log
+            WHERE timestamp >= CURRENT_DATE AND fue_shortcut = TRUE
+            GROUP BY shortcut_tipo ORDER BY total DESC
+        """))
+        shortcut_breakdown = {r.shortcut_tipo: r.total for r in sc_tipos.fetchall()}
+
     def _porcentaje_ahorro(sh, total):
         if not total:
             return "0%"
@@ -521,8 +559,11 @@ async def obtener_estadisticas() -> dict:
             "tiempo_promedio_ms":   int(fila_sem.avg_ms or 0),
             "cache_hits":           int(fila_sem.cache_hits or 0),
         },
-        "top_preguntas": top_preguntas,
-        "proveedores":   proveedores,
+        "top_preguntas":       top_preguntas,
+        "proveedores":         proveedores,
+        "shortcut_breakdown":  shortcut_breakdown,
+        "fuera_scope_hoy":     fuera_scope_hoy,
+        "alerta_fuera_scope":  fuera_scope_hoy > total_hoy * 0.30 if total_hoy else False,
     }
 
 

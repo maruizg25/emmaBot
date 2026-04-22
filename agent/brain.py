@@ -386,6 +386,41 @@ def _query_enriquecido(mensaje: str, historial: list[dict]) -> str:
     return mensaje
 
 
+# Mapa de sinónimos para FAQ — variantes que no deben fallar por diferencia de forma verbal
+_FAQ_SINONIMOS: dict[str, str] = {
+    "registrar": "registro", "registrarme": "registro", "registrarse": "registro",
+    "inscribir": "registro", "inscribirme": "registro", "inscribirlo": "registro",
+    "inscripcion": "registro", "inscribirse": "registro",
+    "renovar": "renovacion", "renovarlo": "renovacion",
+    "suspendido": "suspension", "suspendida": "suspension",
+    "inhabilitado": "inhabilitacion", "inhabilitada": "inhabilitacion",
+    "bloqueado": "bloqueo", "bloqueada": "bloqueo",
+    "contactar": "contacto", "comunicarme": "comunico", "comunicarse": "comunico",
+    "llamar": "linea", "telefonear": "linea",
+    "denunciar": "denuncia", "denunciarlo": "denuncia",
+    "participar": "participacion", "participarme": "participacion",
+    "adjudicado": "adjudicacion", "adjudicada": "adjudicacion",
+    "impugnar": "impugnacion", "apelar": "impugnacion", "reclamar": "impugnacion",
+    "contratar": "contrato", "contratacion": "contrato",
+    "garantizar": "garantia", "garantias": "garantia",
+    "habilitarme": "habilitacion", "habilitarse": "habilitacion",
+    "deshabilitado": "deshabilit", "deshabilitada": "deshabilit",
+    "actualizar": "actualizacion", "actualizo": "actualizacion",
+    "publicar": "publicacion", "publico": "publicacion",
+    "pagar": "pago", "pagarlo": "pago",
+    "facturar": "factura", "facturo": "factura",
+}
+
+
+def _aplicar_sinonimos(tokens: set[str]) -> set[str]:
+    """Expande tokens con sinónimos para mejorar matching de FAQ."""
+    expandido = set(tokens)
+    for token in tokens:
+        if token in _FAQ_SINONIMOS:
+            expandido.add(_FAQ_SINONIMOS[token])
+    return expandido
+
+
 def _check_faq(texto_norm: str) -> Optional[str]:
     """
     Busca coincidencia en el FAQ cache.
@@ -401,6 +436,7 @@ def _check_faq(texto_norm: str) -> Optional[str]:
     mejor_score = 0.0
     mejor_matches = 0
     mejor_respuesta = None
+    mejor_faq: dict = {}
 
     for faq in faqs:
         kw_norm = faq.get("_kw_norm", [])
@@ -408,7 +444,7 @@ def _check_faq(texto_norm: str) -> Optional[str]:
         if not n:
             continue
 
-        tokens_texto = set(texto_norm.split())
+        tokens_texto = _aplicar_sinonimos(set(texto_norm.split()))
         matches = sum(1 for kw in kw_norm if kw in tokens_texto)
         ratio = matches / n
 
@@ -422,9 +458,11 @@ def _check_faq(texto_norm: str) -> Optional[str]:
         if score > mejor_score or (score == mejor_score and score > 0 and matches > mejor_matches):
             mejor_score = score
             mejor_matches = matches
+            mejor_faq = faq
             mejor_respuesta = faq.get("respuesta", "")
 
     if mejor_score >= 0.50:
+        mejor_faq["frecuencia"] = mejor_faq.get("frecuencia", 0) + 1
         return mejor_respuesta
 
     # ── Fallback para queries de 1 token significativo ────────────────────────
@@ -438,9 +476,28 @@ def _check_faq(texto_norm: str) -> Optional[str]:
             for faq in faqs:
                 kw_norm = faq.get("_kw_norm", [])
                 if qt in kw_norm:  # coincidencia exacta — no prefijos
+                    faq["frecuencia"] = faq.get("frecuencia", 0) + 1
                     return faq.get("respuesta", "").strip() or None
 
     return None
+
+
+_KW_HANDOFF = [
+    "quiero hablar con alguien", "quiero hablar con una persona",
+    "necesito un asesor", "quiero un asesor", "quiero hablar con el sercop",
+    "comunicarme con sercop", "hablar con sercop", "contactar sercop",
+    "necesito ayuda urgente", "es urgente", "caso urgente",
+    "quiero una persona", "atiéndame", "atiendame", "atención personalizada",
+    "atencion personalizada", "necesito hablar", "quiero que me llamen",
+]
+
+_MSG_HANDOFF = (
+    "Entendido 😊 Para atención personalizada con un funcionario del SERCOP:\n\n"
+    "📞 *Línea gratuita:* 1800-737267\n"
+    "🌐 *Portal:* www.compraspublicas.gob.ec\n"
+    "🕐 *Horario:* lunes a viernes, 08h00 – 17h00\n\n"
+    "También puedes escribir tu consulta aquí y te respondo al instante 😊"
+)
 
 
 def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
@@ -452,6 +509,10 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
     texto_norm = _normalizar(mensaje)
     texto_strip = texto_norm.strip()
     es_corto = len(texto_norm.split()) <= 4
+
+    # Cat 0 — Solicitud de atención humana → datos de contacto SERCOP
+    if any(kw in texto_norm for kw in _KW_HANDOFF):
+        return ("handoff_humano", _MSG_HANDOFF)
 
     # Cat 7 — Mensajes vacíos o solo emojis → menú
     if _es_vacio_o_solo_emoji(mensaje):

@@ -24,13 +24,12 @@ logger = logging.getLogger("agentkit")
 
 RRF_K           = 60   # Constante estándar de investigación
 TOP_K_BUSQUEDA  = 12   # Candidatos por búsqueda antes de fusionar
-TOP_K_RERANK    = int(os.getenv("TOP_K_CHUNKS", "2"))  # Chunks finales al prompt
+TOP_K_RERANK    = int(os.getenv("TOP_K_CHUNKS", "4"))  # Chunks finales al prompt (4 = mejor diversidad)
 
 # Similitud coseno mínima para aceptar un chunk semántico.
-# Por debajo de este umbral el chunk es demasiado distante de la query
-# y se descarta para evitar respuestas sobre temas incorrectos.
+# 0.50 validado empíricamente — 0.55 descartaba chunks relevantes en temas específicos.
 # (Configurable vía RAG_SCORE_MINIMO; solo aplica a chunks semánticos)
-RAG_SCORE_MINIMO = float(os.getenv("RAG_SCORE_MINIMO", "0.55"))
+RAG_SCORE_MINIMO = float(os.getenv("RAG_SCORE_MINIMO", "0.50"))
 
 # ── Diccionario de expansión de queries ──────────────────────────────────────
 # Siglas y términos técnicos del dominio de contratación pública ecuatoriana
