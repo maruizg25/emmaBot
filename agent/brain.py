@@ -741,12 +741,20 @@ def _detectar_tools(mensaje: str) -> list[tuple[str, dict]]:
         tools_a_ejecutar.append(("obtener_plazos", {"tipo": tipo_plazo}))
 
     _kw_rup = [
-        "rup", "proveedor", "registrar", "registro único", "registro de proveedor",
-        "habilitado", "habilitarme", "proveedores del estado", "contratar con el estado",
+        "como registrar", "como registro", "registrar proveedor",
+        "registro único de proveedores", "registro de proveedor",
+        "habilitarme como proveedor", "proveedores del estado", "contratar con el estado",
         "cómo ser proveedor", "como ser proveedor", "requisitos para ser proveedor",
-        "inscribir", "inscripción",
+        "inscribir", "inscripción", "inscribirme",
+        "cómo obtengo el rup", "como obtengo el rup", "sacar el rup",
     ]
-    if any(kw in texto for kw in _kw_rup):
+    # Excluir queries sobre problemas con RUP existente — esas van al RAG
+    _kw_no_rup = [
+        "no puede", "no puedo", "participar", "problema", "error",
+        "suspendido", "pasivo", "inhabilitado", "infima", "ínfima",
+        "obligacion", "sri", "iess",
+    ]
+    if any(kw in texto for kw in _kw_rup) and not any(kw in texto for kw in _kw_no_rup):
         tools_a_ejecutar.append(("info_rup", {}))
 
     _kw_fecha = [

@@ -5704,3 +5704,87 @@ faqs:
 
     📌 Base legal: Art. 51 LOSNCP; Art. 188-203 RGLOSNCP
   frecuencia: 0
+- keywords:
+  - infima
+  - consolidada
+  pregunta: ¿Qué es la ínfima cuantía consolidada?
+  respuesta: |
+    La *ínfima cuantía consolidada* es el reporte mensual que las entidades contratantes deben publicar en el SOCE con todas las compras por ínfima cuantía realizadas en el mes.
+
+    📋 *Obligaciones:*
+    🔹 Publicar hasta el *día 7 del mes siguiente* al de las compras
+    🔹 Incluir: proveedor, bien/servicio, monto, factura y fecha de cada compra
+    🔹 Se sube directamente en el SOCE: www.compraspublicas.gob.ec
+
+    ⚠️ *No publicar el consolidado* puede generar observaciones en auditorías de la Contraloría.
+
+    💡 La ínfima cuantía consolidada *no es un proceso de selección* — es solo el reporte de las compras ya realizadas.
+
+    📌 Base legal: Art. 50 LOSNCP; Art. 269 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - subasta
+  - oferente
+  - puja
+  pregunta: ¿Hay puja en SIE si solo hay un oferente?
+  respuesta: |
+    *No*. Si en una Subasta Inversa Electrónica (SIE) solo se presenta *un oferente habilitado*, *no existe puja*.
+
+    📋 *Lo que ocurre con un solo oferente:*
+    🔹 El sistema no activa la etapa de puja (requiere mínimo 2 oferentes)
+    🔹 La entidad debe evaluar si el precio ofertado es *justo de mercado*
+    🔹 Si el precio es razonable, puede *adjudicar directamente* al único oferente
+    🔹 Si el precio no es aceptable, puede *declarar desierto* el proceso y reiniciarlo
+
+    ⚠️ La entidad no está obligada a adjudicar solo porque hay una oferta — debe verificar que el precio esté dentro del presupuesto referencial.
+
+    📌 Base legal: Art. 47 LOSNCP; Art. 182-183 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - usuarios
+  - soce
+  - crear
+  pregunta: ¿Cómo creo usuarios en el SOCE para mi entidad?
+  respuesta: |
+    Para crear usuarios del SOCE como entidad contratante:
+
+    ⚙️ *Pasos:*
+    1️⃣ Ingresa al SOCE con el usuario *Administrador* de tu entidad en www.compraspublicas.gob.ec
+    2️⃣ Ve a *"Administración"* → *"Gestión de Usuarios"*
+    3️⃣ Selecciona *"Crear nuevo usuario"*
+    4️⃣ Completa los datos: nombre, cédula, correo institucional y perfil (Gestor, Administrador, etc.)
+    5️⃣ El nuevo usuario recibirá sus credenciales por correo electrónico
+
+    👥 *Perfiles disponibles:*
+    🔹 *Administrador* — gestiona usuarios y configuración de la entidad
+    🔹 *Gestor de Contratación* — crea y gestiona procesos
+    🔹 *Pagador* — autoriza pagos
+
+    📞 Si no tienes acceso de Administrador: *1800-737267*
+    📌 Base legal: Art. 21 LOSNCP
+  frecuencia: 0
+- keywords:
+  - mejor
+  - valor
+  - dinero
+  - infima
+  pregunta: ¿Cómo se aplica el mejor valor por dinero en ínfima cuantía?
+  respuesta: |
+    En la *ínfima cuantía*, el principio de *mejor valor por dinero* se aplica de forma simplificada:
+
+    📋 *Qué significa en la práctica:*
+    🔹 *No es simplemente el precio más bajo* — es la mejor relación calidad/precio
+    🔹 Se evalúa: precio, calidad del bien/servicio, condiciones de entrega y garantía
+    🔹 La entidad selecciona al proveedor que ofrezca las *mejores condiciones globales*
+
+    📄 *Formato / documentación:*
+    No existe un formato oficial único del SERCOP para ínfima cuantía. La entidad puede usar un cuadro comparativo simple que incluya:
+    • Nombre del proveedor
+    • Descripción del bien/servicio
+    • Precio unitario y total
+    • Observaciones (calidad, plazo de entrega)
+
+    💡 Con una sola proforma también se puede adjudicar si se justifica la imposibilidad de obtener más.
+
+    📌 Base legal: Art. 50 LOSNCP; Art. 269 RGLOSNCP; Art. 74 RGLOSNCP (mejor valor por dinero)
+  frecuencia: 0
