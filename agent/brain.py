@@ -368,6 +368,14 @@ def _es_fuera_scope(texto_norm: str) -> bool:
     return not any(stem in texto_norm for stem in _SCOPE_STEMS)
 
 
+def _hay_contexto_previo(historial: list[dict]) -> bool:
+    """True si el bot ya respondió algo sustancial en este hilo — conversación en curso."""
+    for msg in reversed(historial):
+        if msg["role"] == "assistant" and len(msg.get("content", "")) > 150:
+            return True
+    return False
+
+
 def _check_faq(texto_norm: str) -> Optional[str]:
     """
     Busca coincidencia en el FAQ cache.
@@ -952,7 +960,15 @@ async def generar_respuesta(
         return _cargar_config().get("fallback_message", "¿En qué puedo ayudarte?")
 
     # ── 1. Sistema de shortcuts ───────────────────────────────────────────────
+    # Shortcuts ambiguos (fuera_scope, afirmacion, negacion, consulta_ambigua)
+    # se ignoran si hay conversación previa sustancial — el mensaje es una continuación.
+    _SHORTCUTS_AMBIGUOS = {"fuera_scope", "afirmacion", "negacion", "consulta_ambigua"}
     shortcut = _detectar_shortcut(mensaje)
+    if shortcut:
+        categoria, respuesta = shortcut
+        if categoria in _SHORTCUTS_AMBIGUOS and _hay_contexto_previo(historial):
+            logger.info(f"[Sercobot] Multi-turno: shortcut '{categoria}' ignorado — continuación detectada")
+            shortcut = None
     if shortcut:
         categoria, respuesta = shortcut
         elapsed_ms = int((time.time() - t_inicio) * 1000)
@@ -968,8 +984,9 @@ async def generar_respuesta(
     # ── 1b. Consulta demasiado corta — pedir clarificación ───────────────────
     # Solo si llegó aquí (shortcut no aplica) y tiene < 2 tokens significativos.
     # Con ≥ 2 tokens hay contexto suficiente para RAG ("saca rup", "gana sie").
+    # Si hay contexto previo, una query corta es continuación → va al RAG con historial.
     _tokens_sig = _tokens_sin_stopwords(_normalizar(mensaje))
-    if len(_tokens_sig) < 2:
+    if len(_tokens_sig) < 2 and not _hay_contexto_previo(historial):
         cfg = _cargar_config()
         respuesta_menu = cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", ""))
         elapsed_ms = int((time.time() - t_inicio) * 1000)
@@ -981,6 +998,8 @@ async def generar_respuesta(
             rag_chunks=0, telefono=telefono,
         ))
         return respuesta_menu
+    elif len(_tokens_sig) < 2:
+        logger.info(f"[Sercobot] Multi-turno: query corta con contexto previo → RAG")
 
     # ── 2. Construir contexto ────────────────────────────────────────────────
     system = _system_prompt()
