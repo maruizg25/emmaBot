@@ -394,6 +394,35 @@ faqs:
     '
   frecuencia: 0
 - keywords:
+  - deshabilitado
+  - deshabilit
+  pregunta: Estoy deshabilitado en el portal de compras públicas
+  respuesta: 'Si apareces como *deshabilitado* en el portal SOCE, las causas más comunes
+    son:
+
+    ❌ *RUP vencido* — se renueva cada enero; si no lo renovaste quedaste inactivo
+
+    ❌ *Documentos desactualizados* — RUC, IESS o SRI con novedades pendientes
+
+    ❌ *Suspensión por incumplimiento* — contratos incumplidos con entidades públicas
+
+    ❌ *Falta de actualización* — datos del representante legal desactualizados
+
+    *¿Qué hacer?*
+
+    1️⃣ Ingresa a www.compraspublicas.gob.ec → Proveedores → Mi RUP
+
+    2️⃣ Revisa el estado y el motivo de la deshabilitación
+
+    3️⃣ Regulariza la novedad (actualiza datos, paga deudas, renueva RUP)
+
+    4️⃣ Si no puedes resolverlo en línea: *1800-737267* o help.compraspublicas.gob.ec
+
+    📌 Base legal: Art. 18 y 106 LOSNCP
+
+    '
+  frecuencia: 0
+- keywords:
   - puja
   - procesos
   pregunta: ¿En qué procesos existe puja?

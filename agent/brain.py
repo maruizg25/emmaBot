@@ -265,6 +265,9 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "correo", "apu", "apus", "proforma", "adjudic",
     "rubro", "feria inclusiva", "examen sercop",
     "transitori", "subrogacion",
+    # Quinta ronda — 22 abril
+    "deshabilit", "inhabilitad", "suspendid", "bloqueado", "inactivo",
+    "portal compras", "problema portal", "error portal",
 }}
 
 # Mapa de respuestas al menú numerado
