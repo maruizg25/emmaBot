@@ -53,8 +53,8 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL      = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
 
 GEMINI_API_KEY   = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL     = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-GEMINI_MODEL_ALT = os.getenv("GEMINI_MODEL_ALT", "gemini-2.0-flash-lite")
+GEMINI_MODEL     = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL_ALT = os.getenv("GEMINI_MODEL_ALT", "gemini-2.5-flash-lite")
 
 OLLAMA_URL        = os.getenv("OLLAMA_BASE_URL", os.getenv("OLLAMA_URL", "http://localhost:11434"))
 OLLAMA_MODEL      = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
@@ -639,12 +639,12 @@ async def _llamar_gemini_con_modelo(mensajes: list[dict], model_name: str) -> st
 
 
 async def _llamar_gemini(mensajes: list[dict]) -> str:
-    """Gemini 2.0 Flash — modelo principal."""
+    """Gemini 2.5 Flash — modelo principal."""
     return await _llamar_gemini_con_modelo(mensajes, GEMINI_MODEL)
 
 
 async def _llamar_gemini_lite(mensajes: list[dict]) -> str:
-    """Gemini 2.0 Flash-Lite — fallback con límites más altos."""
+    """Gemini 2.5 Flash-Lite — fallback con límites más altos."""
     return await _llamar_gemini_con_modelo(mensajes, GEMINI_MODEL_ALT)
 
 
