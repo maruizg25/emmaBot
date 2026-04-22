@@ -4,7 +4,7 @@
 #   1. Shortcuts (0 tokens, 0ms) — 9 categorías detectadas por regex/keywords
 #   2. Pre-tool execution — Python detecta intención y ejecuta tools sin LLM
 #   3. RAG — recupera chunks normativa SERCOP
-#   4. Cascada LLM secuencial: Groq → Claude Haiku → Gemini → Ollama local
+#   4. Cascada LLM secuencial: Groq 70b → Groq 8b-instant → Gemini → Claude Haiku → Ollama local
 
 from __future__ import annotations
 
@@ -45,8 +45,9 @@ DOCUMENTOS_PDF = {
         "keywords": ["reglamento", "rglosncp", "reglamento general"],
     },
 }
-GROQ_MODEL    = os.getenv("GROQ_MODEL_CASCADE", "llama-3.3-70b-versatile")
-GROQ_URL      = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL      = os.getenv("GROQ_MODEL_CASCADE", "llama-3.3-70b-versatile")
+GROQ_MODEL_FAST = os.getenv("GROQ_MODEL_FAST", "llama-3.1-8b-instant")
+GROQ_URL        = "https://api.groq.com/openai/v1/chat/completions"
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL      = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
@@ -64,7 +65,7 @@ WIKI_FALLBACK = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 
 # Orden de la cascada (configurable vía .env)
 LLM_FALLBACK_ORDER = [p.strip() for p in
-                      os.getenv("LLM_FALLBACK_ORDER", "groq,gemini,claude,local").split(",")]
+                      os.getenv("LLM_FALLBACK_ORDER", "groq,groq_fast,gemini,claude,local").split(",")]
 
 # ── Patrón emoji ──────────────────────────────────────────────────────────────
 _EMOJI_RE = re.compile(
@@ -521,8 +522,8 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
 
 # ─── Llamadas a LLMs (cascada) ───────────────────────────────────────────────
 
-async def _llamar_groq(mensajes: list[dict]) -> str:
-    """Groq API (llama-3.3-70b-versatile). Lanza excepción en fallo."""
+async def _llamar_groq_con_modelo(mensajes: list[dict], model: str) -> str:
+    """Groq API genérica. Lanza excepción en fallo."""
     import httpx
     if not GROQ_API_KEY:
         raise ValueError("GROQ_API_KEY no configurado")
@@ -543,7 +544,7 @@ async def _llamar_groq(mensajes: list[dict]) -> str:
             mensajes_adj.append(msg)
 
     payload = {
-        "model": GROQ_MODEL,
+        "model": model,
         "messages": mensajes_adj,
         "temperature": 0.2,
         "max_tokens": 600,
@@ -564,11 +565,21 @@ async def _llamar_groq(mensajes: list[dict]) -> str:
 
         h = response.headers
         logger.debug(
-            f"Groq límites — req: {h.get('x-ratelimit-remaining-requests','?')} | "
+            f"Groq límites [{model}] — req: {h.get('x-ratelimit-remaining-requests','?')} | "
             f"tokens/min: {h.get('x-ratelimit-remaining-tokens','?')}"
         )
         data = response.json()
         return data["choices"][0]["message"]["content"]
+
+
+async def _llamar_groq(mensajes: list[dict]) -> str:
+    """Groq API — llama-3.3-70b-versatile (100K TPD). Lanza excepción en fallo."""
+    return await _llamar_groq_con_modelo(mensajes, GROQ_MODEL)
+
+
+async def _llamar_groq_fast(mensajes: list[dict]) -> str:
+    """Groq API — llama-3.1-8b-instant (500K TPD). Fallback cuando 70b agota cuota."""
+    return await _llamar_groq_con_modelo(mensajes, GROQ_MODEL_FAST)
 
 
 async def _llamar_claude_haiku(mensajes: list[dict]) -> str:
@@ -650,10 +661,11 @@ async def _llamar_ollama(mensajes: list[dict]) -> str:
 
 # Mapa proveedor → función + timeout
 _PROVEEDORES: dict[str, tuple] = {
-    "groq":   (_llamar_groq,         10.0),
-    "claude": (_llamar_claude_haiku, 12.0),
-    "gemini": (_llamar_gemini,       12.0),
-    "local":  (_llamar_ollama,       45.0),
+    "groq":       (_llamar_groq,         10.0),
+    "groq_fast":  (_llamar_groq_fast,    10.0),  # llama-3.1-8b-instant, 500K TPD
+    "claude":     (_llamar_claude_haiku, 12.0),
+    "gemini":     (_llamar_gemini,       12.0),
+    "local":      (_llamar_ollama,       45.0),
 }
 
 
