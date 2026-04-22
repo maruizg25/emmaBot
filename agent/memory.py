@@ -407,14 +407,8 @@ async def buscar_articulo_directo(num_articulo: int, tipo_doc: str = "ley") -> s
             texto = _re.sub(r'Página\s*\d+\s*de\s*\d+', '', texto)
             texto = _re.sub(r'\n\s*\n', '\n', texto).strip()
             texto = _re.sub(r'  +', ' ', texto)
-            max_chars = 1500
-            truncado = len(texto) > max_chars
-            texto = texto[:max_chars]
             fuente = "LOSNCP" if tipo_doc == "ley" else "RGLOSNCP"
-            resultado = f"📜 *{fuente} — Art. {num_articulo}*\n\n{texto}"
-            if truncado:
-                resultado += "\n\n_(artículo truncado por extensión)_"
-            resultado += f"\n\n📌 Fuente: {fuente} vigente"
+            resultado = f"📜 *{fuente} — Art. {num_articulo}*\n\n{texto}\n\n📌 Fuente: {fuente} vigente"
             return resultado
     except Exception:
         return None

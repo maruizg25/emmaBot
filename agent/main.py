@@ -98,6 +98,30 @@ async def webhook_verificacion(request: Request):
     return {"status": "ok"}
 
 
+_WHATSAPP_MAX_CHARS = 3800  # WhatsApp limita a 4096; dejamos margen
+
+
+async def _enviar_respuesta(telefono: str, respuesta: str) -> None:
+    """Envía la respuesta en uno o dos mensajes si supera el límite de WhatsApp."""
+    if len(respuesta) <= _WHATSAPP_MAX_CHARS:
+        await proveedor.enviar_mensaje(telefono, respuesta)
+        return
+
+    # Buscar corte en un salto de párrafo cercano a la mitad
+    mitad = len(respuesta) // 2
+    corte = respuesta.rfind("\n\n", mitad - 400, mitad + 400)
+    if corte == -1:
+        corte = respuesta.rfind("\n", mitad - 200, mitad + 200)
+    if corte == -1:
+        corte = mitad
+
+    parte1 = respuesta[:corte].strip()
+    parte2 = respuesta[corte:].strip()
+
+    await proveedor.enviar_mensaje(telefono, parte1)
+    await proveedor.enviar_mensaje(telefono, parte2)
+
+
 async def _responder_multimedia(telefono: str) -> None:
     """Responde a mensajes multimedia (audio, imagen, sticker) con orientación textual."""
     try:
@@ -176,7 +200,7 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
 
         await guardar_mensaje(telefono, "user", texto)
         await guardar_mensaje(telefono, "assistant", respuesta)
-        await proveedor.enviar_mensaje(telefono, respuesta)
+        await _enviar_respuesta(telefono, respuesta)
 
         logger.info(f"SercoBot respondió a {telefono} ({len(respuesta)} chars)")
 
