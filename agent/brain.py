@@ -4,7 +4,7 @@
 #   1. Shortcuts (0 tokens, 0ms) — 9 categorías detectadas por regex/keywords
 #   2. Pre-tool execution — Python detecta intención y ejecuta tools sin LLM
 #   3. RAG — recupera chunks normativa SERCOP
-#   4. Cascada LLM secuencial: Groq 70b → Groq 8b-instant → Gemini → Claude Haiku → Ollama local
+#   4. Cascada LLM secuencial: Groq 70b → Groq 8b → Gemini Flash → Gemini Lite → Claude Haiku → Ollama local
 
 from __future__ import annotations
 
@@ -52,8 +52,9 @@ GROQ_URL        = "https://api.groq.com/openai/v1/chat/completions"
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL      = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_API_KEY   = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL     = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_MODEL_ALT = os.getenv("GEMINI_MODEL_ALT", "gemini-2.0-flash-lite")
 
 OLLAMA_URL        = os.getenv("OLLAMA_BASE_URL", os.getenv("OLLAMA_URL", "http://localhost:11434"))
 OLLAMA_MODEL      = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
@@ -65,7 +66,7 @@ WIKI_FALLBACK = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 
 # Orden de la cascada (configurable vía .env)
 LLM_FALLBACK_ORDER = [p.strip() for p in
-                      os.getenv("LLM_FALLBACK_ORDER", "groq,groq_fast,gemini,claude,local").split(",")]
+                      os.getenv("LLM_FALLBACK_ORDER", "groq,groq_fast,gemini,gemini_lite,claude,local").split(",")]
 
 # ── Patrón emoji ──────────────────────────────────────────────────────────────
 _EMOJI_RE = re.compile(
@@ -604,8 +605,8 @@ async def _llamar_claude_haiku(mensajes: list[dict]) -> str:
     return response.content[0].text
 
 
-async def _llamar_gemini(mensajes: list[dict]) -> str:
-    """Gemini 2.5 Flash-Lite vía google-generativeai."""
+async def _llamar_gemini_con_modelo(mensajes: list[dict], model_name: str) -> str:
+    """Gemini vía google-generativeai. Lanza excepción en fallo."""
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY no configurado")
 
@@ -620,7 +621,7 @@ async def _llamar_gemini(mensajes: list[dict]) -> str:
             msgs_to_process = mensajes[1:]
 
         model = genai.GenerativeModel(
-            model_name=GEMINI_MODEL,
+            model_name=model_name,
             system_instruction=system_instruction,
         )
 
@@ -635,6 +636,16 @@ async def _llamar_gemini(mensajes: list[dict]) -> str:
         return resp.text
 
     return await asyncio.to_thread(_sync_gemini)
+
+
+async def _llamar_gemini(mensajes: list[dict]) -> str:
+    """Gemini 2.0 Flash — modelo principal."""
+    return await _llamar_gemini_con_modelo(mensajes, GEMINI_MODEL)
+
+
+async def _llamar_gemini_lite(mensajes: list[dict]) -> str:
+    """Gemini 2.0 Flash-Lite — fallback con límites más altos."""
+    return await _llamar_gemini_con_modelo(mensajes, GEMINI_MODEL_ALT)
 
 
 async def _llamar_ollama(mensajes: list[dict]) -> str:
@@ -661,11 +672,12 @@ async def _llamar_ollama(mensajes: list[dict]) -> str:
 
 # Mapa proveedor → función + timeout
 _PROVEEDORES: dict[str, tuple] = {
-    "groq":       (_llamar_groq,         10.0),
-    "groq_fast":  (_llamar_groq_fast,    10.0),  # llama-3.1-8b-instant, 500K TPD
-    "claude":     (_llamar_claude_haiku, 12.0),
-    "gemini":     (_llamar_gemini,       12.0),
-    "local":      (_llamar_ollama,       45.0),
+    "groq":        (_llamar_groq,         10.0),
+    "groq_fast":   (_llamar_groq_fast,    10.0),   # llama-3.1-8b-instant, 500K TPD
+    "gemini":      (_llamar_gemini,       12.0),
+    "gemini_lite": (_llamar_gemini_lite,  12.0),   # gemini-2.0-flash-lite, límites más altos
+    "claude":      (_llamar_claude_haiku, 12.0),
+    "local":       (_llamar_ollama,       45.0),
 }
 
 
