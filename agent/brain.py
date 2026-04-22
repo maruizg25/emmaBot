@@ -268,6 +268,8 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     # Quinta ronda — 22 abril
     "deshabilit", "inhabilitad", "suspendid", "bloqueado", "inactivo",
     "portal compras", "problema portal", "error portal",
+    "subdivision", "subdivisión", "fraccionamiento", "fraccionar",
+    "elusión", "elusion", "eludir", "simulacion", "simulación",
 }}
 
 # Mapa de respuestas al menú numerado
