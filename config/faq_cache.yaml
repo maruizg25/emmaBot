@@ -5868,3 +5868,138 @@ faqs:
 
     📌 Base legal: Art. 22 LOSNCP; Art. 25-26 RGLOSNCP
   frecuencia: 0
+- keywords:
+  - pliegos
+  - pliego
+  pregunta: ¿Qué son los pliegos?
+  respuesta: |
+    📋 *Los pliegos* son el documento oficial que regula un proceso de contratación pública.
+
+    Establecen las condiciones que el proveedor debe cumplir para participar y las reglas que rigen toda la relación contractual.
+
+    *Contienen:*
+    🔹 Condiciones generales — aplican a todos los procesos
+    🔹 Condiciones particulares — específicas del bien, servicio u obra
+    🔹 Términos de referencia o especificaciones técnicas
+    🔹 Modelo de contrato
+    🔹 Cronograma del proceso
+
+    💡 El SERCOP publica modelos obligatorios de pliegos por tipo de proceso.
+
+    📌 Base legal: Art. 82 LOSNCP; Art. 285 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - regimen
+  - comun
+  pregunta: ¿Qué es el régimen común?
+  respuesta: |
+    📋 *El régimen común* agrupa los procedimientos ordinarios de contratación pública del Ecuador.
+
+    Aplica a la mayoría de las contrataciones del Estado y se rige íntegramente por la LOSNCP y su Reglamento General.
+
+    *Procedimientos del régimen común vigentes (LOSNCP oct 2025):*
+    🔹 Subasta Inversa Electrónica (SIE) — Art. 47
+    🔹 Licitación — Art. 48
+    🔹 Ínfima cuantía — Art. 50 (hasta USD $10,000)
+    🔹 Feria inclusiva — Art. 51
+    🔹 Catálogo electrónico — Art. 43
+
+    💡 *Diferencia con régimen especial:* el régimen común sigue procedimientos abiertos y competitivos. El régimen especial aplica a casos puntuales (seguridad nacional, comunicación social, asesoría legal, obra artística, etc.).
+
+    📌 Base legal: Arts. 43–51 LOSNCP
+  frecuencia: 0
+- keywords:
+  - mfc
+  pregunta: ¿Qué es la MFC (Mejor Forma de Contratación)?
+  respuesta: |
+    📊 *La MFC* es el principio de *Mejor Forma de Contratación* — la entidad debe elegir el procedimiento que entregue el mejor *valor por dinero* dado el bien, servicio u obra a contratar.
+
+    *Qué evalúa la MFC:*
+    🔹 Costo total (precio + costos asociados)
+    🔹 Calidad técnica
+    🔹 Sostenibilidad y plazo
+    🔹 Riesgos del proceso
+
+    💡 Con la reforma LOSNCP de octubre 2025, la MFC reemplaza la lógica de elegir el proceso solo por el monto. Hoy el criterio dominante es el *mejor valor por dinero*, no el precio más bajo.
+
+    📌 Base legal: Art. 4 y Art. 74 LOSNCP; Art. 74 RGLOSNCP
+  frecuencia: 0
+- keywords:
+  - valor
+  - dinero
+  pregunta: ¿Qué es el principio de valor por dinero?
+  respuesta: |
+    💰 *El valor por dinero* es el principio rector de la contratación pública ecuatoriana desde la reforma LOSNCP octubre 2025.
+
+    Significa que la entidad debe contratar buscando la *mejor combinación entre costo, calidad, sostenibilidad y plazo* — no necesariamente el precio más bajo.
+
+    *Cómo se aplica:*
+    🔹 En SIE: el precio bajo es el indicador principal cuando el bien es estandarizado.
+    🔹 En Licitación: se evalúan calidad técnica, experiencia, sostenibilidad y costo de forma ponderada.
+    🔹 En Catálogo electrónico: ya viene fijado por convenios marco SERCOP.
+
+    💡 Es el principio que sustituye el viejo "menor precio" como regla absoluta.
+
+    📌 Base legal: Art. 4 y Art. 74 LOSNCP
+  frecuencia: 0
+- keywords:
+  - vigencia
+  - tecnologica
+  pregunta: ¿Qué es la vigencia tecnológica?
+  respuesta: |
+    🔧 *La vigencia tecnológica* permite a la entidad contratante asegurar que un bien o servicio cumpla con los estándares técnicos vigentes durante toda su vida útil.
+
+    *Aplica principalmente a:*
+    🔹 Equipos informáticos y software
+    🔹 Equipo médico
+    🔹 Maquinaria especializada
+    🔹 Bienes con obsolescencia rápida
+
+    *Qué garantiza:*
+    🔹 Soporte técnico durante la vigencia
+    🔹 Actualizaciones y reemplazo de partes
+    🔹 Compatibilidad con la infraestructura institucional
+
+    📌 Base legal: Art. 69 LOSNCP — Principio de Vigencia Tecnológica
+  frecuencia: 0
+- keywords:
+  - verificacion
+  - produccion
+  - nacional
+  pregunta: ¿Qué es la verificación de producción nacional?
+  respuesta: |
+    🇪🇨 *La verificación de producción nacional* certifica que un bien ha sido elaborado total o parcialmente en el Ecuador, lo que da derecho a *preferencias* en los procesos de contratación pública.
+
+    *Beneficios para el proveedor:*
+    🔹 Margen de preferencia frente a oferentes extranjeros
+    🔹 Mayor puntaje en evaluación con Valor Agregado Ecuatoriano (VAE)
+    🔹 Acceso prioritario en procesos donde aplica
+
+    *Cómo se obtiene:*
+    🔹 La realiza el SERCOP a solicitud del proveedor
+    🔹 Se debe presentar evidencia del proceso productivo en territorio nacional
+    🔹 Se registra junto al RUP
+
+    📌 Base legal: Art. 25 LOSNCP — Producción nacional y VAE
+  frecuencia: 0
+- keywords:
+  - comision
+  - tecnica
+  pregunta: ¿Qué es la comisión técnica en un proceso de contratación?
+  respuesta: |
+    👥 *La comisión técnica* es el órgano colegiado designado por la máxima autoridad para conducir un proceso de contratación.
+
+    *Sus funciones principales:*
+    🔹 Calificar a los oferentes según los pliegos
+    🔹 Evaluar las ofertas técnica y económicamente
+    🔹 Recomendar a la máxima autoridad la adjudicación o declaratoria de desierto
+    🔹 Resolver consultas de los oferentes durante el proceso
+
+    *Conformación típica (3 miembros):*
+    🔹 Un profesional designado por la máxima autoridad
+    🔹 El titular del área requirente o su delegado
+    🔹 Un profesional afín al objeto de contratación
+
+    📌 Base legal: Art. 18 RGLOSNCP — Comisiones técnicas
+  frecuencia: 0
+

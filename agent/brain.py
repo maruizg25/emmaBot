@@ -65,6 +65,9 @@ WIKI_DIR      = Path(os.getenv("WIKI_DIR", "knowledge/wiki"))
 WIKI_FALLBACK = os.getenv("WIKI_FALLBACK", "true").lower() == "true"
 
 # Orden de la cascada (configurable vía .env)
+# Default optimizado por velocidad/costo: Groq primero (mediana ~2s), Gemini después,
+# Claude solo como respaldo (mediana ~5.4s, p95 13s, máx 80s en logs).
+# Datos del análisis 15-abr → 5-may 2026 (n=2541): Claude pasó del 28% al objetivo 10-15%.
 LLM_FALLBACK_ORDER = [p.strip() for p in
                       os.getenv("LLM_FALLBACK_ORDER", "groq,groq_fast,gemini,gemini_lite,claude,local").split(",")]
 
@@ -90,10 +93,60 @@ _EMOJI_RE = re.compile(
 # ─── Normalización ────────────────────────────────────────────────────────────
 
 def _normalizar(texto: str) -> str:
-    """Lowercase, sin tildes, strip."""
+    """Lowercase, sin tildes, sin puntuación, dedup letras repetidas (typos)."""
     texto = texto.lower().strip()
     texto = unicodedata.normalize("NFD", texto)
-    return "".join(c for c in texto if unicodedata.category(c) != "Mn")
+    texto = "".join(c for c in texto if unicodedata.category(c) != "Mn")
+    # Colapsa 3+ letras iguales seguidas (sacccoooo → saco, holaaaa → hola)
+    texto = re.sub(r"([a-z])\1{2,}", r"\1", texto)
+    # Elimina dígitos intercalados entre letras (sac99o → saco)
+    texto = re.sub(r"(?<=[a-z])\d+(?=[a-z])", "", texto)
+    # Limpia puntuación común para que tokens no queden pegados a "?", ",", "."
+    texto = re.sub(r"[¿?¡!,;:.…\(\)\[\]\"'`]", " ", texto)
+    # Colapsa espacios múltiples
+    texto = re.sub(r"\s+", " ", texto).strip()
+    return texto
+
+
+# Mapa de typos frecuentes (detectados en logs reales) → forma canónica.
+# Se aplica sobre tokens individuales después de _normalizar().
+_TYPO_FIXES = {
+    "saco": "saco",       # base
+    "sacr": "sacar",
+    "saca": "sacar",
+    "sacco": "saco",
+    "obtenge": "obtengo",
+    "obtenger": "obtener",
+    "ru": "rup",          # cuidado: solo si tokens vecinos sugieren RUP
+    "siee": "sie",
+    "sii": "si",
+    "noo": "no",
+    "comoo": "como",
+    "haci": "hacer",
+    "infmica": "infima",
+    "infma": "infima",
+    "infmia": "infima",
+    "ifima": "infima",
+    "lcitacion": "licitacion",
+    "lictacion": "licitacion",
+    "subastainversa": "subasta inversa",
+    "subastainvers": "subasta inversa",
+    "registar": "registrar",
+    "registrarse": "registro",
+    "registarse": "registro",
+}
+
+
+def _aplicar_fixes_typos(texto_norm: str) -> str:
+    """Aplica diccionario de typos sobre cada token. Preserva orden."""
+    tokens = texto_norm.split()
+    fixed = []
+    for t in tokens:
+        if t in _TYPO_FIXES:
+            fixed.append(_TYPO_FIXES[t])
+        else:
+            fixed.append(t)
+    return " ".join(fixed)
 
 
 _STOPWORDS = {_normalizar(w) for w in {
@@ -270,6 +323,10 @@ _SCOPE_STEMS = {_normalizar(w) for w in {
     "portal compras", "problema portal", "error portal",
     "subdivision", "subdivisión", "fraccionamiento", "fraccionar",
     "elusión", "elusion", "eludir", "simulacion", "simulación",
+    # Stems faltantes detectados en análisis CSV mayo 2026
+    "regimen", "régimen", "mfc", "vigencia tecnolog", "valor por dinero",
+    "valor agregado", "comision tecnica", "comisión técnica",
+    "verificacion", "verificación", "produccion nacional", "producción nacional",
 }}
 
 # Mapa de respuestas al menú numerado
@@ -296,6 +353,47 @@ _MEDIA_PATTERNS = re.compile(
     r"^\s*\[?(audio|imagen|video|sticker|documento|gif|voz|voice|image|photo|picture)\]?\s*$",
     re.IGNORECASE,
 )
+
+# Detecta plantillas mal interpoladas que llegan como mensaje del usuario
+# Ej: "${mensaje}", "{{texto}}", "{{mensaje}}", "{message}". Una herramienta o
+# integración intermedia falló al sustituir la variable y envió la plantilla cruda.
+_PLACEHOLDER_PATTERN = re.compile(
+    r"\$\{[a-zA-Z_][\w]*\}|\{\{\s*[a-zA-Z_][\w]*\s*\}\}",
+)
+
+
+def _es_placeholder_no_resuelto(texto: str) -> bool:
+    """True si el mensaje es básicamente una plantilla sin interpolar."""
+    s = texto.strip()
+    if not s:
+        return False
+    return bool(_PLACEHOLDER_PATTERN.search(s))
+
+
+# IDs de botones de feedback enviados al final de cada respuesta
+_FEEDBACK_IDS = {
+    "fb_si": True,
+    "fb_no": False,
+    "feedback_si": True,
+    "feedback_no": False,
+}
+
+# Reactions/textos que cuentan como feedback explícito
+_FEEDBACK_UTIL_TOKENS = {"👍", "👌", "✅", "util", "me sirvio", "me sirvió", "perfecto gracias"}
+_FEEDBACK_NO_UTIL_TOKENS = {"👎", "❌", "no util", "no me sirve", "no sirve", "incorrecto"}
+
+
+def _detectar_feedback(mensaje: str) -> Optional[bool]:
+    """Devuelve True/False si es feedback positivo/negativo, None si no aplica."""
+    s = mensaje.strip()
+    if s in _FEEDBACK_IDS:
+        return _FEEDBACK_IDS[s]
+    s_norm = _normalizar(s)
+    if any(t in s_norm for t in _FEEDBACK_NO_UTIL_TOKENS):
+        return False
+    if s_norm in _FEEDBACK_UTIL_TOKENS or any(t == s_norm for t in _FEEDBACK_UTIL_TOKENS):
+        return True
+    return None
 
 
 # ─── Carga de configuración ───────────────────────────────────────────────────
@@ -509,6 +607,8 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
     """
     cfg = _cargar_config()
     texto_norm = _normalizar(mensaje)
+    # Corrige typos comunes antes de matching (sacccoooo → saco, ifima → infima)
+    texto_norm = _aplicar_fixes_typos(texto_norm)
     texto_strip = texto_norm.strip()
     es_corto = len(texto_norm.split()) <= 4
 
@@ -524,6 +624,12 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
     if _MEDIA_PATTERNS.match(mensaje.strip()):
         return ("media", cfg.get("msg_media", cfg.get("fallback_message", "")))
 
+    # Cat 7c — Plantilla sin interpolar (ej: "${mensaje}", "{{texto}}")
+    # Una herramienta intermedia falló al renderizar. Tratar como mensaje vacío
+    # para no derivar al LLM ni clasificar como fuera_scope.
+    if _es_placeholder_no_resuelto(mensaje):
+        return ("placeholder_no_resuelto", cfg.get("msg_bienvenida", ""))
+
     # Cat 0 — Respuestas al menú numerado (1-5 / uno-cinco)
     if es_corto and texto_strip in _MENU_QUERIES:
         query_tema = _MENU_QUERIES[texto_strip]
@@ -534,14 +640,26 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
 
     # Cat 1 — Saludos → menú de bienvenida
     # es_corto en TODOS los checks: "Buenos días, en qué tiempo..." no debe ser saludo
-    if (
+    # Guardia adicional: si hay tokens fuera del dominio de saludo → fuera_scope
+    _es_saludo_match = (
         (es_corto and _coincide_exacto_token(texto_norm, _KW_SALUDO))
         or (es_corto and _contiene_kwset(texto_norm, {_normalizar(f) for f in {
             "buenos dias", "buenas tardes", "buenas noches", "buen dia",
             "como estas", "como esta", "como te va", "que tal",
         }}))
         or (es_corto and _contiene_emoji(mensaje, _EMOJIS_SALUDO))
-    ):
+    )
+    if _es_saludo_match:
+        # Verificar que no hay tokens extra que conviertan esto en pregunta fuera de scope
+        # Ej: "como esta el clima" → las palabras de saludo están pero "clima" lo hace fuera_scope
+        _tokens_saludo = {
+            "hola", "buenos", "buenas", "buen", "dias", "tardes", "noches", "dia",
+            "como", "estas", "esta", "te", "va", "que", "tal", "hay", "ahi",
+        }
+        tokens_msg = set(texto_norm.split())
+        tokens_extra = tokens_msg - _tokens_saludo
+        if tokens_extra and _es_fuera_scope(texto_norm):
+            return ("fuera_scope", cfg.get("msg_fuera_scope", ""))
         return ("saludo", cfg.get("msg_bienvenida", ""))
 
     # Cat 6 — Confusión/Frustración (solo mensajes cortos — evita falsos positivos)
@@ -587,11 +705,14 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
     _tokens_sig_sc = _tokens_sin_stopwords(texto_norm)
     _n_tokens = len(_tokens_sig_sc)
     if _n_tokens < 2:
-        if _es_fuera_scope(texto_norm):
-            return ("fuera_scope", cfg.get("msg_fuera_scope", ""))
+        # FAQ primero — atrapa "pliegos", "rup", "sie", "régimen común"
+        # incluso cuando hay un solo token significativo. Si scope se evalúa antes,
+        # palabras válidas como "regimen" o "mfc" caen erróneamente en fuera_scope.
         faq_resp = _check_faq(texto_norm)
         if faq_resp:
             return ("faq_cache", faq_resp.strip())
+        if _es_fuera_scope(texto_norm):
+            return ("fuera_scope", cfg.get("msg_fuera_scope", ""))
         return ("consulta_ambigua", cfg.get("msg_consulta_ambigua", cfg.get("msg_bienvenida", "")))
     elif _n_tokens <= 2:
         faq_resp = _check_faq(texto_norm)
@@ -606,6 +727,11 @@ def _detectar_shortcut(mensaje: str) -> Optional[tuple[str, str]]:
 
 
 # ─── Llamadas a LLMs (cascada) ───────────────────────────────────────────────
+
+# Timeout HTTP duro a nivel de socket — protege contra LLMs que se cuelgan
+# en streaming sin enviar bytes. Se complementa con asyncio.wait_for en _cascade_llm.
+_HTTP_TIMEOUT_S = float(os.getenv("LLM_HTTP_TIMEOUT_S", "15.0"))
+
 
 async def _llamar_groq_con_modelo(mensajes: list[dict], model: str) -> str:
     """Groq API genérica. Lanza excepción en fallo."""
@@ -634,7 +760,7 @@ async def _llamar_groq_con_modelo(mensajes: list[dict], model: str) -> str:
         "temperature": 0.2,
         "max_tokens": 600,
     }
-    async with httpx.AsyncClient(timeout=None) as client:
+    async with httpx.AsyncClient(timeout=_HTTP_TIMEOUT_S) as client:
         response = await client.post(GROQ_URL, json=payload, headers=headers)
 
         if response.status_code == 413:
@@ -753,41 +879,131 @@ async def _llamar_ollama(mensajes: list[dict]) -> str:
             "repeat_penalty": 1.1,
         },
     }
-    async with httpx.AsyncClient(timeout=None) as client:
+    async with httpx.AsyncClient(timeout=45.0) as client:
         response = await client.post(f"{OLLAMA_URL}/api/chat", json=payload)
         response.raise_for_status()
         data = response.json()
         return data.get("message", {}).get("content", "")
 
 
-# Mapa proveedor → función + timeout
+# Mapa proveedor → función + timeout (alineados con _HTTP_TIMEOUT_S=15s)
+# Hard-stop por proveedor evita que un solo LLM bloquee la cascada.
 _PROVEEDORES: dict[str, tuple] = {
-    "groq":        (_llamar_groq,         10.0),
-    "groq_fast":   (_llamar_groq_fast,    10.0),   # llama-3.1-8b-instant, 500K TPD
-    "gemini":      (_llamar_gemini,       12.0),
-    "gemini_lite": (_llamar_gemini_lite,  12.0),   # gemini-2.0-flash-lite, límites más altos
+    "groq":        (_llamar_groq,          8.0),
+    "groq_fast":   (_llamar_groq_fast,     8.0),
+    "gemini":      (_llamar_gemini,       10.0),
+    "gemini_lite": (_llamar_gemini_lite,  10.0),
     "claude":      (_llamar_claude_haiku, 12.0),
-    "local":       (_llamar_ollama,       45.0),
+    "local":       (_llamar_ollama,       30.0),
 }
+
+# ── Circuit breaker por proveedor ────────────────────────────────────────────
+# Si un proveedor falla N veces consecutivas, se abre el circuito por T segundos.
+# Durante ese tiempo se omite y la cascada salta al siguiente.
+_CB_FAIL_THRESHOLD = int(os.getenv("LLM_CB_FAIL_THRESHOLD", "3"))
+_CB_OPEN_SECONDS = int(os.getenv("LLM_CB_OPEN_SECONDS", "60"))
+_circuit_state: dict[str, dict] = {}  # nombre → {fails, open_until}
+
+
+def _circuit_open(nombre: str) -> bool:
+    st = _circuit_state.get(nombre)
+    if not st:
+        return False
+    if time.time() < st.get("open_until", 0):
+        return True
+    return False
+
+
+def _circuit_record_failure(nombre: str) -> None:
+    st = _circuit_state.setdefault(nombre, {"fails": 0, "open_until": 0})
+    st["fails"] += 1
+    if st["fails"] >= _CB_FAIL_THRESHOLD:
+        st["open_until"] = time.time() + _CB_OPEN_SECONDS
+        st["fails"] = 0
+        logger.warning(
+            f"[Sercobot] Circuit breaker ABIERTO para {nombre} por {_CB_OPEN_SECONDS}s"
+        )
+
+
+def _circuit_record_success(nombre: str) -> None:
+    if nombre in _circuit_state:
+        _circuit_state[nombre]["fails"] = 0
+        _circuit_state[nombre]["open_until"] = 0
+
+
+# Tiempo máximo total de la cascada antes de devolver error técnico al usuario.
+_CASCADE_BUDGET_S = float(os.getenv("LLM_CASCADE_BUDGET_S", "25.0"))
+
+
+def _routing_para_query(mensajes: list[dict]) -> list[str]:
+    """
+    Devuelve el orden de cascada óptimo según la complejidad del último mensaje.
+    Queries simples (cortas, sin razonamiento profundo) → groq_fast primero.
+    Queries complejas (citación legal, comparación, multi-tema) → groq 70b primero.
+    Claude se reserva solo como último recurso de calidad.
+    """
+    # Último mensaje del usuario (con contexto RAG ya enriquecido)
+    user_msgs = [m for m in mensajes if m.get("role") == "user"]
+    if not user_msgs:
+        return list(LLM_FALLBACK_ORDER)
+    last = user_msgs[-1].get("content", "").lower()
+
+    # Heurísticas de complejidad
+    es_complejo = (
+        len(last) > 1500
+        or "diferencia entre" in last
+        or "comparar" in last
+        or "compara " in last
+        or last.count("art.") + last.count("articulo") + last.count("artículo") >= 2
+        or last.count("?") >= 2
+    )
+
+    if es_complejo:
+        # Modelo grande primero: groq 70b → gemini → claude
+        return ["groq", "gemini", "groq_fast", "gemini_lite", "claude", "local"]
+
+    # Query simple: groq_fast (8b, ~1.7s) primero
+    return ["groq_fast", "groq", "gemini_lite", "gemini", "claude", "local"]
 
 
 async def _cascade_llm(mensajes: list[dict]) -> tuple[str, str, float]:
     """
-    Ejecuta la cascada de LLMs en orden configurado.
+    Ejecuta la cascada de LLMs en orden configurado con:
+      - Timeout por proveedor (hard-stop con asyncio.wait_for)
+      - Circuit breaker (omite proveedores con fallos consecutivos)
+      - Budget global (aborta si la cascada excede _CASCADE_BUDGET_S)
+      - Routing por complejidad (groq_fast primero en queries simples)
     Retorna (respuesta, proveedor_usado, tiempo_segundos).
     """
     fallidos: list[str] = []
+    t_inicio = time.time()
 
-    for nombre in LLM_FALLBACK_ORDER:
+    # Si el usuario forzó un orden vía .env (LLM_FALLBACK_ORDER no es el default), respétalo.
+    default_order = "groq,groq_fast,gemini,gemini_lite,claude,local"
+    custom_order = os.getenv("LLM_FALLBACK_ORDER", default_order) != default_order
+    orden = list(LLM_FALLBACK_ORDER) if custom_order else _routing_para_query(mensajes)
+
+    for nombre in orden:
         if nombre not in _PROVEEDORES:
             logger.warning(f"[Sercobot] Proveedor desconocido en cascada: {nombre}")
             continue
+
+        if _circuit_open(nombre):
+            logger.info(f"[Sercobot] {nombre} circuito abierto — saltando")
+            continue
+
+        if (time.time() - t_inicio) > _CASCADE_BUDGET_S:
+            logger.warning(
+                f"[Sercobot] Cascade budget {_CASCADE_BUDGET_S}s agotado — abortando"
+            )
+            break
 
         fn, timeout_s = _PROVEEDORES[nombre]
         t0 = time.time()
         try:
             resultado = await asyncio.wait_for(fn(mensajes), timeout=timeout_s)
             elapsed = time.time() - t0
+            _circuit_record_success(nombre)
 
             if fallidos:
                 logger.info(
@@ -799,13 +1015,14 @@ async def _cascade_llm(mensajes: list[dict]) -> tuple[str, str, float]:
             return resultado, nombre, elapsed
 
         except asyncio.TimeoutError:
-            elapsed = time.time() - t0
             logger.warning(f"[Sercobot] {nombre} timeout {timeout_s}s → siguiente nivel")
+            _circuit_record_failure(nombre)
             fallidos.append(nombre)
 
         except Exception as e:
             elapsed = time.time() - t0
             logger.warning(f"[Sercobot] {nombre} falló ({elapsed:.1f}s): {e} → siguiente nivel")
+            _circuit_record_failure(nombre)
             fallidos.append(nombre)
 
     return "", "none", 0.0
@@ -824,6 +1041,12 @@ def _detectar_tools(mensaje: str) -> list[tuple[str, dict]]:
         "montos de contratacion", "montos de contratación",
         "umbrales de contratacion", "umbrales de contratación",
         "cuanto es la infima", "cuánto es la ínfima",
+        "monto de infima", "monto infima", "monto de la infima",
+        "monto de ínfima", "monto ínfima", "monto de la ínfima",
+        "valor de infima", "valor infima", "precio infima",
+        "valor de ínfima", "precio ínfima",
+        "cuanto es infima", "cuánto es ínfima",
+        "cuanto cuesta infima", "cuánto cuesta ínfima",
     ]
     _kw_no_umbrales = [
         "experiencia", "tdr", "terminos de referencia", "calific",
@@ -871,11 +1094,23 @@ def _detectar_tools(mensaje: str) -> list[tuple[str, dict]]:
     if any(kw in texto for kw in _kw_rup) and not any(kw in texto for kw in _kw_no_rup):
         tools_a_ejecutar.append(("info_rup", {}))
 
+    # Solo activar si el usuario pregunta por la fecha/hora ACTUAL — no si menciona fechas de proceso
     _kw_fecha = [
-        "fecha", "hora", "hoy es", "qué día", "que dia",
-        "qué hora", "que hora", "día de hoy", "dia de hoy",
+        "qué día es hoy", "que dia es hoy",
+        "qué fecha es hoy", "que fecha es hoy",
+        "qué hora es", "que hora es",
+        "hoy es", "qué día es", "que dia es",
+        "día de hoy", "dia de hoy",
+        "fecha actual", "hora actual",
+        "fecha de hoy", "hora de hoy",
     ]
-    if any(kw in texto for kw in _kw_fecha):
+    _kw_no_fecha = [
+        "inicio", "inició", "inicion", "precontractual", "contractual",
+        "plazo", "oferta", "adjudic", "publicacion", "publicación",
+        "vence", "vencimiento", "hasta el", "desde el", "a partir",
+        "proceso", "contrato", "firma",
+    ]
+    if any(kw in texto for kw in _kw_fecha) and not any(kw in texto for kw in _kw_no_fecha):
         tools_a_ejecutar.append(("obtener_fecha_hora_ecuador", {}))
 
     _kw_tipo = [
@@ -1031,6 +1266,29 @@ async def generar_respuesta(
 
     if not mensaje or len(mensaje.strip()) < 1:
         return _cargar_config().get("fallback_message", "¿En qué puedo ayudarte?")
+
+    # ── 0. Feedback 👍/👎 (botones interactivos o reacciones) ──────────────────
+    fb = _detectar_feedback(mensaje)
+    if fb is not None:
+        try:
+            from agent.memory import registrar_feedback
+            await registrar_feedback(telefono=telefono, util=fb)
+            logger.info(f"[Sercobot] Feedback registrado: {'útil' if fb else 'no útil'}")
+        except Exception as e:
+            logger.debug(f"No se pudo registrar feedback: {e}")
+        cfg = _cargar_config()
+        if fb:
+            return cfg.get(
+                "msg_feedback_positivo",
+                "¡Gracias por tu feedback! 😊 ¿Tienes otra consulta?",
+            )
+        return cfg.get(
+            "msg_feedback_negativo",
+            (
+                "Gracias, lo tomamos en cuenta. ¿Puedes contarme qué faltó "
+                "para mejorarlo? Si necesitas atención humana, llama al 1800-737267."
+            ),
+        )
 
     # ── 1. Sistema de shortcuts ───────────────────────────────────────────────
     # Shortcuts ambiguos (fuera_scope, afirmacion, negacion, consulta_ambigua)

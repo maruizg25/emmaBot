@@ -25,6 +25,7 @@ logger = logging.getLogger("agentkit")
 RRF_K           = 60   # Constante estándar de investigación
 TOP_K_BUSQUEDA  = 12   # Candidatos por búsqueda antes de fusionar
 TOP_K_RERANK    = int(os.getenv("TOP_K_CHUNKS", "4"))  # Chunks finales al prompt (4 = mejor diversidad)
+RERANKER_ENABLED = os.getenv("RERANKER_ENABLED", "true").lower() == "true"
 
 # Similitud coseno mínima para aceptar un chunk semántico.
 # 0.50 validado empíricamente — 0.55 descartaba chunks relevantes en temas específicos.
@@ -149,6 +150,9 @@ async def buscar_contexto(query: str) -> list[dict]:
 
     if not candidatos:
         return []
+
+    if not RERANKER_ENABLED:
+        return candidatos[:TOP_K_RERANK]
 
     # Reranking con cross-encoder (query original, sin expansión)
     from agent.rag.reranker import rerank

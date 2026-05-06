@@ -43,3 +43,26 @@ class ProveedorWhatsApp(ABC):
                                 nombre_archivo: str, caption: str = "") -> bool:
         """Envía un documento. Implementado solo en Meta por ahora."""
         return False
+
+    async def enviar_lista_interactiva(
+        self,
+        telefono: str,
+        cuerpo: str,
+        opciones: list[dict],
+        encabezado: str = "",
+        pie: str = "",
+        boton_texto: str = "Ver opciones",
+    ) -> bool:
+        """Envía una lista interactiva. Default: no soportado."""
+        return False
+
+    async def enviar_botones_interactivos(
+        self,
+        telefono: str,
+        cuerpo: str,
+        botones: list[dict],
+        encabezado: str = "",
+        pie: str = "",
+    ) -> bool:
+        """Envía botones de respuesta rápida. Default: no soportado."""
+        return False

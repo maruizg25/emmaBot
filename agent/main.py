@@ -13,7 +13,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form, BackgroundTasks
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -99,10 +99,49 @@ async def webhook_verificacion(request: Request):
 
 
 _WHATSAPP_MAX_CHARS = 3800  # WhatsApp limita a 4096; dejamos margen
+_MENU_INTERACTIVO_HABILITADO = os.getenv("MENU_INTERACTIVO", "true").lower() == "true"
+_FEEDBACK_HABILITADO = os.getenv("FEEDBACK_HABILITADO", "true").lower() == "true"
+
+# Opciones del menú principal — IDs alineados con _MENU_QUERIES en brain.py
+_MENU_OPCIONES: list[dict] = [
+    {"id": "1", "titulo": "Tipos de procesos", "descripcion": "SIE, licitación, ínfima cuantía, feria inclusiva..."},
+    {"id": "2", "titulo": "RUP — Proveedores", "descripcion": "Registro, requisitos y renovación"},
+    {"id": "3", "titulo": "Buscar procesos", "descripcion": "Cómo participar en el portal"},
+    {"id": "4", "titulo": "Garantías y contratos", "descripcion": "Montos, tipos y plazos"},
+    {"id": "5", "titulo": "Normativa", "descripcion": "LOSNCP, Reglamento, Resoluciones"},
+]
+
+
+def _es_respuesta_menu(respuesta: str) -> bool:
+    """Detecta si una respuesta es el menú de bienvenida (heurística por contenido)."""
+    return (
+        "1️⃣" in respuesta and "2️⃣" in respuesta
+        and ("Tipos de procesos" in respuesta or "RUP" in respuesta)
+    )
 
 
 async def _enviar_respuesta(telefono: str, respuesta: str) -> None:
-    """Envía la respuesta dividida en tantos mensajes como sea necesario."""
+    """Envía la respuesta dividida en tantos mensajes como sea necesario.
+    Si la respuesta es el menú de bienvenida y el proveedor lo soporta,
+    envía una lista interactiva en lugar del texto plano con números."""
+    if _MENU_INTERACTIVO_HABILITADO and _es_respuesta_menu(respuesta):
+        try:
+            ok = await proveedor.enviar_lista_interactiva(
+                telefono=telefono,
+                cuerpo=(
+                    "👋 ¡Hola! Soy *SercoBot*, asistente de contratación pública del SERCOP 🇪🇨\n\n"
+                    "Elige un tema o escribe tu pregunta directamente."
+                ),
+                opciones=_MENU_OPCIONES,
+                pie="SERCOP — sercop.gob.ec",
+                boton_texto="Ver temas",
+            )
+            if ok:
+                return
+            logger.info("Lista interactiva no enviada — fallback a texto")
+        except Exception as e:
+            logger.warning(f"Error enviando lista interactiva: {e} — fallback a texto")
+
     pendiente = respuesta.strip()
     while pendiente:
         if len(pendiente) <= _WHATSAPP_MAX_CHARS:
@@ -116,6 +155,33 @@ async def _enviar_respuesta(telefono: str, respuesta: str) -> None:
             corte = _WHATSAPP_MAX_CHARS
         await proveedor.enviar_mensaje(telefono, pendiente[:corte].strip())
         pendiente = pendiente[corte:].strip()
+
+
+def _es_respuesta_sustantiva(respuesta: str) -> bool:
+    """True si vale la pena preguntar al usuario si la respuesta le sirvió.
+    Excluye saludos, menús, mensajes de error y respuestas muy cortas."""
+    s = respuesta.strip()
+    if len(s) < 200:
+        return False
+    if _es_respuesta_menu(s):
+        return False
+    bandera_error = ("dificultades técnicas" in s) or ("problema técnico" in s)
+    return not bandera_error
+
+
+async def _enviar_feedback_buttons(telefono: str) -> None:
+    """Envía botones 👍/👎 después de una respuesta sustantiva."""
+    try:
+        await proveedor.enviar_botones_interactivos(
+            telefono=telefono,
+            cuerpo="¿Te fue útil la respuesta?",
+            botones=[
+                {"id": "fb_si", "titulo": "👍 Sí"},
+                {"id": "fb_no", "titulo": "👎 No"},
+            ],
+        )
+    except Exception as e:
+        logger.debug(f"No se pudo enviar botones de feedback: {e}")
 
 
 async def _responder_multimedia(telefono: str) -> None:
@@ -197,6 +263,9 @@ async def _procesar_mensaje(telefono: str, texto: str, mensaje_id: str) -> None:
         await guardar_mensaje(telefono, "user", texto)
         await guardar_mensaje(telefono, "assistant", respuesta)
         await _enviar_respuesta(telefono, respuesta)
+
+        if _FEEDBACK_HABILITADO and _es_respuesta_sustantiva(respuesta):
+            await _enviar_feedback_buttons(telefono)
 
         logger.info(f"SercoBot respondió a {telefono} ({len(respuesta)} chars)")
 
@@ -426,6 +495,195 @@ async def recargar_faq(request: Request):
     _cargar_config.cache_clear()
     faqs = _cargar_faq_cache()
     return {"status": "ok", "faqs_cargados": len(faqs)}
+
+
+@app.get("/admin/metricas")
+async def metricas_json(request: Request, dias: int = 7):
+    """Métricas para el dashboard (JSON)."""
+    _verificar_admin(request)
+    from agent.memory import metricas_dashboard
+    return await metricas_dashboard(dias=dias)
+
+
+_DASHBOARD_HTML = """<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><title>SercoBot — Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: #f5f6f8; color: #1c1c1e; }
+  header { background: #0066cc; color: #fff; padding: 16px 24px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .subtitle { opacity: 0.8; font-size: 13px; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 16px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .kpi { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .kpi h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; color: #6b7280; letter-spacing: 0.5px; }
+  .kpi .value { font-size: 28px; font-weight: 600; }
+  .kpi .delta { font-size: 12px; color: #6b7280; }
+  .card { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 12px; }
+  .card h2 { margin: 0 0 12px; font-size: 15px; color: #1c1c1e; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 8px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #f8f9fa; font-weight: 600; color: #6b7280; text-transform: uppercase; font-size: 11px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+  select, button { padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; cursor: pointer; }
+  button.primary { background: #0066cc; color: #fff; border: none; }
+</style>
+</head><body>
+<header>
+  <h1>SercoBot — Dashboard de uso</h1>
+  <div class="subtitle">Métricas en vivo · SERCOP / DIO</div>
+</header>
+<div class="container">
+  <div style="margin-bottom: 12px;">
+    <label>Rango: </label>
+    <select id="rango">
+      <option value="1">Hoy</option>
+      <option value="7" selected>7 días</option>
+      <option value="30">30 días</option>
+    </select>
+    <button class="primary" onclick="cargar()">Actualizar</button>
+  </div>
+
+  <div class="row" id="kpis"></div>
+
+  <div class="card"><h2>Mensajes por día</h2><canvas id="serieChart" height="80"></canvas></div>
+
+  <div class="grid-2">
+    <div class="card"><h2>Routing — quién responde</h2><canvas id="routingChart" height="180"></canvas></div>
+    <div class="card"><h2>Distribución horaria</h2><canvas id="horarioChart" height="180"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h2>Latencia por proveedor LLM</h2>
+      <table id="tablaLatencia"><thead><tr>
+        <th>Proveedor</th><th class="num">n</th><th class="num">p50 ms</th><th class="num">p95 ms</th><th class="num">máx ms</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+    <div class="card"><h2>Tipos de shortcut</h2>
+      <table id="tablaShortcut"><thead><tr>
+        <th>Tipo</th><th class="num">Total</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+let serieChart, routingChart, horarioChart;
+
+async function cargar() {
+  const dias = document.getElementById("rango").value;
+  const headers = { "X-Admin-Token": (window.localStorage.getItem("admin_token") || "") };
+  const r = await fetch(`/admin/metricas?dias=${dias}`, { headers });
+  if (!r.ok) {
+    alert("Error cargando métricas: " + r.status);
+    return;
+  }
+  const d = await r.json();
+  pintarKPIs(d);
+  pintarSerie(d.serie_temporal);
+  pintarRouting(d.shortcut_breakdown, d.latencia_por_proveedor);
+  pintarHorario(d.distribucion_horaria);
+  pintarLatencia(d.latencia_por_proveedor);
+  pintarShortcut(d.shortcut_breakdown);
+}
+
+function pintarKPIs(d) {
+  const csat = d.feedback.csat_pct !== null ? d.feedback.csat_pct + "%" : "—";
+  const totalShortcuts = (d.shortcut_breakdown || []).reduce((a, x) => a + x.total, 0);
+  const pctShortcut = d.total_consultas ? Math.round(totalShortcuts / d.total_consultas * 100) : 0;
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi"><h3>Total consultas</h3><div class="value">${d.total_consultas}</div><div class="delta">últimos ${d.dias} días</div></div>
+    <div class="kpi"><h3>% Shortcut (sin LLM)</h3><div class="value">${pctShortcut}%</div><div class="delta">${totalShortcuts} de ${d.total_consultas}</div></div>
+    <div class="kpi"><h3>Tasa de error</h3><div class="value">${d.tasa_error_pct}%</div><div class="delta">${d.errores} timeouts</div></div>
+    <div class="kpi"><h3>Satisfacción (CSAT)</h3><div class="value">${csat}</div><div class="delta">${d.feedback.total} respuestas</div></div>
+  `;
+}
+
+function pintarSerie(serie) {
+  const ctx = document.getElementById("serieChart");
+  if (serieChart) serieChart.destroy();
+  serieChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: serie.map(x => x.dia),
+      datasets: [
+        { label: "Total", data: serie.map(x => x.total), borderColor: "#0066cc", tension: 0.3, fill: false },
+        { label: "Shortcuts", data: serie.map(x => x.shortcuts), borderColor: "#10b981", tension: 0.3, fill: false },
+        { label: "Errores", data: serie.map(x => x.errores), borderColor: "#ef4444", tension: 0.3, fill: false },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { position: "top" } } },
+  });
+}
+
+function pintarRouting(shortcuts, latencia) {
+  const labels = latencia.map(x => x.proveedor);
+  const data = latencia.map(x => x.n);
+  const ctx = document.getElementById("routingChart");
+  if (routingChart) routingChart.destroy();
+  routingChart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: ["#10b981", "#0066cc", "#f59e0b", "#8b5cf6", "#ef4444", "#6b7280", "#84cc16", "#06b6d4", "#ec4899", "#a78bfa", "#f97316"],
+      }],
+    },
+    options: { responsive: true, plugins: { legend: { position: "right" } } },
+  });
+}
+
+function pintarHorario(horas) {
+  const labels = Array.from({length: 24}, (_, i) => String(i).padStart(2, "0") + ":00");
+  const map = Object.fromEntries(horas.map(x => [x.hora, x.total]));
+  const data = labels.map((_, i) => map[i] || 0);
+  const ctx = document.getElementById("horarioChart");
+  if (horarioChart) horarioChart.destroy();
+  horarioChart = new Chart(ctx, {
+    type: "bar",
+    data: { labels, datasets: [{ label: "Mensajes", data, backgroundColor: "#0066cc" }] },
+    options: { responsive: true, plugins: { legend: { display: false } } },
+  });
+}
+
+function pintarLatencia(rows) {
+  const tbody = document.querySelector("#tablaLatencia tbody");
+  tbody.innerHTML = rows.map(r => `<tr>
+    <td>${r.proveedor}</td>
+    <td class="num">${r.n}</td>
+    <td class="num">${r.p50_ms}</td>
+    <td class="num">${r.p95_ms}</td>
+    <td class="num">${r.max_ms}</td>
+  </tr>`).join("");
+}
+
+function pintarShortcut(rows) {
+  const tbody = document.querySelector("#tablaShortcut tbody");
+  tbody.innerHTML = rows.map(r => `<tr>
+    <td>${r.tipo}</td><td class="num">${r.total}</td>
+  </tr>`).join("");
+}
+
+// Bootstrap: pedir token si no está guardado
+if (!localStorage.getItem("admin_token")) {
+  const t = prompt("Token de administración (deja vacío si no aplica):") || "";
+  localStorage.setItem("admin_token", t);
+}
+cargar();
+</script>
+</body></html>
+"""
+
+
+@app.get("/admin/dashboard", response_class=HTMLResponse)
+async def dashboard():
+    """Dashboard HTML con gráficas en vivo."""
+    return HTMLResponse(_DASHBOARD_HTML)
 
 
 @app.get("/admin/stats")

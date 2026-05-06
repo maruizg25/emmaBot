@@ -279,6 +279,15 @@ msg_consulta_ambigua: |
 
   Escribe tu pregunta completa y te respondo al instante 😊
 
+msg_feedback_positivo: |
+  ¡Gracias por tu feedback! 😊 Me ayuda a mejorar. ¿Tienes otra consulta?
+
+msg_feedback_negativo: |
+  Gracias por avisarme 🙏 Lamento que no te haya servido.
+
+  Cuéntame qué faltó o reformula tu pregunta y te respondo mejor.
+  Para atención humana: *1800-737267* (lunes a viernes 08h00–17h00).
+
 msg_media: |
   Recibí tu mensaje 😊 Por ahora solo puedo responder preguntas de texto.
 

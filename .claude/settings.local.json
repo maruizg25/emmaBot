@@ -18,7 +18,18 @@
       "Write",
       "Edit",
       "Glob",
-      "Grep"
+      "Grep",
+      "Bash(python -c \"import docx; print\\('ok'\\)\")",
+      "Bash(python scripts/generar_informe.py)",
+      "Bash(python -c \"import os; os.environ['PYTHONIOENCODING']='utf-8'\")",
+      "Bash(python -c ' *)",
+      "Bash(python scripts/generar_prueba_escritorio.py)",
+      "Bash(python scripts/generar_anexos.py)",
+      "Read(//c/Users/jonathan.ruiz/Downloads/**)",
+      "Bash(py *)",
+      "Bash(python *)",
+      "WebFetch(domain:compracorporativasalud.compraspublicas.gob.ec)",
+      "WebFetch(domain:docs.ollama.com)"
     ]
   }
 }

@@ -162,6 +162,21 @@ async def inicializar_db():
                 CREATE INDEX IF NOT EXISTS idx_consultas_shortcut
                 ON consultas_log (fue_shortcut, timestamp DESC)
             """))
+            # Tabla de feedback de satisfacción
+            await conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS feedback (
+                    id              BIGSERIAL PRIMARY KEY,
+                    telefono_hash   VARCHAR(64),
+                    consulta_id     BIGINT,
+                    util            BOOLEAN NOT NULL,
+                    comentario      TEXT,
+                    timestamp       TIMESTAMPTZ DEFAULT NOW()
+                )
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_feedback_timestamp
+                ON feedback (timestamp DESC)
+            """))
 
     # Purga automática de historial antiguo al arrancar
     await purgar_historial_antiguo(dias=30)
@@ -434,6 +449,66 @@ async def buscar_articulo_directo(num_articulo: int, tipo_doc: str = "ley") -> s
         return None
 
 
+async def registrar_feedback(
+    telefono: str,
+    util: bool,
+    comentario: str | None = None,
+) -> None:
+    """Persiste un feedback 👍/👎 del último mensaje del usuario."""
+    if not _is_postgres:
+        return
+    telefono_hash = hashlib.sha256(telefono.encode()).hexdigest() if telefono else None
+    async with async_session() as session:
+        # Buscar la última consulta de este teléfono para vincular
+        consulta_id = None
+        if telefono_hash:
+            res = await session.execute(text("""
+                SELECT id FROM consultas_log
+                WHERE telefono_hash = :th
+                ORDER BY timestamp DESC LIMIT 1
+            """), {"th": telefono_hash})
+            row = res.fetchone()
+            if row:
+                consulta_id = row.id
+        await session.execute(text("""
+            INSERT INTO feedback (telefono_hash, consulta_id, util, comentario)
+            VALUES (:th, :cid, :u, :c)
+        """), {
+            "th": telefono_hash,
+            "cid": consulta_id,
+            "u": util,
+            "c": (comentario or "")[:500] or None,
+        })
+        await session.commit()
+
+
+async def estadisticas_satisfaccion(dias: int = 7) -> dict:
+    """Resumen de feedback en los últimos N días."""
+    if not _is_postgres:
+        return {"error": "estadísticas disponibles solo con PostgreSQL"}
+    async with engine.connect() as conn:
+        res = await conn.execute(text("""
+            SELECT
+                COUNT(*)                                          AS total,
+                SUM(CASE WHEN util THEN 1 ELSE 0 END)             AS utiles,
+                SUM(CASE WHEN NOT util THEN 1 ELSE 0 END)         AS no_utiles
+            FROM feedback
+            WHERE timestamp >= NOW() - (:d || ' days')::interval
+        """), {"d": dias})
+        row = res.fetchone()
+        total = int(row.total or 0)
+        utiles = int(row.utiles or 0)
+        no_utiles = int(row.no_utiles or 0)
+        csat = (utiles / total * 100) if total else 0.0
+        return {
+            "dias": dias,
+            "total_feedback": total,
+            "utiles": utiles,
+            "no_utiles": no_utiles,
+            "csat_pct": round(csat, 1),
+        }
+
+
 async def buscar_respuesta_cacheada(pregunta_normalizada: str) -> str | None:
     """Busca en consultas_log si una pregunta similar ya fue respondida por LLM."""
     if not _is_postgres:
@@ -564,6 +639,137 @@ async def obtener_estadisticas() -> dict:
         "shortcut_breakdown":  shortcut_breakdown,
         "fuera_scope_hoy":     fuera_scope_hoy,
         "alerta_fuera_scope":  fuera_scope_hoy > total_hoy * 0.30 if total_hoy else False,
+    }
+
+
+async def metricas_dashboard(dias: int = 7) -> dict:
+    """
+    Datos completos para el dashboard. Incluye:
+      - Serie temporal por día
+      - Distribución por proveedor con latencia
+      - Top temas (palabras clave)
+      - Tasa de errores
+      - CSAT (si hay feedback)
+    """
+    if not _is_postgres:
+        return {"error": "métricas disponibles solo con PostgreSQL"}
+
+    async with engine.connect() as conn:
+        # Serie temporal por día
+        serie = await conn.execute(text("""
+            SELECT DATE(timestamp) AS dia,
+                   COUNT(*) AS total,
+                   SUM(CASE WHEN fue_shortcut THEN 1 ELSE 0 END) AS shortcuts,
+                   SUM(CASE WHEN proveedor_llm = 'none' THEN 1 ELSE 0 END) AS errores
+            FROM consultas_log
+            WHERE timestamp >= NOW() - (:d || ' days')::interval
+            GROUP BY DATE(timestamp) ORDER BY dia
+        """), {"d": dias})
+        serie_temporal = [
+            {
+                "dia": str(r.dia),
+                "total": int(r.total),
+                "shortcuts": int(r.shortcuts or 0),
+                "errores": int(r.errores or 0),
+            }
+            for r in serie.fetchall()
+        ]
+
+        # Latencia por proveedor (mediana p50, p95)
+        latencia = await conn.execute(text("""
+            SELECT proveedor_llm,
+                   COUNT(*) AS n,
+                   ROUND(AVG(tiempo_ms))::INT AS avg_ms,
+                   ROUND(percentile_cont(0.5) WITHIN GROUP (ORDER BY tiempo_ms))::INT AS p50_ms,
+                   ROUND(percentile_cont(0.95) WITHIN GROUP (ORDER BY tiempo_ms))::INT AS p95_ms,
+                   MAX(tiempo_ms) AS max_ms
+            FROM consultas_log
+            WHERE timestamp >= NOW() - (:d || ' days')::interval
+              AND tiempo_ms > 0
+            GROUP BY proveedor_llm ORDER BY n DESC
+        """), {"d": dias})
+        latencia_proveedor = [
+            {
+                "proveedor": r.proveedor_llm,
+                "n": int(r.n),
+                "avg_ms": int(r.avg_ms or 0),
+                "p50_ms": int(r.p50_ms or 0),
+                "p95_ms": int(r.p95_ms or 0),
+                "max_ms": int(r.max_ms or 0),
+            }
+            for r in latencia.fetchall()
+        ]
+
+        # Distribución por hora del día
+        por_hora = await conn.execute(text("""
+            SELECT EXTRACT(HOUR FROM timestamp)::INT AS hora, COUNT(*) AS total
+            FROM consultas_log
+            WHERE timestamp >= NOW() - (:d || ' days')::interval
+            GROUP BY hora ORDER BY hora
+        """), {"d": dias})
+        distribucion_horaria = [
+            {"hora": int(r.hora), "total": int(r.total)}
+            for r in por_hora.fetchall()
+        ]
+
+        # Tipos de shortcut
+        sc_tipos = await conn.execute(text("""
+            SELECT shortcut_tipo, COUNT(*) AS total
+            FROM consultas_log
+            WHERE timestamp >= NOW() - (:d || ' days')::interval AND fue_shortcut = TRUE
+            GROUP BY shortcut_tipo ORDER BY total DESC
+        """), {"d": dias})
+        shortcut_breakdown = [
+            {"tipo": r.shortcut_tipo or "sin_tipo", "total": int(r.total)}
+            for r in sc_tipos.fetchall()
+        ]
+
+        # Tasa de errores
+        err = await conn.execute(text("""
+            SELECT COUNT(*) AS errores,
+                   (SELECT COUNT(*) FROM consultas_log
+                    WHERE timestamp >= NOW() - (:d || ' days')::interval) AS total
+            FROM consultas_log
+            WHERE timestamp >= NOW() - (:d || ' days')::interval
+              AND proveedor_llm = 'none'
+        """), {"d": dias})
+        e_row = err.fetchone()
+        err_total = int(e_row.errores or 0)
+        total_g = int(e_row.total or 0)
+        tasa_error_pct = round(err_total / total_g * 100, 2) if total_g else 0.0
+
+        # Feedback / CSAT
+        try:
+            fb = await conn.execute(text("""
+                SELECT
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN util THEN 1 ELSE 0 END) AS utiles
+                FROM feedback
+                WHERE timestamp >= NOW() - (:d || ' days')::interval
+            """), {"d": dias})
+            fb_row = fb.fetchone()
+            fb_total = int(fb_row.total or 0)
+            fb_utiles = int(fb_row.utiles or 0)
+            csat_pct = round(fb_utiles / fb_total * 100, 1) if fb_total else None
+        except Exception:
+            fb_total = 0
+            fb_utiles = 0
+            csat_pct = None
+
+    return {
+        "dias": dias,
+        "total_consultas": total_g,
+        "errores": err_total,
+        "tasa_error_pct": tasa_error_pct,
+        "serie_temporal": serie_temporal,
+        "latencia_por_proveedor": latencia_proveedor,
+        "distribucion_horaria": distribucion_horaria,
+        "shortcut_breakdown": shortcut_breakdown,
+        "feedback": {
+            "total": fb_total,
+            "utiles": fb_utiles,
+            "csat_pct": csat_pct,
+        },
     }
 
 
